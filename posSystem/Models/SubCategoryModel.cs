@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace posSystem.Models
@@ -6,12 +7,13 @@ namespace posSystem.Models
     [Table("tblSubCategory")]
     public class SubCategoryModel
     {
+        [Key]
         public int subCId { get; set; }
-        public string subCatName { get; set; }
-        public string subCatCode { get; set; }
+        public string? subCatName { get; set; }
+        public string? subCatCode { get; set; }
         public DateTime? subCatCreatedAt { get; set; }
 
-        public string catCode { get; set; }
+        public string? catCode { get; set; }
         public CategoryModel category { get; set; }
     }
 

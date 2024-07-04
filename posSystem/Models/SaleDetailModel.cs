@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace posSystem.Models
@@ -6,6 +7,7 @@ namespace posSystem.Models
     [Table("tblSaleDetail")]
     public class SaleDetailModel
     {
+        [Key]
         public int sdId { get; set; }
         public int? saleId { get; set; }
         public int? itemId { get; set; }

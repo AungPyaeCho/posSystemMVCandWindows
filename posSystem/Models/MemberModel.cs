@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace posSystem.Models
@@ -6,12 +7,13 @@ namespace posSystem.Models
     [Table("tblMember")]
     public class MemberModel
     {
+        [Key]
         public string memberId { get; set; }
-        public string memberName { get; set; }
-        public string memberEmail { get; set; }
-        public string memberPhone { get; set; }
-        public string memberAddress { get; set; }
-        public string memberPhoto { get; set; }
+        public string? memberName { get; set; }
+        public string? memberEmail { get; set; }
+        public string? memberPhone { get; set; }
+        public string? memberAddress { get; set; }
+        public string? memberPhoto { get; set; }
         public DateTime? memberCreatedAt { get; set; }
     }
 

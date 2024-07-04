@@ -1,0 +1,75 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+
+<div class="mb-3">
+    <label for="Category Name" class="form-label">Category Name</label>
+    <input type="text" class="form-control" id="catName" name="catName" placeholder="">
+</div>
+
+<div class="mb-3">
+    <label for="Category Code" class="form-label">Category Code</label>
+    <input type="text" class="form-control" id="catCode" name="catCode" placeholder="">
+</div>
+
+<div class="mb-3">
+    <label for="Category Description" class="form-label">Category Description</label>
+    <input type="text" class="form-control" id="catDescription" name="catDescription" placeholder="">
+</div>
+
+<div>
+    <a href="/Author" class="btn btn-dark">Back</a>
+    <button type="button" id="btnSave" class="btn btn-success">Save Category</button>
+</div>
+
+@section scripts {
+    <script>
+        $('#btnSave').click(function () {
+            let catName = $('#catName').val();
+            let catCode = $('#catCode').val();
+            let catDescription = $('#catDescription').val();
+
+            let _reqModel = {
+                catName: catName,
+                catCode: catCode,
+                catDescription: catDescription,
+            };
+
+            $.ajax({
+                url: "/Category/Save",
+                data: { categoryModel: _reqModel },
+                type: "POST",
+                //json.spitfy သုံးရင်လို
+                //contentType: "application/json;charset=utf-8",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: result.responeMessage,
+                            icon: "success",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/Category";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        })
+    </script>
+}

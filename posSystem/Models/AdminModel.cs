@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace posSystem.Models
@@ -6,10 +7,11 @@ namespace posSystem.Models
     [Table("tblAdmin")]
     public class AdminModel
     {
+        [Key]
         public int id { get; set; }
-        public string adminName { get; set; }
-        public string adminEmail { get; set; }
-        public string adminPassword { get; set; }
+        public string? adminName { get; set; }
+        public string? adminEmail { get; set; }
+        public string? adminPassword { get; set; }
     }
 
     public class loginResponeModel

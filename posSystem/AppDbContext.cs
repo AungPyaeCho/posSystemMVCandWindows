@@ -22,5 +22,18 @@ namespace posSystem
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
+
+        //public override int SaveChanges()
+        //{
+        //    var entries = ChangeTracker.Entries()
+        //        .Where(e => e.State == EntityState.Added && e.Entity is CategoryModel);
+
+        //    foreach (var entry in entries)
+        //    {
+        //        ((CategoryModel)entry.Entity).catCreatedAt = DateTime.Now;
+        //    }
+
+        //    return base.SaveChanges();
+        //}
     }
 }
