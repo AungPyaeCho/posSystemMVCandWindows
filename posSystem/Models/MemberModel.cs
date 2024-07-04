@@ -8,13 +8,16 @@ namespace posSystem.Models
     public class MemberModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string memberId { get; set; }
         public string? memberName { get; set; }
         public string? memberEmail { get; set; }
         public string? memberPhone { get; set; }
         public string? memberAddress { get; set; }
         public string? memberPhoto { get; set; }
-        public DateTime? memberCreatedAt { get; set; }
+        public string? memberCreateAt { get; set; }
+        public string? memberUpdateAt { get; set; }
+        public int? memberUpdateCount { get; set; }
     }
 
     public class MemberResponseModel

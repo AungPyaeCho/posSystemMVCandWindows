@@ -8,13 +8,19 @@ namespace posSystem.Models
     public class SubCategoryModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int subCId { get; set; }
         public string? subCatName { get; set; }
         public string? subCatCode { get; set; }
-        public DateTime? subCatCreatedAt { get; set; }
+        public string? subCatCreateAt { get; set; }
+        public string? subCatUpdateAt { get; set; }
+        public int? subCatUpdateCount { get; set; }
 
         public string? catCode { get; set; }
-        public CategoryModel category { get; set; }
+        public int catId { get; set; }
+
+        [ForeignKey("catId")]
+        public CategoryModel Category { get; set; }
     }
 
     public class SubCategoryResponseModel

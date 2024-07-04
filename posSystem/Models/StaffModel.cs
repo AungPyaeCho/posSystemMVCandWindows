@@ -8,6 +8,7 @@ namespace posSystem.Models
     public class StaffModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string staffId { get; set; }
         public string? staffName { get; set; }
         public string? staffEmail { get; set; }
@@ -15,7 +16,9 @@ namespace posSystem.Models
         public string? staffAddress { get; set; }
         public string? staffRole { get; set; }
         public string? staffPhoto { get; set; }
-        public DateTime? staffCreatedAt { get; set; }
+        public string? staffCreateAt { get; set; }
+        public string? staffUpdateAt { get; set; }
+        public int? staffUpdateCount { get; set; }
     }
 
     public class StaffResponseModel

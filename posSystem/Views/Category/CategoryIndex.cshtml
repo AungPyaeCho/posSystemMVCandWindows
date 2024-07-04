@@ -28,6 +28,8 @@
             <th scope="col">Category Name</th>
             <th scope="col">Category Description</th>
             <th scope="col">Create Date</th>
+            <th scope="col">Update Date</th>
+            <th scope="col">Update Count</th>
             <td scope="col">Action</td>
         </tr>
     </thead>
@@ -40,6 +42,8 @@
                 <td>@item.catName</td>
                 <td>@item.catDescription</td>
                 <td>@item.catCreatedAt</td>
+                <td>@item.catUpdatedAt</td>
+                <td>@item.catUpdateCount</td>
                 <td>
                     <a href="/Category/Edit/@item.catId" class="btn btn-warning">Edit</a>
                     <button type="button" class="btn btn-danger btn-delete" data-id="@item.catId">Delete</button>

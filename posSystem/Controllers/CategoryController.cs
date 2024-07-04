@@ -60,7 +60,7 @@ namespace posSystem.Controllers
         public IActionResult CategorySave(CategoryModel categoryModel)
         {
             
-            categoryModel.catCreatedAt = DateTime.UtcNow;
+            categoryModel.catCreatedAt = DateTime.Now.ToString();
             _appDbContext.Categories.Add(categoryModel);
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Save Success" : "Save Fail";
@@ -89,9 +89,20 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
+
+
             item.catName = categoryModel.catName;
             item.catCode = categoryModel.catCode;
             item.catDescription = categoryModel.catDescription;
+            item.catUpdatedAt = DateTime.Now.ToString();
+            if (item.catUpdateCount is null)
+            {
+                item.catUpdateCount = 1;
+            }
+            else
+            {
+                item.catUpdateCount++;
+            }
 
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Update Success" : "Update Fail";
