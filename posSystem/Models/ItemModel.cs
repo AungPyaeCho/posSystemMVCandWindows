@@ -12,8 +12,10 @@ namespace posSystem.Models
         public int itemId { get; set; }
         public string? itemCode { get; set; }
         public string? itemName { get; set; }
-        public int? itemCategory { get; set; }
-        public int? itemSubCategory { get; set; }
+        public string? itemCategory { get; set; }
+        public string? catCode { get; set; }
+        public string? itemSubCategory { get; set; }
+        public string? subCatCode { get; set; }
         public string? itemDescription { get; set; }
         public string? itemBarcode { get; set; }
         public int? itemStock { get; set; }
@@ -23,6 +25,8 @@ namespace posSystem.Models
         public string? itemUpdateAt { get; set; }
         public int? itemUpdateCount { get; set; }
         public int? creatorName { get; set; }
+        public int? catId { get; set; }
+        public int? subCId { get; set; }
 
 
         [ForeignKey("catId")]

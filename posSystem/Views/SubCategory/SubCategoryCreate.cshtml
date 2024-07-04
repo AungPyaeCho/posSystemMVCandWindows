@@ -1,47 +1,53 @@
-﻿
+﻿@model posSystem.Models.SubCategoryModel
+
 @{
+    var categories = ViewBag.Categories as List<posSystem.Models.CategoryModel>;
 }
 
-
 <div class="mb-3">
-    <label for="Sub Category Name" class="form-label">Category Name</label>
-    <input type="text" class="form-control" id="catName" name="catName" placeholder="">
+    <label for="Sub Category Name" class="form-label">Sub Category Name</label>
+    <input type="text" class="form-control" id="subCatName" name="subCatName" placeholder="">
 </div>
 
 <div class="mb-3">
     <label for="Category Code" class="form-label">Category Code</label>
-    <input type="text" class="form-control" id="catCode" name="catCode" placeholder="">
+    <input type="text" class="form-control" id="subCatCode" name="subCatCode" placeholder="">
 </div>
 
+
 <div class="mb-3">
-    <label for="Category Description" class="form-label">Category Description</label>
-    <input type="text" class="form-control" id="catDescription" name="catDescription" placeholder="">
+    <label for="Category" class="form-label">Category</label>
+    <select class="form-control" id="catId" name="catId">
+        <option value="">Select a category</option>
+        @foreach (var category in categories!)
+        {
+            <option value="@category.catId">@category.catName</option>
+        }
+    </select>
 </div>
 
 <div>
-    <a href="/Author" class="btn btn-dark">Back</a>
-    <button type="button" id="btnSave" class="btn btn-success">Save Category</button>
+    <a href="/SubCategory" class="btn btn-dark">Back</a>
+    <button type="button" id="btnSave" class="btn btn-success">Save SubCategory</button>
 </div>
 
 @section scripts {
     <script>
         $('#btnSave').click(function () {
-            let catName = $('#catName').val();
-            let catCode = $('#catCode').val();
-            let catDescription = $('#catDescription').val();
+            let subCatName = $('#subCatName').val();
+            let subCatCode = $('#subCatCode').val();
+            let catId = $('#catId').val();
 
             let _reqModel = {
-                catName: catName,
-                catCode: catCode,
-                catDescription: catDescription,
+                subCatName: subCatName,
+                subCatCode: subCatCode,
+                catId: catId,
             };
 
             $.ajax({
-                url: "/Category/Save",
-                data: { categoryModel: _reqModel },
+                url: "/SubCategory/Save",
+                data: { subCategoryModel: _reqModel },
                 type: "POST",
-                //json.spitfy သုံးရင်လို
-                //contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (result) {
                     console.log(result);
@@ -52,7 +58,7 @@
                             icon: "success",
                         }).then((result) => {
                             if (result.isConfirmed) {
-                                location.href = "/Category";
+                                location.href = "/SubCategory";
                             }
                         });
                     }

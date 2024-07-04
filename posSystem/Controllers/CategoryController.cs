@@ -38,17 +38,6 @@ namespace posSystem.Controllers
             return View("CategoryIndex", response);
         }
 
-        [ActionName("Edit")]
-        public IActionResult CategoryEdit(int id)
-        {
-            var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == id);
-            if (item is null)
-            {
-                return Redirect("/Category");
-            }
-            return View("CategoryEdit", item);
-        }
-
         [ActionName("Create")]
         public IActionResult CategoryCreate()
         {
@@ -72,6 +61,17 @@ namespace posSystem.Controllers
             return Json(rspModel);
         }
 
+        [ActionName("Edit")]
+        public IActionResult CategoryEdit(int id)
+        {
+            var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == id);
+            if (item is null)
+            {
+                return Redirect("/Category");
+            }
+            return View("CategoryEdit", item);
+        }
+
         [HttpPost]
         [ActionName("Update")]
         public IActionResult CategoryUpdate(int catId, CategoryModel categoryModel)
@@ -88,8 +88,6 @@ namespace posSystem.Controllers
                 };
                 return Json(rspModel);
             }
-
-
 
             item.catName = categoryModel.catName;
             item.catCode = categoryModel.catCode;

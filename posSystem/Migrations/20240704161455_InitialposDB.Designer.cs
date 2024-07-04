@@ -12,7 +12,7 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240704051312_InitialposDB")]
+    [Migration("20240704161455_InitialposDB")]
     partial class InitialposDB
     {
         /// <inheritdoc />
@@ -65,6 +65,7 @@ namespace posSystem.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("catId"));
 
                     b.Property<string>("catCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("catCreatedAt")
@@ -126,7 +127,10 @@ namespace posSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("itemId"));
 
-                    b.Property<int>("catId")
+                    b.Property<string>("catCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("catId")
                         .HasColumnType("int");
 
                     b.Property<int?>("creatorName")
@@ -135,8 +139,8 @@ namespace posSystem.Migrations
                     b.Property<string>("itemBarcode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("itemCategory")
-                        .HasColumnType("int");
+                    b.Property<string>("itemCategory")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemCode")
                         .HasColumnType("nvarchar(max)");
@@ -159,8 +163,8 @@ namespace posSystem.Migrations
                     b.Property<int?>("itemStock")
                         .HasColumnType("int");
 
-                    b.Property<int?>("itemSubCategory")
-                        .HasColumnType("int");
+                    b.Property<string>("itemSubCategory")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemUpdateAt")
                         .HasColumnType("nvarchar(max)");
@@ -168,14 +172,17 @@ namespace posSystem.Migrations
                     b.Property<int?>("itemUpdateCount")
                         .HasColumnType("int");
 
-                    b.Property<int>("subCId")
+                    b.Property<int?>("subCId")
                         .HasColumnType("int");
+
+                    b.Property<string>("subCatCode")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("itemId");
 
-                    b.HasIndex("itemCategory");
+                    b.HasIndex("catId");
 
-                    b.HasIndex("itemSubCategory");
+                    b.HasIndex("subCId");
 
                     b.ToTable("tblItem");
                 });
@@ -191,16 +198,26 @@ namespace posSystem.Migrations
                     b.Property<int?>("adminId")
                         .HasColumnType("int");
 
+                    b.Property<string>("adminName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("logOutAt")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("loginAt")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("staffId")
-                        .HasColumnType("int");
+                    b.Property<string>("staffId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("staffName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ldId");
+
+                    b.HasIndex("adminId");
+
+                    b.HasIndex("staffId");
 
                     b.ToTable("tblLoginDetail");
                 });
@@ -323,6 +340,9 @@ namespace posSystem.Migrations
                     b.Property<string>("memberId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("memberName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("paymentMethod")
                         .HasColumnType("nvarchar(max)");
 
@@ -337,6 +357,9 @@ namespace posSystem.Migrations
 
                     b.Property<string>("staffId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("staffName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("totalAmount")
                         .HasColumnType("int");
@@ -399,8 +422,11 @@ namespace posSystem.Migrations
                     b.Property<string>("catCode")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("catId")
+                    b.Property<int?>("catId")
                         .HasColumnType("int");
+
+                    b.Property<string>("catName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("subCatCode")
                         .HasColumnType("nvarchar(max)");
@@ -428,15 +454,30 @@ namespace posSystem.Migrations
                 {
                     b.HasOne("posSystem.Models.CategoryModel", "Category")
                         .WithMany()
-                        .HasForeignKey("itemCategory");
+                        .HasForeignKey("catId");
 
                     b.HasOne("posSystem.Models.SubCategoryModel", "SubCategory")
                         .WithMany()
-                        .HasForeignKey("itemSubCategory");
+                        .HasForeignKey("subCId");
 
                     b.Navigation("Category");
 
                     b.Navigation("SubCategory");
+                });
+
+            modelBuilder.Entity("posSystem.Models.LoginDetailModel", b =>
+                {
+                    b.HasOne("posSystem.Models.AdminModel", "Admin")
+                        .WithMany()
+                        .HasForeignKey("adminId");
+
+                    b.HasOne("posSystem.Models.StaffModel", "Staff")
+                        .WithMany()
+                        .HasForeignKey("staffId");
+
+                    b.Navigation("Admin");
+
+                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("posSystem.Models.SaleDetailModel", b =>
@@ -473,9 +514,7 @@ namespace posSystem.Migrations
                 {
                     b.HasOne("posSystem.Models.CategoryModel", "Category")
                         .WithMany()
-                        .HasForeignKey("catId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("catId");
 
                     b.Navigation("Category");
                 });

@@ -1,0 +1,129 @@
+﻿@model SubCategoryModel
+
+@{
+    var categories = ViewBag.Categories as List<posSystem.Models.CategoryModel>;
+}
+
+<div class="mb-3">
+    <label for="Category Name" class="form-label">Category Name</label>
+    <input type="text" class="form-control" id="subCatName" name="subCatName" placeholder="" value="@Model.subCatName">
+</div>
+
+<div class="mb-3">
+    <label for="Category Code" class="form-label">Category Code</label>
+    <input type="text" class="form-control" id="subCatCode" name="subCatCode" placeholder="" value="@Model.subCatCode">
+</div>
+
+<div class="mb-3">
+    <label for="Category" class="form-label">Category</label>
+    <select class="form-control" id="catId" name="catId">
+        <option value="">Select a Category</option>
+        @foreach (var category in categories!)
+        {
+            <option value="@category.catId">@category.catName</option>
+        }
+    </select>
+</div>
+
+<div>
+    <a href="/Category" class="btn btn-dark">Back</a>
+    <button type="button" id="btnUpdate" class="btn btn-success">Update</button>
+</div>
+
+@section scripts {
+    <script>
+        $('#btnUpdate').click(function () {
+            let subCId = @Model.subCId; // Ensure this is the correct value
+            let subCatName = $('#subCatName').val();
+            let subCatCode = $('#subCatCode').val();
+            let catId = $('#catId').val();
+
+            let _reqModel = {
+                subCatName: subCatName,
+                subCatCode: subCatCode,
+                subCId: subCId,
+            };
+
+            $.ajax({
+                url: "/SubCategory/Update?subCId=" + @Model.subCId,
+                data: _reqModel,
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: result.responeMessage,
+                            icon: "success",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/SubCategory";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        });
+
+    </script>
+}
+
+
+@* @section scripts {
+    <script>
+        $('#btnUpdate').click(function () {
+            let subCatName = $('#subCatName').val();
+            let subCatCode = $('#subCatCode').val();
+            let catId = $('#catId option:selected').data('catId');
+
+            let _reqModel = {
+                subCatName: subCatName,
+                subCatCode: subCatCode,
+                catId: catId,
+            };
+
+            $.ajax({
+                url: `/SubCategory/Update?subCId=${subCId}`,
+                data: _reqModel,
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: result.responeMessage,
+                            icon: "success",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/SubCategory";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        });
+
+    </script>
+} *@

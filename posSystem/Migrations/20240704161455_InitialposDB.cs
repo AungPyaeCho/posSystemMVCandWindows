@@ -3,7 +3,7 @@
 #nullable disable
 
 namespace posSystem.Migrations
-{ 
+{
     /// <inheritdoc />
     public partial class InitialposDB : Migration
     {
@@ -36,7 +36,7 @@ namespace posSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     catName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     catCreatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catUpdatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catDeleteAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -62,22 +62,6 @@ namespace posSystem.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblDiscount", x => x.disId);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "tblLoginDetail",
-                columns: table => new
-                {
-                    ldId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    adminId = table.Column<int>(type: "int", nullable: true),
-                    staffId = table.Column<int>(type: "int", nullable: true),
-                    loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblLoginDetail", x => x.ldId);
                 });
 
             migrationBuilder.CreateTable(
@@ -148,8 +132,9 @@ namespace posSystem.Migrations
                     subCatCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     subCatUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     subCatUpdateCount = table.Column<int>(type: "int", nullable: true),
+                    catId = table.Column<int>(type: "int", nullable: true),
                     catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catId = table.Column<int>(type: "int", nullable: false)
+                    catName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -158,8 +143,35 @@ namespace posSystem.Migrations
                         name: "FK_tblSubCategory_tblCategory_catId",
                         column: x => x.catId,
                         principalTable: "tblCategory",
-                        principalColumn: "catId",
-                        onDelete: ReferentialAction.Cascade);
+                        principalColumn: "catId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblLoginDetail",
+                columns: table => new
+                {
+                    ldId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    adminId = table.Column<int>(type: "int", nullable: true),
+                    adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblLoginDetail", x => x.ldId);
+                    table.ForeignKey(
+                        name: "FK_tblLoginDetail_tblAdmin_adminId",
+                        column: x => x.adminId,
+                        principalTable: "tblAdmin",
+                        principalColumn: "id");
+                    table.ForeignKey(
+                        name: "FK_tblLoginDetail_tblStaff_staffId",
+                        column: x => x.staffId,
+                        principalTable: "tblStaff",
+                        principalColumn: "staffId");
                 });
 
             migrationBuilder.CreateTable(
@@ -169,7 +181,9 @@ namespace posSystem.Migrations
                     saleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     saleQty = table.Column<int>(type: "int", nullable: true),
                     totalAmount = table.Column<int>(type: "int", nullable: true),
                     saleDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -200,8 +214,10 @@ namespace posSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     itemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    itemCategory = table.Column<int>(type: "int", nullable: true),
-                    itemSubCategory = table.Column<int>(type: "int", nullable: true),
+                    itemCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemSubCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCatCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemBarcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemStock = table.Column<int>(type: "int", nullable: true),
@@ -211,20 +227,20 @@ namespace posSystem.Migrations
                     itemUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemUpdateCount = table.Column<int>(type: "int", nullable: true),
                     creatorName = table.Column<int>(type: "int", nullable: true),
-                    catId = table.Column<int>(type: "int", nullable: false),
-                    subCId = table.Column<int>(type: "int", nullable: false)
+                    catId = table.Column<int>(type: "int", nullable: true),
+                    subCId = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblItem", x => x.itemId);
                     table.ForeignKey(
-                        name: "FK_tblItem_tblCategory_itemCategory",
-                        column: x => x.itemCategory,
+                        name: "FK_tblItem_tblCategory_catId",
+                        column: x => x.catId,
                         principalTable: "tblCategory",
                         principalColumn: "catId");
                     table.ForeignKey(
-                        name: "FK_tblItem_tblSubCategory_itemSubCategory",
-                        column: x => x.itemSubCategory,
+                        name: "FK_tblItem_tblSubCategory_subCId",
+                        column: x => x.subCId,
                         principalTable: "tblSubCategory",
                         principalColumn: "subCId");
                 });
@@ -259,14 +275,24 @@ namespace posSystem.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblItem_itemCategory",
+                name: "IX_tblItem_catId",
                 table: "tblItem",
-                column: "itemCategory");
+                column: "catId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_tblItem_itemSubCategory",
+                name: "IX_tblItem_subCId",
                 table: "tblItem",
-                column: "itemSubCategory");
+                column: "subCId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblLoginDetail_adminId",
+                table: "tblLoginDetail",
+                column: "adminId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblLoginDetail_staffId",
+                table: "tblLoginDetail",
+                column: "staffId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblSale_memberId",
@@ -298,9 +324,6 @@ namespace posSystem.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "tblAdmin");
-
-            migrationBuilder.DropTable(
                 name: "tblDiscount");
 
             migrationBuilder.DropTable(
@@ -311,6 +334,9 @@ namespace posSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "tblSaleDetail");
+
+            migrationBuilder.DropTable(
+                name: "tblAdmin");
 
             migrationBuilder.DropTable(
                 name: "tblItem");

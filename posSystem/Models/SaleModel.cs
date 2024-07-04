@@ -11,7 +11,9 @@ namespace posSystem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int saleId { get; set; }
         public string? staffId { get; set; }
+        public string? staffName { get; set; }
         public string? memberId { get; set; }
+        public string? memberName { get; set; }
         public int? saleQty { get; set; }
         public int? totalAmount { get; set; }
         public string? saleDate { get; set; }
@@ -21,12 +23,12 @@ namespace posSystem.Models
 
 
         [ForeignKey("staffId")]
-        public StaffModel Staff { get; set; }
+        public StaffModel? Staff { get; set; }
 
         [ForeignKey("memberId")]
-        public MemberModel Member { get; set; }
+        public MemberModel? Member { get; set; }
 
-        public ICollection<SaleDetailModel> saleDetails { get; set; }
+        public ICollection<SaleDetailModel>? saleDetails { get; set; }
     }
 
     public class SaleResponseModel

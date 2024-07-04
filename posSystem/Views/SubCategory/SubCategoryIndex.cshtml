@@ -1,0 +1,220 @@
+﻿@model SubCategoryResponseModel
+
+@{
+    // Layout = "~/Views/Shared/_IndexLayout.cshtml";
+    ViewData["Title"] = "SubCategory";
+    int count = 0;
+    int _pageNo = Model.pageNo;
+    int _pageCount = Model.pageCount;
+    int _pageSize = Model.pageSize;
+
+    string _pageURL(int _pageNo)
+    {
+        return $"/SubCategory/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+    }
+}
+
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Sub Category</h1>
+    <a href="/SubCategory/Create">Add Sub Category</a>
+</div>
+
+<a href="/SubCategory/Create" class="btn btn-outline-success">New</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Sub Category Name</th>
+            <th scope="col">Sub Category Code</th>
+            <th scope="col">Category Name</th>
+            <th scope="col">Create Date</th>
+            <th scope="col">Update Date</th>
+            <th scope="col">Update Count</th>
+            <td scope="col">Action</td>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (SubCategoryModel item in Model.subCategoryData)
+        {
+            <tr>
+                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                <td>@item.subCatName</td>
+                <td>@item.subCatCode</td>
+                <td>@item.catName</td>
+                <td>@item.subCatCreateAt</td>
+                <td>@item.subCatUpdateAt</td>
+                <td>@item.subCatUpdateCount</td>
+                <td>
+                    <a href="/SubCategory/Edit?subCid=@item.subCId" class="btn btn-warning">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.subCId">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td>
+                <nav aria-label="...">
+                    <ul class="pagination">
+                        @if (_pageNo == 1)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Previous</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo - 1)">Previous</a></li>
+                        }
+
+                        @if (_pageCount <= 9)
+                        {
+                            for (int i = 1; i <= _pageCount; i++)
+                            {
+                                if (_pageNo == i)
+                                {
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" href="@_pageURL(i)">@i</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
+                            {
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                for (int i = _pageCount - 3; i <= _pageCount; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@_pageURL(1)">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="@_pageURL(_pageCount)">@_pageCount</a></li>
+                            }
+                        }
+
+                        @if (_pageNo == _pageCount)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Next</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo + 1)">Next</a></li>
+                        }
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+@section scripts {
+    <script>
+        // Function to handle delete operation
+        $(document).on('click', '.btn-delete', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: "Confirm?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteData(id);
+                }
+            });
+        });
+
+        // AJAX function to delete data
+        function deleteData(subCId) {
+            let _reqModel = {
+                subCId: subCId
+            };
+
+            $.ajax({
+                url: `/SubCategory/Delete?subCId=${subCId}`,
+                data: _reqModel,
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        Swal.fire({
+                            title: "Deleted!",
+                            text: result.responeMessage,
+                            icon: "success"
+                        }).then(() => {
+                            location.reload(); // Refresh page after deletion
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An error occurred while deleting.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    </script>
+}
+
