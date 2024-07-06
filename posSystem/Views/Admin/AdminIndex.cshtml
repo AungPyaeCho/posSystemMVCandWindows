@@ -1,7 +1,6 @@
-﻿@model CategoryResponseModel
+﻿@model AdminResponseModel
 @{
-    // Layout = "~/Views/Shared/_IndexLayout.cshtml";
-    ViewData["Title"] = "Category";
+    ViewData["Title"] = "Admin";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
@@ -9,16 +8,16 @@
 
     string _pageURL(int _pageNo)
     {
-        return $"/Category/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/Admin/Index?pageNo={_pageNo}&pageSize={_pageSize}";
     }
 }
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Category</h1>
+    <h1 class="h3 mb-0 text-gray-800">Admin</h1>
 </div>
 
 <div lass="d-sm-flex align-items-center justify-content-between mb-4">
-    <a href="/Category/Create" class="btn btn-outline-success">Add Category</a>
+    <a href="/Admin/Create" class="btn btn-outline-success">Add Admin</a>
 </div>
 
 <di>
@@ -29,29 +28,25 @@
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Category Code</th>
-            <th scope="col">Category Description</th>
-            <th scope="col">Create Date</th>
-            <th scope="col">Update Date</th>
-            <th scope="col">Update Count</th>
-            <td scope="col">Action</td>
+            <th scope="col">Admin Name</th>
+            <th scope="col">Admin Email</th>
+            <th scope="col">Admin Password</th>
+            <th scope="col">Admin Account Created Date</th>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (CategoryModel item in Model.categoryData)
+        @foreach (AdminModel item in Model.adminData)
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.catName</td>
-                <td>@item.catCode</td>
-                <td>@item.catDescription</td>
-                <td>@item.catCreatedAt</td>
-                <td>@item.catUpdatedAt</td>
-                <td>@item.catUpdateCount</td>
+                <td>@item.adminName</td>
+                <td>@item.adminEmail</td>
+                <td>@item.adminPassword</td>
+                <td>@item.adminCreateAt</td>
                 <td>
-                    <a href="/Category/Edit/@item.catId" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.catId">Delete</button>
+                    <a href="/Admin/Edit/@item.id" class="btn btn-warning">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.id">Delete</button>
                 </td>
             </tr>
         }
@@ -181,13 +176,13 @@
         });
 
         // AJAX function to delete data
-        function deleteData(catId) {
+        function deleteData(id) {
             let _reqModel = {
-                catId: catId
+                id: id
             };
 
             $.ajax({
-                url: `/Category/Delete?catId=${catId}`,
+                url: "/Admin/Delete",
                 data: _reqModel,
                 type: "POST",
                 dataType: "json",

@@ -1,0 +1,158 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+<div class="container">
+
+    <div class="">
+        <div class="card-body p-0">
+            <div class="col-lg-7">
+                <div class="p-5">
+                    <div class="text-center">
+                        <h1 class="h4 text-gray-900 mb-4">Create an Admin Account!</h1>
+                    </div>
+                    <hr>
+                    <form class="user">
+                        <div class="form-group row">
+                            <input type="text" class="form-control form-control-user" id="adminName" placeholder="Admin Name">
+                        </div>
+
+                        <div class="form-group row">
+                            <input type="email" class="form-control form-control-user" id="adminEmail" placeholder="Email Address">    
+                        </div>
+
+                        <div class="form-group row">
+                            <span id="emailFeedback"></span>
+                        </div>
+
+                        <div class="form-group row">
+                            <div class="col-sm-6 ">
+                                <input type="password" class="form-control form-control-user" id="adminPassword" placeholder="Password" oninput="validatePassword()">
+                            </div>
+                            <div class="col-sm-6">
+                                <input type="password" class="form-control form-control-user" id="confirmPassword" placeholder="Repeat Password" oninput="validatePassword()">
+                            </div>
+                        </div>
+                        <div class="form-group row">
+                            <span style ="margin-bottom: 1em; color: red;" id="error-message"></span>
+                        </div>
+                        <hr>
+                    </form>
+                    <div class="text-center">
+                        <button type="button" class="btn btn-primary btn-user btn-block" id="btnSave">
+                            Save Admin Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts {
+    <script>
+
+        document.getElementById('adminPassword').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+        function validatePassword() {
+            const adminPassword = document.getElementById('adminPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (adminPassword !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                return false; // Prevent form submission
+            }
+
+            errorMessage.textContent = ''; // Clear any previous error message
+            return true; // Allow form submission
+        }
+
+        // Attach event listeners to both password fields
+
+
+
+        $(document).ready(function () {
+            $('#adminEmail').on('input', function () {
+                let adminEmail = $('#adminEmail').val();
+
+                if (adminEmail) {
+                    $.ajax({
+                        url: "/Admin/Check",
+                        data: { email: adminEmail },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isEmailRegistered) {
+                                $('#emailFeedback').text("This email is already registered").css("color", "red");
+                            } else {
+                                $('#emailFeedback').text("This email is available").css("color", "green");
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage.responseText);
+                        }
+                    });
+                } else {
+                    $('#emailFeedback').text("");
+                }
+            });
+
+            $('#btnSave').click(function () {
+                let adminName = $('#adminName').val();
+                let adminEmail = $('#adminEmail').val();
+                let adminPassword = $('#adminPassword').val();
+
+                if ($('#emailFeedback').text() === "This email is already registered") {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "This email is already registered",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                let formData = new FormData();
+                formData.append('adminName', adminName);
+                formData.append('adminEmail', adminEmail);
+                formData.append('adminPassword', adminPassword);
+
+                $.ajax({
+                    url: "/Admin/Save",
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,  
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responeMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Admin";
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responeMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

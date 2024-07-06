@@ -17,25 +17,12 @@ namespace posSystem
         public DbSet<SaleDetailModel> SaleDetails { get; set; }
         public DbSet<PromotionModel> Promotions { get; set; }
         public DbSet<DiscountModel> Discounts { get; set; }
-        public DbSet<AdminModel> Admins { get; set; }
+        public DbSet<AdminModel> Admin { get; set; }
         public DbSet<LoginDetailModel> LoginDetails { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
-
-        //public override int SaveChanges()
-        //{
-        //    var entries = ChangeTracker.Entries()
-        //        .Where(e => e.State == EntityState.Added && e.Entity is CategoryModel);
-
-        //    foreach (var entry in entries)
-        //    {
-        //        ((CategoryModel)entry.Entity).catCreatedAt = DateTime.Now;
-        //    }
-
-        //    return base.SaveChanges();
-        //}
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
