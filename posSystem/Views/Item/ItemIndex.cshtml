@@ -1,7 +1,8 @@
-﻿@model CategoryResponseModel
+﻿@model ItemResponseModel
+
 @{
     // Layout = "~/Views/Shared/_IndexLayout.cshtml";
-    ViewData["Title"] = "Category";
+    ViewData["Title"] = "Item";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
@@ -9,49 +10,66 @@
 
     string _pageURL(int _pageNo)
     {
-        return $"/Category/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/Item/Index?pageNo={_pageNo}&pageSize={_pageSize}";
     }
 }
 
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Category</h1>
-    <a href="/Category/Create">Add Category</a>
+    <h1 class="h3 mb-0 text-gray-800">Items</h1>
 </div>
 
-<a href="/Category/Create" class="btn btn-outline-success">New</a>
+<div lass="d-sm-flex align-items-center justify-content-between mb-4">
+    <a href="/Item/Create" class="btn btn-outline-success">Add Item</a>
+</div>
+
+<di>
+    <p></p>
+</di>
+
 <table class="table">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Category Code</th>
-            <th scope="col">Category Description</th>
-            <th scope="col">Create Date</th>
-            <th scope="col">Update Date</th>
-            <th scope="col">Update Count</th>
+            <th scope="col">Item Code</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Item Price</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Solded</th>
+            <th scope="col">Reaming</th>
+            <th scope="col">Category</th>
+            <th scope="col">Sub Category</th>
+            <th scope="col">Item Barcode</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Updated At</th>
+            <th scope="col">Item Inputed By</th>
             <td scope="col">Action</td>
         </tr>
     </thead>
     <tbody>
-        @foreach (CategoryModel item in Model.categoryData)
+        @foreach (ItemModel item in Model.itemData)
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.catName</td>
-                <td>@item.catCode</td>
-                <td>@item.catDescription</td>
-                <td>@item.catCreatedAt</td>
-                <td>@item.catUpdatedAt</td>
-                <td>@item.catUpdateCount</td>
+                <td>@item.itemCode</td>
+                <td>@item.itemName</td>
+                <td>@item.itemPrice</td>
+                <td>@item.itemStock</td>
+                <td>@item.itemSold</td>
+                <td>@item.itemRemainStock</td>
+                <td>@item.itemCategory</td>
+                <td>@item.itemSubCategory</td>
+                <td>@item.itemBarcode</td>
+                <td>@item.itemCreateAt</td>
+                <td>@item.itemUpdateAt</td>
+                <td>@item.creatorName</td>
                 <td>
-                    <a href="/Category/Edit/@item.catId" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.catId">Delete</button>
+                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.itemId">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
-
     <tfoot>
         <tr>
             <td>
@@ -176,13 +194,13 @@
         });
 
         // AJAX function to delete data
-        function deleteData(catId) {
+        function deleteData(itemId) {
             let _reqModel = {
-                catId: catId
+                itemId: itemId
             };
 
             $.ajax({
-                url: `/Category/Delete?catId=${catId}`,
+                url: `/Item/Delete?itemId=${itemId}`,
                 data: _reqModel,
                 type: "POST",
                 dataType: "json",

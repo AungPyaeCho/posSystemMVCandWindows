@@ -12,19 +12,24 @@ namespace posSystem.Models
         public int itemId { get; set; }
         public string? itemCode { get; set; }
         public string? itemName { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a valid price")]
+        public int? itemPrice { get; set; }
         public string? itemCategory { get; set; }
         public string? catCode { get; set; }
         public string? itemSubCategory { get; set; }
         public string? subCatCode { get; set; }
         public string? itemDescription { get; set; }
         public string? itemBarcode { get; set; }
+
+        [Range(0, int.MaxValue, ErrorMessage = "Please enter a valid stock quantity")]
         public int? itemStock { get; set; }
         public int? itemSold { get; set; }
         public int? itemRemainStock { get; set; }
         public string? itemCreateAt { get; set; }
         public string? itemUpdateAt { get; set; }
         public int? itemUpdateCount { get; set; }
-        public int? creatorName { get; set; }
+        public string? creatorName { get; set; }
         public int? catId { get; set; }
         public int? subCId { get; set; }
 

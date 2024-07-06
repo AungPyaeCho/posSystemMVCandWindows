@@ -1,0 +1,129 @@
+﻿@model ItemModel
+
+@{
+    var categories = ViewBag.Categories as List<CategoryModel>;
+    var subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
+}
+
+<div class="mb-3">
+    <label for="itemCode" class="form-label">Item Code</label>
+    <input type="text" class="form-control" id="itemCode" name="itemCode" value="@Model.itemCode">
+</div>
+
+<div class="mb-3">
+    <label for="itemName" class="form-label">Item Name</label>
+    <input type="text" class="form-control" id="itemName" name="itemName" value="@Model.itemName">
+</div>
+
+<div class="mb-3">
+    <label for="itemPrice" class="form-label">Item Price</label>
+    <input type="number" class="form-control" id="itemPrice" name="itemPrice" value="@Model.itemPrice">
+</div>
+
+<div class="mb-3">
+    <label for="Category" class="form-label">Category</label>
+    <select class="form-control" id="catId" name="catId">
+        <option value="">Select a category</option>
+        @foreach (var category in categories!)
+        {
+            <option value="@category.catId">@category.catName</option>
+        }
+    </select>
+</div>
+
+<div class="mb-3">
+    <label for="Sub Category" class="form-label">SubCategory</label>
+    <select class="form-control" id="subCId" name="subCId">
+        <option value="">Select a sub category</option>
+        @foreach (var subCategory in subCategories!)
+        {
+            <option value="@subCategory.subCId">@subCategory.subCatName</option>
+        }
+    </select>
+</div>
+
+<div class="mb-3">
+    <label for="itemDescription" class="form-label">Item Description</label>
+    <textarea class="form-control" id="itemDescription" name="itemDescription">@Model.itemDescription</textarea>
+</div>
+
+<div class="mb-3">
+    <label for="itemBarcode" class="form-label">Item Barcode</label>
+    <input type="text" class="form-control" id="itemBarcode" name="itemBarcode" value="@Model.itemBarcode">
+</div>
+
+<div class="mb-3">
+    <label for="itemStock" class="form-label">Item Stock</label>
+    <input type="number" class="form-control" id="itemStock" name="itemStock" value="@Model.itemStock">
+</div>
+
+<div class="mb-3">
+    <label for="creatorName" class="form-label">Creator Name</label>
+    <input type="text" class="form-control" id="creatorName" name="creatorName" value="@Model.creatorName">
+</div>
+
+<div>
+    <a href="/Item" class="btn btn-dark">Back</a>
+    <button type="button" id="btnUpdate" class="btn btn-success">Update Item</button>
+</div>
+
+@section scripts {
+    <script>
+        $('#btnUpdate').click(function () {
+            let itemId = @Model.itemId;
+            let itemCode = $('#itemCode').val();
+            let itemName = $('#itemName').val();
+            let itemPrice = $('#itemPrice').val();
+            let catId = $('#catId').val();
+            let subCId = $('#subCId').val();
+            let itemDescription = $('#itemDescription').val();
+            let itemBarcode = $('#itemBarcode').val();
+            let itemStock = $('#itemStock').val();
+            let creatorName = $('#creatorName').val();
+
+            let _reqModel = {
+                itemId: itemId,
+                itemCode: itemCode,
+                itemName: itemName,
+                itemPrice: itemPrice,
+                catId: catId,
+                subCId: subCId,
+                itemDescription: itemDescription,
+                itemBarcode: itemBarcode,
+                itemStock: itemStock,
+                creatorName: creatorName
+            };
+
+            $.ajax({
+                url: "/Item/Update?itemId=" + @Model.itemId,
+                data: { itemModel: _reqModel },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        Swal.fire({
+                            title: "Success!",
+                            text: result.responeMessage,
+                            icon: "success",
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                location.href = "/Item";
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        })
+    </script>
+}
