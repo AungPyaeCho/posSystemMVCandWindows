@@ -47,16 +47,16 @@ namespace posSystem.Controllers
                     subCId = s.subCId,
 
                     itemCategory = _appDbContext.Categories
-                                .Where(c => c.catId == s.catId)
-                                .Select(c => c.catName)
-                                .FirstOrDefault(), // Retrieve catName based on catId
+                        .Where(c => c.catCode == s.catCode)
+                        .Select(c => c.catName)
+                        .FirstOrDefault(), // Retrieve catName based on catId
 
                     itemSubCategory = _appDbContext.SubCategories
-                                .Where(sc => sc.subCId == s.subCId)
-                                .Select(sc => sc.subCatName)
-                                .FirstOrDefault(), // Retrieve subCatName based on subCId
+                        .Where(sc => sc.subCatCode == s.subCatCode)
+                        .Select(sc => sc.subCatName)
+                        .FirstOrDefault(), // Retrieve subCatName based on subCId
                 })
-                .ToList();
+                .ToList()!;
 
             ItemResponseModel response = new();
             response.itemData = list;
@@ -80,6 +80,11 @@ namespace posSystem.Controllers
         [ActionName("Save")]
         public IActionResult ItemSave(ItemModel itemModel)
         {
+            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == itemModel.catId)!;
+            itemModel.catCode = catItem.catCode;
+            var subCatItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == itemModel.subCId)!;
+            itemModel.subCatCode = subCatItem.subCatCode;
+
             itemModel.itemCreateAt = DateTime.Now.ToString();
             _appDbContext.Items.Add(itemModel);
             int result = _appDbContext.SaveChanges();
@@ -128,6 +133,9 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
+            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == itemModel.catId)!;
+            var subCatItem = _appDbContext.SubCategories.FirstOrDefault(s => s.subCId == itemModel.subCId)!;
+
             item.itemCode = itemModel.itemCode;
             item.itemName = itemModel.itemName;
             item.itemPrice = itemModel.itemPrice;
@@ -137,6 +145,8 @@ namespace posSystem.Controllers
             item.itemBarcode = itemModel.itemBarcode;
             item.itemStock = itemModel.itemStock;
             item.creatorName = itemModel.creatorName;
+            item.catCode = catItem.catCode;
+            item.subCatCode = subCatItem.subCatCode;
             item.itemUpdateAt = DateTime.Now.ToString();
             if (item.itemUpdateCount is null)
             {

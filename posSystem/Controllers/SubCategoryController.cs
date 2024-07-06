@@ -37,13 +37,13 @@ namespace posSystem.Controllers
                     subCatUpdateAt = s.subCatUpdateAt,
                     subCatUpdateCount = s.subCatUpdateCount,
                     catName = _appDbContext.Categories
-                                .Where(c => c.catId == s.catId)
-                                .Select(c => c.catName)
-                                .FirstOrDefault(), // Retrieve catName based on catCod
+                        .Where(c => c.catCode == s.catCode)
+                        .Select(c => c.catName)
+                        .FirstOrDefault(), // Retrieve catName based on catCod
                 })
-                .ToList();
+                .ToList()!;
 
-            SubCategoryResponseModel response = new();
+            SubCategoryResponseModel response = new()!;
             response.subCategoryData = list;
             response.pageSize = pageSize;
             response.pageCount = pageCount;
@@ -63,6 +63,8 @@ namespace posSystem.Controllers
         [ActionName("Save")]
         public IActionResult SubCategorySave(SubCategoryModel subCategoryModel)
         {
+            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == subCategoryModel.catId)!;
+            subCategoryModel.catCode = catItem.catCode;
             subCategoryModel.subCatCreateAt = DateTime.Now.ToString();
             _appDbContext.SubCategories.Add(subCategoryModel);
             int result = _appDbContext.SaveChanges();
@@ -71,16 +73,14 @@ namespace posSystem.Controllers
             {
                 IsSuccess = result > 0,
                 responeMessage = message
-            };
+            }!;
             return Json(rspModel);
         }
 
         [ActionName("Edit")]
         public IActionResult SubCategoryEdit(int subCId)
         {
-            Console.WriteLine($"Received catId: {subCId}");
             var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
-            Console.WriteLine($"Received catId: {subCId}");
             if (item is null)
             {
                 return Redirect("/SubCategory");
@@ -90,39 +90,13 @@ namespace posSystem.Controllers
             ViewBag.Categories = categories;
 
             return View("SubCategoryEdit", item);
-
-            //Console.WriteLine($"Received catId: {subCId}");
-
-            //// Fetch the subcategory item based on subCId
-            //var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
-
-            //if (item is null)
-            //{
-            //    return Redirect("/SubCategory");
-            //}
-
-            //// Fetch the catName based on subCId
-            //var catName = (from subCat in _appDbContext.SubCategories
-            //               join cat in _appDbContext.Categories on subCat.catId equals cat.catId
-            //               where subCat.subCId == subCId
-            //               select cat.catName).FirstOrDefault();
-
-            //// Add the fetched catName to the item
-            //item.catName = catName;
-
-            //// Fetch all categories to pass to the view
-            //var categories = _appDbContext.Categories.ToList();
-            //ViewBag.Categories = categories;
-
-            //return View("SubCategoryEdit", item);
         }
 
         [HttpPost]
         [ActionName("Update")]
         public IActionResult SubCategoryUpdate(int subCId, SubCategoryModel subCategoryModel)
         {
-            Console.WriteLine($"Received catId: {subCId}");
-            MsgResopnseModel rspModel = new MsgResopnseModel();
+            MsgResopnseModel rspModel = new MsgResopnseModel()!;
             var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
             if (item is null)
             {
@@ -134,9 +108,11 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
+            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == subCategoryModel.catId)!;
             item.subCatName = subCategoryModel.subCatName;
             item.subCatCode = subCategoryModel.subCatCode;
-            item.catCode = subCategoryModel.catCode;
+            item.catId = subCategoryModel.catId;
+            item.catCode = catItem.catCode;
             item.subCatUpdateAt = DateTime.Now.ToString();
             if (item.subCatUpdateCount is null)
             {
