@@ -47,12 +47,12 @@ namespace posSystem.Controllers
                     subCId = s.subCId,
 
                     itemCategory = _appDbContext.Categories
-                        .Where(c => c.catCode == s.catCode)
+                        .Where(c => c.catCode == s.catCode || c.catId == s.catId)
                         .Select(c => c.catName)
                         .FirstOrDefault(), // Retrieve catName based on catId
 
                     itemSubCategory = _appDbContext.SubCategories
-                        .Where(sc => sc.subCatCode == s.subCatCode)
+                        .Where(sc => sc.subCatCode == s.subCatCode || sc.subCId == s.subCId)
                         .Select(sc => sc.subCatName)
                         .FirstOrDefault(), // Retrieve subCatName based on subCId
                 })

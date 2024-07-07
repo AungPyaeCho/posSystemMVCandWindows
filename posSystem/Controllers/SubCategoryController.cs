@@ -37,7 +37,7 @@ namespace posSystem.Controllers
                     subCatUpdateAt = s.subCatUpdateAt,
                     subCatUpdateCount = s.subCatUpdateCount,
                     catName = _appDbContext.Categories
-                        .Where(c => c.catCode == s.catCode)
+                        .Where(c => c.catCode == s.catCode || c.catId == s.catId)
                         .Select(c => c.catName)
                         .FirstOrDefault(), // Retrieve catName based on catCod
                 })

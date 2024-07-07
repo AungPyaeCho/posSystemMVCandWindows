@@ -8,14 +8,15 @@ namespace posSystem.Models
     public class LoginDetailModel
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int ldId { get; set; }
-        public int? adminId { get; set; }
+        public string ldId { get; set; }
+        public string? adminId { get; set; }
         public string? adminName { get; set; }
         public string? staffId { get; set; }
         public string? staffName { get; set; }
         public string? loginAt { get; set; }
         public string? logOutAt { get; set; }
+        public string? sessionId { get; set; }
+        public TimeOnly? sessionExpired {  get; set; }
 
         [ForeignKey("adminId")]
         public AdminModel Admin { get; set; }

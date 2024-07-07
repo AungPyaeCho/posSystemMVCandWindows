@@ -8,8 +8,8 @@ namespace posSystem.Models
     public class StaffModel
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string staffId { get; set; }
+        public string staffCode { get; set; }
         public string? staffName { get; set; }
         public string? staffEmail { get; set; }
         public string? staffPhone { get; set; }

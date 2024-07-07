@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 #nullable disable
 
@@ -14,11 +15,10 @@ namespace posSystem.Migrations
                 name: "tblAdmin",
                 columns: table => new
                 {
-                    id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    adminPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    adminPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     adminCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminLoginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminLoginName = table.Column<string>(type: "nvarchar(max)", nullable: true)
@@ -69,6 +69,7 @@ namespace posSystem.Migrations
                 columns: table => new
                 {
                     memberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    memberCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -106,6 +107,7 @@ namespace posSystem.Migrations
                 columns: table => new
                 {
                     staffId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    staffCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -150,14 +152,15 @@ namespace posSystem.Migrations
                 name: "tblLoginDetail",
                 columns: table => new
                 {
-                    ldId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    adminId = table.Column<int>(type: "int", nullable: true),
+                    ldId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    adminId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    sessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    sessionExpired = table.Column<TimeOnly>(type: "time", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -214,6 +217,7 @@ namespace posSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     itemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemPrice = table.Column<int>(type: "int", nullable: true),
                     itemCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemSubCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -226,7 +230,7 @@ namespace posSystem.Migrations
                     itemCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemUpdateCount = table.Column<int>(type: "int", nullable: true),
-                    creatorName = table.Column<int>(type: "int", nullable: true),
+                    creatorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catId = table.Column<int>(type: "int", nullable: true),
                     subCId = table.Column<int>(type: "int", nullable: true)
                 },

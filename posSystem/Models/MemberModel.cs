@@ -8,8 +8,8 @@ namespace posSystem.Models
     public class MemberModel
     {
         [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public string memberId { get; set; }
+        public string memberCode { get; set; }
         public string? memberName { get; set; }
         public string? memberEmail { get; set; }
         public string? memberPhone { get; set; }

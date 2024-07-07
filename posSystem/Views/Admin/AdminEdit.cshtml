@@ -1,4 +1,4 @@
-﻿
+﻿@model AdminModel;
 @{
 
 }
@@ -16,15 +16,15 @@
                         </div>
                         <form class="user">
                             <div class="form-group">
-                                <input type="text" class="form-control form-control-user" id="adminName" placeholder="Admin Name">
+                                <input type="text" class="form-control form-control-user" id="adminName" placeholder="Admin Name" value="@Model.adminName">
                             </div>
                             <div class="form-group">
-                                <input type="email" class="form-control form-control-user" id="adminEmail" placeholder="Email Address">
+                                <input type="email" class="form-control form-control-user" id="adminEmail" placeholder="Email Address" value="@Model.adminEmail">
                             </div>
                             <div class="form-group">
                                 <span id="emailFeedback"></span>
                             </div>
-                            <div class="form-group row">
+@*                             <div class="form-group row">
                                 <div class="col-sm-6">
                                     <input type="password" class="form-control form-control-user" id="adminPassword" placeholder="Password" oninput="validatePassword()">
                                 </div>
@@ -34,11 +34,11 @@
                             </div>
                             <div class="form-group">
                                 <span style="margin-bottom: 1em; color: red;" id="error-message"></span>
-                            </div>
+                            </div> *@
                             <hr>
                             <div class="text-center">
-                                <button type="button" class="btn btn-primary btn-user btn-block" id="btnSave">
-                                    Save Admin Account
+                                <button type="button" class="btn btn-primary btn-user btn-block" id="btnUpdate">
+                                    Update Admin Account
                                 </button>
                             </div>
                             <hr>
@@ -52,27 +52,6 @@
 
 @section scripts {
     <script>
-
-        document.getElementById('adminPassword').addEventListener('input', validatePassword);
-        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
-
-        function validatePassword() {
-            const adminPassword = document.getElementById('adminPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const errorMessage = document.getElementById('error-message');
-
-            if (adminPassword !== confirmPassword) {
-                errorMessage.textContent = 'Passwords do not match';
-                return false; // Prevent form submission
-            }
-
-            errorMessage.textContent = ''; // Clear any previous error message
-            return true; // Allow form submission
-        }
-
-        // Attach event listeners to both password fields
-
-
 
         $(document).ready(function () {
             $('#adminEmail').on('input', function () {
@@ -100,31 +79,21 @@
                 }
             });
 
-            $('#btnSave').click(function () {
+            $('#btnUpdate').click(function () {
+                let id = '@Model.id.ToString()';
                 let adminName = $('#adminName').val();
                 let adminEmail = $('#adminEmail').val();
-                let adminPassword = $('#adminPassword').val();
 
-                if ($('#emailFeedback').text() === "This email is already registered") {
-                    Swal.fire({
-                        title: "Error!",
-                        text: "This email is already registered",
-                        icon: "error"
-                    });
-                    return;
-                }
-
-                let formData = new FormData();
-                formData.append('adminName', adminName);
-                formData.append('adminEmail', adminEmail);
-                formData.append('adminPassword', adminPassword);
+                let _reqModel = {
+                    id: id,
+                    adminName: adminName,
+                    adminEmail: adminEmail,
+                };
 
                 $.ajax({
-                    url: "/Admin/Save",
-                    data: formData,
+                    url: "/Admin/Update",
+                    data: _reqModel,
                     type: "POST",
-                    processData: false,
-                    contentType: false,  
                     dataType: "json",
                     success: function (result) {
                         console.log(result);
@@ -138,8 +107,7 @@
                                     location.href = "/Admin";
                                 }
                             });
-                        }
-                        else {
+                        } else {
                             Swal.fire({
                                 title: "Error!",
                                 text: result.responeMessage,
@@ -153,5 +121,7 @@
                 });
             });
         });
+
+
     </script>
 }

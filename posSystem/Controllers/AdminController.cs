@@ -77,6 +77,11 @@ namespace posSystem.Controllers
                     return Json(emailExistsResponse);
                 }
 
+                if (string.IsNullOrEmpty(adminModel.id))
+                {
+                    adminModel.id = Guid.NewGuid().ToString();
+                }
+                adminModel.adminCreateAt = DateTime.Now.ToString();
                 adminModel.SetEncryptedPassword(adminModel.adminPassword);
 
                 _appDbContext.Admin.Add(adminModel);
@@ -97,7 +102,7 @@ namespace posSystem.Controllers
         }
 
         [ActionName("Edit")]
-        public IActionResult AdminEdit(int id)
+        public IActionResult AdminEdit(string id)
         {
             var item = _appDbContext.Admin.FirstOrDefault(x => x.id == id);
             if (item is null)
@@ -111,10 +116,10 @@ namespace posSystem.Controllers
 
         [HttpPost]
         [ActionName("Update")]
-        public IActionResult AdminUpdate(int id, AdminModel adminModel)
+        public IActionResult AdminUpdate(AdminModel adminModel)
         {
             MsgResopnseModel msg = new MsgResopnseModel();
-            var item = _appDbContext.Admin.FirstOrDefault(x => x.id == id);
+            var item = _appDbContext.Admin.FirstOrDefault(x => x.id == adminModel.id);
             if (item is null)
             {
                 msg = new MsgResopnseModel()
@@ -128,7 +133,7 @@ namespace posSystem.Controllers
             item.adminName = adminModel.adminName;
             item.adminEmail = adminModel.adminEmail;
             //item.adminPassword = adminModel.adminPassword;
-            item.SetEncryptedPassword(adminModel.adminPassword);
+            //item.SetEncryptedPassword(adminModel.adminPassword);
 
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Update Success" : "Update Fail";
@@ -143,7 +148,7 @@ namespace posSystem.Controllers
 
         [HttpPost]
         [ActionName("Delete")]
-        public IActionResult AdminDelete(int id)
+        public IActionResult AdminDelete(string id)
         {
             MsgResopnseModel msg = new MsgResopnseModel();
             var item = _appDbContext.Admin.FirstOrDefault(x => x.id == id);

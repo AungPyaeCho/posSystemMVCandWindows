@@ -12,7 +12,7 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240704161455_InitialposDB")]
+    [Migration("20240707084113_InitialposDB")]
     partial class InitialposDB
     {
         /// <inheritdoc />
@@ -27,11 +27,8 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.AdminModel", b =>
                 {
-                    b.Property<int>("id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("id"));
+                    b.Property<string>("id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("adminCreateAt")
                         .HasColumnType("nvarchar(max)");
@@ -49,6 +46,7 @@ namespace posSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("adminPassword")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -133,8 +131,8 @@ namespace posSystem.Migrations
                     b.Property<int?>("catId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("creatorName")
-                        .HasColumnType("int");
+                    b.Property<string>("creatorName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemBarcode")
                         .HasColumnType("nvarchar(max)");
@@ -153,6 +151,9 @@ namespace posSystem.Migrations
 
                     b.Property<string>("itemName")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("itemPrice")
+                        .HasColumnType("int");
 
                     b.Property<int?>("itemRemainStock")
                         .HasColumnType("int");
@@ -189,14 +190,11 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.LoginDetailModel", b =>
                 {
-                    b.Property<int>("ldId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                    b.Property<string>("ldId")
+                        .HasColumnType("nvarchar(450)");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ldId"));
-
-                    b.Property<int?>("adminId")
-                        .HasColumnType("int");
+                    b.Property<string>("adminId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("adminName")
                         .HasColumnType("nvarchar(max)");
@@ -205,6 +203,12 @@ namespace posSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("loginAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<TimeOnly?>("sessionExpired")
+                        .HasColumnType("time");
+
+                    b.Property<string>("sessionId")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("staffId")
@@ -225,10 +229,13 @@ namespace posSystem.Migrations
             modelBuilder.Entity("posSystem.Models.MemberModel", b =>
                 {
                     b.Property<string>("memberId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("memberAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("memberCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("memberCreateAt")
@@ -376,10 +383,13 @@ namespace posSystem.Migrations
             modelBuilder.Entity("posSystem.Models.StaffModel", b =>
                 {
                     b.Property<string>("staffId")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("staffAddress")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("staffCode")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("staffCreateAt")
