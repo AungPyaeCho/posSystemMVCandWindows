@@ -1,6 +1,7 @@
 using posSystem;
 using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using posSystem.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,6 +26,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseCookieMiddleware();
 
 app.UseRouting();
 

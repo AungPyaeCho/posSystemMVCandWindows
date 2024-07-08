@@ -3,7 +3,6 @@ using System.Text;
 using System.Security.Cryptography;
 using posSystem.Models;
 using System;
-using System.Text;
 
 
 namespace posSystem.Controllers

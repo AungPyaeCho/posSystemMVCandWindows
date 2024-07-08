@@ -19,6 +19,8 @@ namespace posSystem
         public DbSet<DiscountModel> Discounts { get; set; }
         public DbSet<AdminModel> Admin { get; set; }
         public DbSet<LoginDetailModel> LoginDetails { get; set; }
+        public DbSet<BrandModel> Brands { get; set; }
+        public DbSet<SubBrandModel> SubBrands { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -34,6 +36,11 @@ namespace posSystem
                     .HasOne(s => s.Category)
                     .WithMany()
                     .HasForeignKey(s => s.catId);
+
+                modelBuilder.Entity<SubBrandModel>()
+                    .HasOne(s => s.Brand)
+                    .WithMany()
+                    .HasForeignKey(s => s.brandId);
 
                 // Define other relationships
                 modelBuilder.Entity<ItemModel>()

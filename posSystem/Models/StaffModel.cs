@@ -16,6 +16,7 @@ namespace posSystem.Models
         public string? staffAddress { get; set; }
         public string? staffRole { get; set; }
         public string? staffPhoto { get; set; }
+        public DateTime? staffJoinedDate { get; set; }
         public string? staffCreateAt { get; set; }
         public string? staffUpdateAt { get; set; }
         public int? staffUpdateCount { get; set; }

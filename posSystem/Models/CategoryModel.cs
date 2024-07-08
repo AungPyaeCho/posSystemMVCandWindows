@@ -16,8 +16,9 @@ namespace posSystem.Models
         public string catCode { get; set; }
         public string? catCreatedAt { get; set; }
         public string? catUpdatedAt { get; set; }
-        public string? catDeleteAt { get; set; }
         public int? catUpdateCount { get; set; }
+        public string? catDeleteAt { get; set; }
+        
     }
 
     public class CategoryResponseModel
@@ -25,7 +26,6 @@ namespace posSystem.Models
         public int pageNo { get; set; }
         public int pageSize { get; set; }
         public int pageCount { get; set; }
-
         public bool isEndofpage => pageNo >= pageCount;
         public List<CategoryModel> categoryData { get; set; }
     }
