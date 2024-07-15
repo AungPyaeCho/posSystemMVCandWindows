@@ -12,7 +12,7 @@ namespace posSystem.Models
         public int brandId { get; set; }
         public string? brandName { get; set; }
         public string? brandDescription { get; set; }
-        public string brandCode { get; set; }
+        public string? brandCode { get; set; }
         public string? brandCreatedAt { get; set; }
         public string? brandUpdatedAt { get; set; }
         public string? brandDeleteAt { get; set; }
@@ -25,7 +25,7 @@ namespace posSystem.Models
         public int pageSize { get; set; }
         public int pageCount { get; set; }
 
-        public bool isEndofpage => pageNo >= pageCount;
+        public bool? isEndofpage => pageNo >= pageCount;
         public List<BrandModel> brandData { get; set; }
     }
 }

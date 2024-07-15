@@ -1,6 +1,5 @@
-using posSystem;
-using System.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using posSystem;
 using posSystem.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +11,9 @@ builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
 });
 
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+}, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
 var app = builder.Build();
 
@@ -20,7 +21,6 @@ var app = builder.Build();
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -36,5 +36,12 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Ensure database is created and seeded
+using (var scope = app.Services.CreateScope())
+{
+    var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
+    context.Database.Migrate(); // Applies any pending migrations and creates the database if it does not exist
+}
 
 app.Run();

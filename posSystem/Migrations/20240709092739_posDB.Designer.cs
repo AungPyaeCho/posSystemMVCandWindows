@@ -12,8 +12,8 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240707084113_InitialposDB")]
-    partial class InitialposDB
+    [Migration("20240709092739_posDB")]
+    partial class posDB
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -36,12 +36,6 @@ namespace posSystem.Migrations
                     b.Property<string>("adminEmail")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("adminLoginAt")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("adminLoginName")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("adminName")
                         .HasColumnType("nvarchar(max)");
 
@@ -54,6 +48,40 @@ namespace posSystem.Migrations
                     b.ToTable("tblAdmin");
                 });
 
+            modelBuilder.Entity("posSystem.Models.BrandModel", b =>
+                {
+                    b.Property<int>("brandId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("brandId"));
+
+                    b.Property<string>("brandCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("brandCreatedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("brandDeleteAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("brandDescription")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("brandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("brandUpdateCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("brandUpdatedAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("brandId");
+
+                    b.ToTable("tblBrand");
+                });
+
             modelBuilder.Entity("posSystem.Models.CategoryModel", b =>
                 {
                     b.Property<int>("catId")
@@ -63,7 +91,6 @@ namespace posSystem.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("catId"));
 
                     b.Property<string>("catCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("catCreatedAt")
@@ -125,6 +152,12 @@ namespace posSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("itemId"));
 
+                    b.Property<string>("brandCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("brandId")
+                        .HasColumnType("int");
+
                     b.Property<string>("catCode")
                         .HasColumnType("nvarchar(max)");
 
@@ -137,10 +170,19 @@ namespace posSystem.Migrations
                     b.Property<string>("itemBarcode")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("itemBrand")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("itemBuyPrice")
+                        .HasColumnType("int");
+
                     b.Property<string>("itemCategory")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("itemColor")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemCreateAt")
@@ -152,10 +194,10 @@ namespace posSystem.Migrations
                     b.Property<string>("itemName")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("itemPrice")
+                    b.Property<int?>("itemRemainStock")
                         .HasColumnType("int");
 
-                    b.Property<int?>("itemRemainStock")
+                    b.Property<int?>("itemSalePrice")
                         .HasColumnType("int");
 
                     b.Property<int?>("itemSold")
@@ -163,6 +205,9 @@ namespace posSystem.Migrations
 
                     b.Property<int?>("itemStock")
                         .HasColumnType("int");
+
+                    b.Property<string>("itemSubBrnad")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemSubCategory")
                         .HasColumnType("nvarchar(max)");
@@ -173,6 +218,15 @@ namespace posSystem.Migrations
                     b.Property<int?>("itemUpdateCount")
                         .HasColumnType("int");
 
+                    b.Property<int?>("itemWholeSalePrice")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("subBId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("subBrandCode")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("subCId")
                         .HasColumnType("int");
 
@@ -181,7 +235,11 @@ namespace posSystem.Migrations
 
                     b.HasKey("itemId");
 
+                    b.HasIndex("brandId");
+
                     b.HasIndex("catId");
+
+                    b.HasIndex("subBId");
 
                     b.HasIndex("subCId");
 
@@ -193,11 +251,11 @@ namespace posSystem.Migrations
                     b.Property<string>("ldId")
                         .HasColumnType("nvarchar(450)");
 
+                    b.Property<string>("adminEmail")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("adminId")
                         .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("adminName")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("logOutAt")
                         .HasColumnType("nvarchar(max)");
@@ -205,23 +263,15 @@ namespace posSystem.Migrations
                     b.Property<string>("loginAt")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<TimeOnly?>("sessionExpired")
-                        .HasColumnType("time");
+                    b.Property<DateTime?>("sessionExpired")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("sessionId")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("staffId")
-                        .HasColumnType("nvarchar(450)");
-
-                    b.Property<string>("staffName")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("ldId");
 
                     b.HasIndex("adminId");
-
-                    b.HasIndex("staffId");
 
                     b.ToTable("tblLoginDetail");
                 });
@@ -244,7 +294,14 @@ namespace posSystem.Migrations
                     b.Property<string>("memberEmail")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("memberLevel")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("memberName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("memberPassword")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("memberPhone")
@@ -253,10 +310,16 @@ namespace posSystem.Migrations
                     b.Property<string>("memberPhoto")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("memberPoints")
+                        .HasColumnType("int");
+
                     b.Property<string>("memberUpdateAt")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("memberUpdateCount")
+                        .HasColumnType("int");
+
+                    b.Property<int>("memberUsedPoints")
                         .HasColumnType("int");
 
                     b.HasKey("memberId");
@@ -398,6 +461,9 @@ namespace posSystem.Migrations
                     b.Property<string>("staffEmail")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<DateTime?>("staffJoinedDate")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("staffName")
                         .HasColumnType("nvarchar(max)");
 
@@ -419,6 +485,45 @@ namespace posSystem.Migrations
                     b.HasKey("staffId");
 
                     b.ToTable("tblStaff");
+                });
+
+            modelBuilder.Entity("posSystem.Models.SubBrandModel", b =>
+                {
+                    b.Property<int>("subBId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("subBId"));
+
+                    b.Property<string>("brandCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("brandId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("brandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("subBrandCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("subBrandCreateAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("subBrandName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("subBrandUpdateAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("subBrandUpdateCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("subBId");
+
+                    b.HasIndex("brandId");
+
+                    b.ToTable("tblSubBrand");
                 });
 
             modelBuilder.Entity("posSystem.Models.SubCategoryModel", b =>
@@ -462,15 +567,27 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.ItemModel", b =>
                 {
+                    b.HasOne("posSystem.Models.BrandModel", "Brand")
+                        .WithMany()
+                        .HasForeignKey("brandId");
+
                     b.HasOne("posSystem.Models.CategoryModel", "Category")
                         .WithMany()
                         .HasForeignKey("catId");
+
+                    b.HasOne("posSystem.Models.SubBrandModel", "SubBrand")
+                        .WithMany()
+                        .HasForeignKey("subBId");
 
                     b.HasOne("posSystem.Models.SubCategoryModel", "SubCategory")
                         .WithMany()
                         .HasForeignKey("subCId");
 
+                    b.Navigation("Brand");
+
                     b.Navigation("Category");
+
+                    b.Navigation("SubBrand");
 
                     b.Navigation("SubCategory");
                 });
@@ -481,13 +598,7 @@ namespace posSystem.Migrations
                         .WithMany()
                         .HasForeignKey("adminId");
 
-                    b.HasOne("posSystem.Models.StaffModel", "Staff")
-                        .WithMany()
-                        .HasForeignKey("staffId");
-
                     b.Navigation("Admin");
-
-                    b.Navigation("Staff");
                 });
 
             modelBuilder.Entity("posSystem.Models.SaleDetailModel", b =>
@@ -518,6 +629,15 @@ namespace posSystem.Migrations
                     b.Navigation("Member");
 
                     b.Navigation("Staff");
+                });
+
+            modelBuilder.Entity("posSystem.Models.SubBrandModel", b =>
+                {
+                    b.HasOne("posSystem.Models.BrandModel", "Brand")
+                        .WithMany()
+                        .HasForeignKey("brandId");
+
+                    b.Navigation("Brand");
                 });
 
             modelBuilder.Entity("posSystem.Models.SubCategoryModel", b =>

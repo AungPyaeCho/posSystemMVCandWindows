@@ -1,8 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using posSystem.Models;
-using System.Collections;
+using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 
 namespace posSystem
 {
@@ -28,53 +27,73 @@ namespace posSystem
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Define foreign key relationship between SubCategory and Category
+            base.OnModelCreating(modelBuilder);
 
-            {
-                // Define foreign key relationship between SubCategory and Category
-                modelBuilder.Entity<SubCategoryModel>()
-                    .HasOne(s => s.Category)
-                    .WithMany()
-                    .HasForeignKey(s => s.catId);
+            // Define foreign key relationships
+            modelBuilder.Entity<SubCategoryModel>()
+                .HasOne(s => s.Category)
+                .WithMany()
+                .HasForeignKey(s => s.catId);
 
-                modelBuilder.Entity<SubBrandModel>()
-                    .HasOne(s => s.Brand)
-                    .WithMany()
-                    .HasForeignKey(s => s.brandId);
+            modelBuilder.Entity<SubBrandModel>()
+                .HasOne(s => s.Brand)
+                .WithMany()
+                .HasForeignKey(s => s.brandId);
 
-                // Define other relationships
-                modelBuilder.Entity<ItemModel>()
-                    .HasOne(i => i.Category)
-                    .WithMany()
-                    .HasForeignKey(i => i.catId);
+            modelBuilder.Entity<ItemModel>()
+                .HasOne(i => i.Category)
+                .WithMany()
+                .HasForeignKey(i => i.catId);
 
-                modelBuilder.Entity<ItemModel>()
-                    .HasOne(i => i.SubCategory)
-                    .WithMany()
-                    .HasForeignKey(i => i.subCId);
+            modelBuilder.Entity<ItemModel>()
+                .HasOne(i => i.SubCategory)
+                .WithMany()
+                .HasForeignKey(i => i.subCId);
 
-                modelBuilder.Entity<SaleModel>()
-                    .HasOne(s => s.Staff)
-                    .WithMany()
-                    .HasForeignKey(s => s.staffId);
+            modelBuilder.Entity<ItemModel>()
+                .HasOne(i => i.Brand)
+                .WithMany()
+                .HasForeignKey(i => i.brandId);
 
-                modelBuilder.Entity<SaleModel>()
-                    .HasOne(s => s.Member)
-                    .WithMany()
-                    .HasForeignKey(s => s.memberId);
+            modelBuilder.Entity<ItemModel>()
+                .HasOne(i => i.SubBrand)
+                .WithMany()
+                .HasForeignKey(i => i.subBId);
 
-                modelBuilder.Entity<SaleDetailModel>()
-                    .HasOne(sd => sd.Sale)
-                    .WithMany(s => s.saleDetails)
-                    .HasForeignKey(sd => sd.saleId);
+            modelBuilder.Entity<SaleModel>()
+                .HasOne(s => s.Staff)
+                .WithMany()
+                .HasForeignKey(s => s.staffId);
 
-                modelBuilder.Entity<SaleDetailModel>()
-                    .HasOne(sd => sd.Item)
-                    .WithMany()
-                    .HasForeignKey(sd => sd.itemId);
+            modelBuilder.Entity<SaleModel>()
+                .HasOne(s => s.Member)
+                .WithMany()
+                .HasForeignKey(s => s.memberId);
 
-                base.OnModelCreating(modelBuilder);
-            }
+            modelBuilder.Entity<SaleDetailModel>()
+                .HasOne(sd => sd.Sale)
+                .WithMany(s => s.saleDetails)
+                .HasForeignKey(sd => sd.saleId);
+
+            modelBuilder.Entity<SaleDetailModel>()
+                .HasOne(sd => sd.Item)
+                .WithMany()
+                .HasForeignKey(sd => sd.itemId);
+
+            // Seed default admin user
+            string defaultAdminId = Guid.NewGuid().ToString();
+            string defaultAdminEmail = "admin@pos.com";
+            string defaultAdminPassword = SimpleEncryptionHelper.Encrypt("Admin@123"); // Encrypt the default password
+
+            modelBuilder.Entity<AdminModel>().HasData(
+                new AdminModel
+                {
+                    id = defaultAdminId,
+                    adminName = "Default Admin",
+                    adminEmail = defaultAdminEmail,
+                    adminPassword = defaultAdminPassword,
+                    adminCreateAt = DateTime.Now.ToString()
+                });
         }
     }
 }

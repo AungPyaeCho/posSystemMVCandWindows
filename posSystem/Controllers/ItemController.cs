@@ -31,7 +31,7 @@ namespace posSystem.Controllers
                     itemId = s.itemId,
                     itemCode = s.itemCode,
                     itemName = s.itemName,
-                    itemPrice = s.itemPrice,
+                    itemSalePrice = s.itemSalePrice,
                     catCode = s.catCode,
                     subCatCode = s.subCatCode,
                     itemDescription = s.itemDescription,
@@ -135,18 +135,27 @@ namespace posSystem.Controllers
 
             var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == itemModel.catId)!;
             var subCatItem = _appDbContext.SubCategories.FirstOrDefault(s => s.subCId == itemModel.subCId)!;
+            var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == itemModel.brandId)!;
+            var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(s => s.subBId == itemModel.subBId)!;
 
             item.itemCode = itemModel.itemCode;
             item.itemName = itemModel.itemName;
-            item.itemPrice = itemModel.itemPrice;
+            item.itemBuyPrice = itemModel.itemBuyPrice;
+            item.itemSalePrice = itemModel.itemSalePrice;
+            item.itemWholeSalePrice = itemModel.itemWholeSalePrice;
             item.catId = itemModel.catId;
+            item.catCode = catItem.catCode;
             item.subCId = itemModel.subCId;
+            item.subCatCode = subCatItem.subCatCode;
+            item.brandId = itemModel.brandId;
+            item.brandCode = brandItem.brandCode;
+            item.subBId = itemModel.subBId;
+            item.subBrandCode = subBrandItem.subBrandCode;
+            item.itemColor = itemModel.itemColor;
+            item.itemStock = itemModel.itemStock;
             item.itemDescription = itemModel.itemDescription;
             item.itemBarcode = itemModel.itemBarcode;
-            item.itemStock = itemModel.itemStock;
             item.creatorName = itemModel.creatorName;
-            item.catCode = catItem.catCode;
-            item.subCatCode = subCatItem.subCatCode;
             item.itemUpdateAt = DateTime.Now.ToString();
             if (item.itemUpdateCount is null)
             {

@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace posSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class InitialposDB : Migration
+    public partial class posDB : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -19,13 +19,30 @@ namespace posSystem.Migrations
                     adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    adminCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    adminLoginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    adminLoginName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    adminCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblAdmin", x => x.id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblBrand",
+                columns: table => new
+                {
+                    brandId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    brandName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandCreatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandUpdatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandDeleteAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandUpdateCount = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblBrand", x => x.brandId);
                 });
 
             migrationBuilder.CreateTable(
@@ -36,11 +53,11 @@ namespace posSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     catName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catCreatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     catUpdatedAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catDeleteAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catUpdateCount = table.Column<int>(type: "int", nullable: true)
+                    catUpdateCount = table.Column<int>(type: "int", nullable: true),
+                    catDeleteAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -72,9 +89,13 @@ namespace posSystem.Migrations
                     memberCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    memberPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     memberPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    memberLevel = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    memberPoints = table.Column<int>(type: "int", nullable: true),
+                    memberUsedPoints = table.Column<int>(type: "int", nullable: false),
                     memberCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberUpdateCount = table.Column<int>(type: "int", nullable: true)
@@ -114,6 +135,7 @@ namespace posSystem.Migrations
                     staffAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffRole = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffPhoto = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    staffJoinedDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     staffCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffUpdateCount = table.Column<int>(type: "int", nullable: true)
@@ -124,43 +146,16 @@ namespace posSystem.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "tblSubCategory",
-                columns: table => new
-                {
-                    subCId = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    subCatName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    subCatCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    subCatCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    subCatUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    subCatUpdateCount = table.Column<int>(type: "int", nullable: true),
-                    catId = table.Column<int>(type: "int", nullable: true),
-                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catName = table.Column<string>(type: "nvarchar(max)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_tblSubCategory", x => x.subCId);
-                    table.ForeignKey(
-                        name: "FK_tblSubCategory_tblCategory_catId",
-                        column: x => x.catId,
-                        principalTable: "tblCategory",
-                        principalColumn: "catId");
-                });
-
-            migrationBuilder.CreateTable(
                 name: "tblLoginDetail",
                 columns: table => new
                 {
                     ldId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     adminId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
-                    staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    adminEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     sessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    sessionExpired = table.Column<TimeOnly>(type: "time", nullable: true)
+                    sessionExpired = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    logOutAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -170,11 +165,56 @@ namespace posSystem.Migrations
                         column: x => x.adminId,
                         principalTable: "tblAdmin",
                         principalColumn: "id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblSubBrand",
+                columns: table => new
+                {
+                    subBId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    subBrandName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subBrandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandId = table.Column<int>(type: "int", nullable: true),
+                    brandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subBrandCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subBrandUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subBrandUpdateCount = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblSubBrand", x => x.subBId);
                     table.ForeignKey(
-                        name: "FK_tblLoginDetail_tblStaff_staffId",
-                        column: x => x.staffId,
-                        principalTable: "tblStaff",
-                        principalColumn: "staffId");
+                        name: "FK_tblSubBrand_tblBrand_brandId",
+                        column: x => x.brandId,
+                        principalTable: "tblBrand",
+                        principalColumn: "brandId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "tblSubCategory",
+                columns: table => new
+                {
+                    subCId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    subCatName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCatCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    catId = table.Column<int>(type: "int", nullable: true),
+                    catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    catName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCatCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCatUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCatUpdateCount = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_tblSubCategory", x => x.subCId);
+                    table.ForeignKey(
+                        name: "FK_tblSubCategory_tblCategory_catId",
+                        column: x => x.catId,
+                        principalTable: "tblCategory",
+                        principalColumn: "catId");
                 });
 
             migrationBuilder.CreateTable(
@@ -217,31 +257,50 @@ namespace posSystem.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     itemCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    itemPrice = table.Column<int>(type: "int", nullable: true),
-                    itemCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemBuyPrice = table.Column<int>(type: "int", nullable: true),
+                    itemSalePrice = table.Column<int>(type: "int", nullable: true),
+                    itemWholeSalePrice = table.Column<int>(type: "int", nullable: true),
+                    catId = table.Column<int>(type: "int", nullable: true),
                     catCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    itemSubCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subCId = table.Column<int>(type: "int", nullable: true),
                     subCatCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    itemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemSubCategory = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    brandId = table.Column<int>(type: "int", nullable: true),
+                    brandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemBrand = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    subBId = table.Column<int>(type: "int", nullable: true),
+                    subBrandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemSubBrnad = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemBarcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemStock = table.Column<int>(type: "int", nullable: true),
                     itemSold = table.Column<int>(type: "int", nullable: true),
                     itemRemainStock = table.Column<int>(type: "int", nullable: true),
+                    itemDescription = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemUpdateAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemUpdateCount = table.Column<int>(type: "int", nullable: true),
-                    creatorName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    catId = table.Column<int>(type: "int", nullable: true),
-                    subCId = table.Column<int>(type: "int", nullable: true)
+                    creatorName = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_tblItem", x => x.itemId);
                     table.ForeignKey(
+                        name: "FK_tblItem_tblBrand_brandId",
+                        column: x => x.brandId,
+                        principalTable: "tblBrand",
+                        principalColumn: "brandId");
+                    table.ForeignKey(
                         name: "FK_tblItem_tblCategory_catId",
                         column: x => x.catId,
                         principalTable: "tblCategory",
                         principalColumn: "catId");
+                    table.ForeignKey(
+                        name: "FK_tblItem_tblSubBrand_subBId",
+                        column: x => x.subBId,
+                        principalTable: "tblSubBrand",
+                        principalColumn: "subBId");
                     table.ForeignKey(
                         name: "FK_tblItem_tblSubCategory_subCId",
                         column: x => x.subCId,
@@ -279,9 +338,19 @@ namespace posSystem.Migrations
                 });
 
             migrationBuilder.CreateIndex(
+                name: "IX_tblItem_brandId",
+                table: "tblItem",
+                column: "brandId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_tblItem_catId",
                 table: "tblItem",
                 column: "catId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblItem_subBId",
+                table: "tblItem",
+                column: "subBId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_subCId",
@@ -292,11 +361,6 @@ namespace posSystem.Migrations
                 name: "IX_tblLoginDetail_adminId",
                 table: "tblLoginDetail",
                 column: "adminId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_tblLoginDetail_staffId",
-                table: "tblLoginDetail",
-                column: "staffId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblSale_memberId",
@@ -317,6 +381,11 @@ namespace posSystem.Migrations
                 name: "IX_tblSaleDetail_saleId",
                 table: "tblSaleDetail",
                 column: "saleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_tblSubBrand_brandId",
+                table: "tblSubBrand",
+                column: "brandId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblSubCategory_catId",
@@ -349,6 +418,9 @@ namespace posSystem.Migrations
                 name: "tblSale");
 
             migrationBuilder.DropTable(
+                name: "tblSubBrand");
+
+            migrationBuilder.DropTable(
                 name: "tblSubCategory");
 
             migrationBuilder.DropTable(
@@ -356,6 +428,9 @@ namespace posSystem.Migrations
 
             migrationBuilder.DropTable(
                 name: "tblStaff");
+
+            migrationBuilder.DropTable(
+                name: "tblBrand");
 
             migrationBuilder.DropTable(
                 name: "tblCategory");
