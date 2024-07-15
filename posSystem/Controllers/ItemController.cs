@@ -12,8 +12,7 @@ namespace posSystem.Controllers
             _appDbContext = appDbContext;
         }
 
-        [ActionName("Index")]
-        public IActionResult ItemIndex(int pageNo = 1, int pageSize = 10)
+        private (List<ItemModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
             int rowCount = _appDbContext.Items.Count();
             int pageCount = rowCount / pageSize;
@@ -21,11 +20,53 @@ namespace posSystem.Controllers
             if (rowCount % pageSize > 0)
                 pageCount++;
 
-            List<ItemModel> list = _appDbContext.Items
-                .Include(s => s.Category)
-                .Include(s => s.SubCategory) // Assuming you have a navigation property for SubCategory
+            bool ascending = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
+            IQueryable<ItemModel> query = _appDbContext.Items.AsQueryable();
+
+            switch (sortField.ToLower())
+            {
+                case "itemcode":
+                    query = ascending ? query.OrderBy(p => p.itemCode) : query.OrderByDescending(p => p.itemCode);
+                    break;
+                case "itemname":
+                    query = ascending ? query.OrderBy(p => p.itemName) : query.OrderByDescending(p => p.itemName);
+                    break;
+                case "itemsaleprice":
+                    query = ascending ? query.OrderBy(p => p.itemSalePrice) : query.OrderByDescending(p => p.itemSalePrice);
+                    break;
+                case "itemstock":
+                    query = ascending ? query.OrderBy(p => p.itemStock) : query.OrderByDescending(p => p.itemStock);
+                    break;
+                case "itemsold":
+                    query = ascending ? query.OrderBy(p => p.itemSold) : query.OrderByDescending(p => p.itemSold);
+                    break;
+                case "itemremainstock":
+                    query = ascending ? query.OrderBy(p => p.itemRemainStock) : query.OrderByDescending(p => p.itemRemainStock);
+                    break;
+                case "itemcategory":
+                    query = ascending ? query.OrderBy(p => p.itemCategory) : query.OrderByDescending(p => p.itemCategory);
+                    break;
+                case "itemsubcategory":
+                    query = ascending ? query.OrderBy(p => p.itemSubCategory) : query.OrderByDescending(p => p.itemSubCategory);
+                    break;
+                case "itembrand":
+                    query = ascending ? query.OrderBy(p => p.itemBrand) : query.OrderByDescending(p => p.itemBrand);
+                    break;
+                case "itemsubbrand":
+                    query = ascending ? query.OrderBy(p => p.itemSubBrnad) : query.OrderByDescending(p => p.itemSubBrnad);
+                    break;
+                default:
+                    query = ascending ? query.OrderBy(p => p.itemCode) : query.OrderByDescending(p => p.itemCode);
+                    break;
+            }
+
+            List<ItemModel> list = query
                 .Skip((pageNo - 1) * pageSize)
                 .Take(pageSize)
+                .Include(s => s.Category)
+                .Include(s => s.SubCategory) // Assuming you have a navigation property for SubCategory
+                .Include(s => s.Brand)
+                .Include(s => s.SubBrand)
                 .Select(s => new ItemModel
                 {
                     itemId = s.itemId,
@@ -55,16 +96,46 @@ namespace posSystem.Controllers
                         .Where(sc => sc.subCatCode == s.subCatCode || sc.subCId == s.subCId)
                         .Select(sc => sc.subCatName)
                         .FirstOrDefault(), // Retrieve subCatName based on subCId
+
+                    itemBrand = _appDbContext.Brands
+                        .Where(c => c.brandCode == s.brandCode || c.brandId == s.brandId)
+                        .Select(c => c.brandName)
+                        .FirstOrDefault(), // Retrieve brandName based on brandId
+
+                    itemSubBrnad = _appDbContext.SubBrands
+                        .Where(sc => sc.subBrandCode == s.subBrandCode || sc.subBId == s.subBId)
+                        .Select(sc => sc.subBrandName)
+                        .FirstOrDefault(), // Retrieve subBrandName based on subBId
                 })
                 .ToList()!;
-
-            ItemResponseModel response = new();
-            response.itemData = list;
-            response.pageSize = pageSize;
-            response.pageCount = pageCount;
-            response.pageNo = pageNo;
-            return View("ItemIndex", response);
+            return (list, pageCount);
         }
+
+        [ActionName("Index")]
+        public IActionResult ItemIndex(int pageNo = 1, int pageSize = 10, string sortField = "itemName", string sortOrder = "asc")
+        {
+            try
+            {
+                var (list, pageCount) = GetSorted(pageNo, pageSize, sortField, sortOrder);
+
+                ItemResponseModel response = new()
+                {
+                    itemData = list,
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo,
+                    sortField = sortField,
+                    sortOrder = sortOrder
+                };
+                return View("ItemIndex", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("ItemIndex");
+            }
+        }
+
 
         [ActionName("Create")]
         public IActionResult ItemCreate()

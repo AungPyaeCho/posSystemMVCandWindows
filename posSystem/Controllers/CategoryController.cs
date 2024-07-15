@@ -3,6 +3,7 @@ using posSystem.Models;
 using System.Text;
 using System.Security.Cryptography;
 using Microsoft.VisualBasic;
+using Microsoft.EntityFrameworkCore;
 
 namespace posSystem.Controllers
 {
@@ -15,8 +16,7 @@ namespace posSystem.Controllers
             _appDbContext = appDbContext;
         }
 
-        [ActionName("Index")]
-        public IActionResult CategoryIndex(int pageNo = 1, int pageSize = 10)
+        private (List<CategoryModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
             int rowCount = _appDbContext.Categories.Count();
             int pageCount = rowCount / pageSize;
@@ -24,18 +24,52 @@ namespace posSystem.Controllers
             if (rowCount % pageSize > 0)
                 pageCount++;
 
-            List<CategoryModel> list = _appDbContext.Categories
-                //.OrderByDescending(x => x.id)
+            bool ascending = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
+
+            IQueryable<CategoryModel> query = _appDbContext.Categories.AsQueryable();
+
+            switch (sortField.ToLower())
+            {
+                case "catname":
+                    query = ascending ? query.OrderBy(p => p.catName) : query.OrderByDescending(p => p.catName);
+                    break;
+                case "catcode":
+                    query = ascending ? query.OrderBy(p => p.catCode) : query.OrderByDescending(p => p.catCode);
+                    break;
+            }
+
+            List<CategoryModel> list = query
                 .Skip((pageNo - 1) * pageSize)
                 .Take(pageSize)
                 .ToList();
 
-            CategoryResponseModel response = new();
-            response.categoryData = list;
-            response.pageSize = pageSize;
-            response.pageCount = pageCount;
-            response.pageNo = pageNo;
-            return View("CategoryIndex", response);
+            return (list, pageCount);
+        }
+
+        [ActionName("Index")]
+        public IActionResult CategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "catName", string sortOrder = "asc")
+        {
+            try
+            {
+                var (list, pageCount) = GetSorted(pageNo, pageSize, sortField, sortOrder);
+
+                CategoryResponseModel response = new()
+                {
+                    categoryData = list,
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo,
+                    sortField = sortField,
+                    sortOrder = sortOrder
+                };
+
+                return View("CategoryIndex", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("CategoryIndex");
+            }
         }
 
         [ActionName("Create")]

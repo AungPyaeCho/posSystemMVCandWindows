@@ -16,7 +16,6 @@ namespace posSystem.Models
         public string? loginAt { get; set; }
         public string? logOutAt { get; set; }
 
-
         [ForeignKey("adminId")]
         public AdminModel Admin { get; set; }
     }

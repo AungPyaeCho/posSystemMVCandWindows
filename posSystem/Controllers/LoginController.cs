@@ -1,5 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using posSystem.Models;
+using System;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
 
 namespace posSystem.Controllers
 {
@@ -12,14 +16,13 @@ namespace posSystem.Controllers
             _appDbContext = appDbContext;
         }
 
-
         public IActionResult Index()
         {
             return View();
         }
 
         [HttpPost]
-        public async  Task<IActionResult> Index(AdminModel adminModel)
+        public async Task<IActionResult> Index(AdminModel adminModel, bool rememberMe)
         {
             adminModel.SetEncryptedPassword(adminModel.adminPassword);
             var encPsw = adminModel.adminPassword;
@@ -27,10 +30,10 @@ namespace posSystem.Controllers
             if (item is null) return View();
 
             string sessionId = Guid.NewGuid().ToString();
-            DateTime sessionExpired = DateTime.Now.AddSeconds(60);
+            DateTime sessionExpired = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddMinutes(360);
 
             CookieOptions cookie = new CookieOptions();
-            cookie.Expires = DateTime.Now.AddDays(1);
+            cookie.Expires = sessionExpired;
             Response.Cookies.Append("AdminId", item.id, cookie);
             Response.Cookies.Append("SessionId", sessionId, cookie);
 
@@ -41,6 +44,7 @@ namespace posSystem.Controllers
                 adminEmail = item.adminEmail,
                 sessionId = sessionId,
                 sessionExpired = sessionExpired,
+                loginAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             });
             await _appDbContext.SaveChangesAsync();
             return Redirect("/Home");

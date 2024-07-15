@@ -1,4 +1,101 @@
-﻿@model SubCategoryModel
+﻿@model posSystem.Models.SubCategoryModel
+
+@{
+    var categories = ViewBag.Categories as List<posSystem.Models.CategoryModel>;
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Update SubCategory</h2>
+
+                    <div class="mb-3">
+                        <label for="subCatName" class="form-label">Sub Category Name</label>
+                        <input type="text" class="form-control" id="subCatName" name="subCatName" placeholder="Enter subcategory name" value="@Model.subCatName">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subCatCode" class="form-label">Sub Category Code</label>
+                        <input type="text" class="form-control" id="subCatCode" name="subCatCode" placeholder="Enter subcategory code" value="@Model.subCatCode">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="Category" class="form-label">Category</label>
+                        <select class="form-control" id="catId" name="catId">
+                            <option value="">Select a Category</option>
+                            @foreach (var category in categories!)
+                            {
+                                <option value="@category.catId">@category.catName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update</button>
+                        <a href="/SubCategory" class="btn btn-dark mt-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $(document).ready(function () {
+            $('#btnUpdate').click(function () {
+                let subCId = '@Model.subCId'; // Ensure this is the correct value
+                let subCatName = $('#subCatName').val();
+                let subCatCode = $('#subCatCode').val();
+                let catId = $('#catId').val();
+
+                let _reqModel = {
+                    subCId: subCId,
+                    subCatName: subCatName,
+                    subCatCode: subCatCode,
+                    catId: catId
+                };
+
+                $.ajax({
+                    url: "/SubCategory/Update?subCId=" + subCId,
+                    data: _reqModel,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/SubCategory";
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}
+
+
+
+@* @model SubCategoryModel
 
 @{
     var categories = ViewBag.Categories as List<posSystem.Models.CategoryModel>;
@@ -79,7 +176,7 @@
 
     </script>
 }
-
+ *@
 
 @* @section scripts {
     <script>

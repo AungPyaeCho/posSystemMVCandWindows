@@ -1,164 +1,147 @@
 ﻿@model CategoryResponseModel
 @{
-    // Layout = "~/Views/Shared/_IndexLayout.cshtml";
     ViewData["Title"] = "Category";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
     int _pageSize = Model.pageSize;
+    string _sortField = Model.sortField ?? "Id";
+    string _sortOrder = Model.sortOrder ?? "asc";
 
-    string _pageURL(int _pageNo)
+    string _pageURL(int _pageNo, string _sortField, string _sortOrder)
     {
-        return $"/Category/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/Category/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
     }
 }
 
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Category</h1>
-</div>
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-4">Category</h1>
+        <a href="/Category/Create" class="btn btn-outline-success">Add Category</a>
+    </div>
 
-<div lass="d-sm-flex align-items-center justify-content-between mb-4">
-    <a href="/Category/Create" class="btn btn-outline-success">Add Category</a>
-</div>
-
-<di>
-    <p></p>
-</di>
-
-<table class="table">
-    <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">Category Name</th>
-            <th scope="col">Category Code</th>
-            <th scope="col">Category Description</th>
-            <th scope="col">Create Date</th>
-            <th scope="col">Update Date</th>
-            <th scope="col">Update Count</th>
-            <th scope="col">Action</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (CategoryModel item in Model.categoryData)
-        {
+<table class="table table-hover">
+        <thead>
             <tr>
-                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.catName</td>
-                <td>@item.catCode</td>
-                <td>@item.catDescription</td>
-                <td>@item.catCreatedAt</td>
-                <td>@item.catUpdatedAt</td>
-                <td>@item.catUpdateCount</td>
-                <td>
-                    <a href="/Category/Edit/@item.catId" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.catId">Delete</button>
-                </td>
+                <th scope="col">#</th>
+                <th scope="col">
+                    <a href="@_pageURL(_pageNo, "catName", _sortOrder == "asc" ? "desc" : "asc")">
+                        Category Name @(_sortField == "catName" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                    </a>
+                </th>
+                <th scope="col">
+                    <a href="@_pageURL(_pageNo, "catCode", _sortOrder == "asc" ? "desc" : "asc")">
+                        Category Code @(_sortField == "catCode" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                    </a>
+                </th>
+                <th scope="col">Category Description</th>
+                <th scope="col">Create Date</th>
+                <th scope="col">Update Date</th>
+                <th scope="col">Update Count</th>
+                <th scope="col">Action</th>
             </tr>
-        }
-    </tbody>
+        </thead>
 
-    <tfoot>
-        <tr>
-            <td>
-                <nav aria-label="...">
-                    <ul class="pagination">
-                        @if (_pageNo == 1)
-                        {
-                            <li class="page-item disabled">
-                                <a class="page-link">Previous</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo - 1)">Previous</a></li>
-                        }
+        <tbody>
+            @foreach (CategoryModel item in Model.categoryData)
+            {
+                <tr>
+                    <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                    <td>@item.catName</td>
+                    <td>@item.catCode</td>
+                    <td>@item.catDescription</td>
+                    <td>@item.catCreatedAt</td>
+                    <td>@item.catUpdatedAt</td>
+                    <td>@item.catUpdateCount</td>
+                    <td>
+                        <a href="/Category/Edit/@item.catId" class="btn btn-warning">Edit</a>
+                        <button type="button" class="btn btn-danger btn-delete" data-id="@item.catId">Delete</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
 
-                        @if (_pageCount <= 9)
-                        {
-                            for (int i = 1; i <= _pageCount; i++)
+        <tfoot>
+            <tr>
+                <td colspan="8">
+                    <nav aria-label="Pagination">
+                        <ul class="pagination justify-content-center">
+                            @if (_pageNo == 1)
                             {
-                                if (_pageNo == i)
-                                {
-                                    <li class="page-item active" aria-current="page">
-                                        <a class="page-link" href="@_pageURL(i)">@i</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                }
+                                <li class="page-item disabled">
+                                    <a class="page-link">Previous</a>
+                                </li>
                             }
-                        }
-                        else
-                        {
-                            if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
+                            else
                             {
-                                for (int i = 1; i <= 4; i++)
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(_pageNo - 1, _sortField, _sortOrder)">Previous</a>
+                                </li>
+                            }
+
+                            @if (_pageCount <= 9)
+                            {
+                                for (int i = 1; i <= _pageCount; i++)
                                 {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
-                                }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                for (int i = _pageCount - 3; i <= _pageCount; i++)
-                                {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
                                 }
                             }
                             else
                             {
-                                <li class="page-item"><a class="page-link" href="@_pageURL(1)">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
+                                if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
                                 {
-                                    if (_pageNo == i)
+                                    for (int i = 1; i <= 4; i++)
                                     {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        <li class="page-item @(i == _pageNo ? "active" : "")">
+                                            <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
                                         </li>
                                     }
-                                    else
+                                    <li class="page-item"><a class="page-link">...</a></li>
+                                    for (int i = _pageCount - 3; i <= _pageCount; i++)
                                     {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                        <li class="page-item @(i == _pageNo ? "active" : "")">
+                                            <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                        </li>
                                     }
                                 }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                <li class="page-item"><a class="page-link" href="@_pageURL(_pageCount)">@_pageCount</a></li>
+                                else
+                                {
+                                    <li class="page-item">
+                                        <a class="page-link" href="@_pageURL(1, _sortField, _sortOrder)">1</a>
+                                    </li>
+                                    <li class="page-item"><a class="page-link">...</a></li>
+                                    for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
+                                    {
+                                        <li class="page-item @(i == _pageNo ? "active" : "")">
+                                            <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                        </li>
+                                    }
+                                    <li class="page-item"><a class="page-link">...</a></li>
+                                    <li class="page-item">
+                                        <a class="page-link" href="@_pageURL(_pageCount, _sortField, _sortOrder)">@_pageCount</a>
+                                    </li>
+                                }
                             }
-                        }
 
-                        @if (_pageNo == _pageCount)
-                        {
-                            <li class="page-item disabled">
-                                <a class="page-link">Next</a>
-                            </li>
-                        }
-                        else
-                        {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo + 1)">Next</a></li>
-                        }
-                    </ul>
-                </nav>
-            </td>
-        </tr>
-    </tfoot>
-</table>
+                            @if (_pageNo == _pageCount)
+                            {
+                                <li class="page-item disabled">
+                                    <a class="page-link">Next</a>
+                                </li>
+                            }
+                            else
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(_pageNo + 1, _sortField, _sortOrder)">Next</a>
+                                </li>
+                            }
+                        </ul>
+                    </nav>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
 
 @section scripts {
     <script>
@@ -221,4 +204,3 @@
         }
     </script>
 }
-

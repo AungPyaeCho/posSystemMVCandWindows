@@ -15,8 +15,7 @@ namespace posSystem.Controllers
             _appDbContext = appDbContext;
         }
 
-        [ActionName("Index")]
-        public IActionResult SubCategoryIndex(int pageNo = 1, int pageSize = 10)
+        private (List<SubCategoryModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
             int rowCount = _appDbContext.SubCategories.Count();
             int pageCount = rowCount / pageSize;
@@ -24,7 +23,24 @@ namespace posSystem.Controllers
             if (rowCount % pageSize > 0)
                 pageCount++;
 
-            List<SubCategoryModel> list = _appDbContext.SubCategories
+            bool ascending = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
+
+            IQueryable<SubCategoryModel> query = _appDbContext.SubCategories.AsQueryable();
+
+            switch (sortField.ToLower())
+            {
+                case "subcatname":
+                    query = ascending ? query.OrderBy(p => p.subCatName) : query.OrderByDescending(p => p.subCatName);
+                    break;
+                case "subcatcode":
+                    query = ascending ? query.OrderBy(p => p.subCatCode) : query.OrderByDescending(p => p.subCatCode);
+                    break;
+                default:
+                    query = ascending ? query.OrderBy(p => p.subCatName) : query.OrderByDescending(p => p.subCatName);
+                    break;
+            }
+
+            List<SubCategoryModel> list = query
                 .Include(s => s.Category)
                 .Skip((pageNo - 1) * pageSize)
                 .Take(pageSize)
@@ -41,14 +57,68 @@ namespace posSystem.Controllers
                         .Select(c => c.catName)
                         .FirstOrDefault(), // Retrieve catName based on catCod
                 })
-                .ToList()!;
+                .ToList();
 
-            SubCategoryResponseModel response = new()!;
-            response.subCategoryData = list;
-            response.pageSize = pageSize;
-            response.pageCount = pageCount;
-            response.pageNo = pageNo;
-            return View("SubCategoryIndex", response);
+            return (list, pageCount);
+        }
+
+
+        [ActionName("Index")]
+        public IActionResult SubCategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "catName", string sortOrder = "asc")
+        {
+            try
+            {
+                var (list, pageCount) = GetSorted(pageNo, pageSize, sortField, sortOrder);
+
+                SubCategoryResponseModel response = new()
+                {
+                    subCategoryData = list,
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo,
+                    sortField = sortField,
+                    sortOrder = sortOrder
+                };
+
+                return View("SubCategoryIndex", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("SubCategoryIndex");
+            }
+
+            //int rowCount = _appDbContext.SubCategories.Count();
+            //int pageCount = rowCount / pageSize;
+
+            //if (rowCount % pageSize > 0)
+            //    pageCount++;
+
+            //List<SubCategoryModel> list = _appDbContext.SubCategories
+            //    .Include(s => s.Category)
+            //    .Skip((pageNo - 1) * pageSize)
+            //    .Take(pageSize)
+            //    .Select(s => new SubCategoryModel
+            //    {
+            //        subCId = s.subCId,
+            //        subCatName = s.subCatName,
+            //        subCatCode = s.subCatCode,
+            //        subCatCreateAt = s.subCatCreateAt,
+            //        subCatUpdateAt = s.subCatUpdateAt,
+            //        subCatUpdateCount = s.subCatUpdateCount,
+            //        catName = _appDbContext.Categories
+            //            .Where(c => c.catCode == s.catCode || c.catId == s.catId)
+            //            .Select(c => c.catName)
+            //            .FirstOrDefault(), // Retrieve catName based on catCod
+            //    })
+            //    .ToList()!;
+
+            //SubCategoryResponseModel response = new()!;
+            //response.subCategoryData = list;
+            //response.pageSize = pageSize;
+            //response.pageCount = pageCount;
+            //response.pageNo = pageNo;
+            //return View("SubCategoryIndex", response);
         }
 
         [ActionName("Create")]

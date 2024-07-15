@@ -1,74 +1,84 @@
 ﻿@model CategoryModel
 
-@{
-    // Layout = "~/Views/Shared/_MainLayout.cshtml";
-}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h2 class="card-title mb-4">Update Category</h2>
 
-<div class="mb-3">
-    <label for="Category Name" class="form-label">Category Name</label>
-    <input type="text" class="form-control" id="catName" name="catName" placeholder="" value="@Model.catName">
-</div>
+                    <div class="mb-3">
+                        <label for="catName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="catName" name="catName" placeholder="Enter category name" value="@Model.catName">
+                    </div>
 
-<div class="mb-3">
-    <label for="Category Code" class="form-label">Category Code</label>
-    <input type="text" class="form-control" id="catCode" name="catCode" placeholder="" value="@Model.catCode">
-</div>
+                    <div class="mb-3">
+                        <label for="catCode" class="form-label">Category Code</label>
+                        <input type="text" class="form-control" id="catCode" name="catCode" placeholder="Enter category code" value="@Model.catCode">
+                    </div>
 
-<div class="mb-3">
-    <label for="Category Description" class="form-label">Category Description</label>
-    <input type="text" class="form-control" id="catDescription" name="catDescription" placeholder="" value="@Model.catDescription">
-</div>
+                    <div class="mb-3">
+                        <label for="catDescription" class="form-label">Category Description</label>
+                        <textarea class="form-control" id="catDescription" name="catDescription" rows="3" placeholder="Enter category description">@Model.catDescription</textarea>
+                    </div>
 
-<div>
-    <a href="/Category" class="btn btn-dark">Back</a>
-    <button type="button" id="btnUpdate" class="btn btn-success">Update</button>
+                    <div class="d-grid gap-2">
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update Category</button>
+                        <a href="/Category" class="btn btn-dark mt-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
     <script>
-        $('#btnUpdate').click(function () {
-            //let catId = @Model.catId; // Ensure this is the correct value
-            let catName = $('#catName').val();
-            let catCode = $('#catCode').val();
-            let catDescription = $('#catDescription').val();
+        $(document).ready(function () {
+            $('#btnUpdate').click(function () {
+                let catId = @Model.catId; // Ensure this is the correct value
+                let catName = $('#catName').val();
+                let catCode = $('#catCode').val();
+                let catDescription = $('#catDescription').val();
 
-            let _reqModel = {
-                catName: catName,
-                catCode: catCode,
-                catDescription: catDescription
-            };
+                let _reqModel = {
+                    catId: catId,
+                    catName: catName,
+                    catCode: catCode,
+                    catDescription: catDescription
+                };
 
-            $.ajax({
-                url: "/Category/Update?catId=" + @Model.catId,
-                data: _reqModel,
-                type: "POST",
-                dataType: "json",
-                success: function (result) {
-                    console.log(result);
-                    if (result.IsSuccess) {
-                        Swal.fire({
-                            title: "Success!",
-                            text: result.responeMessage,
-                            icon: "success",
-                        }).then((result) => {
-                            if (result.isConfirmed) {
-                                location.href = "/Category";
-                            }
-                        });
+                $.ajax({
+                    url: "/Category/Update?catId=" + catId,
+                    data: _reqModel,
+                    type: "POST",
+                    dataType: "json",
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Category";
+                                }
+                            });
+                        }
+                        else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
                     }
-                    else {
-                        Swal.fire({
-                            title: "Error!",
-                            text: result.responeMessage,
-                            icon: "error"
-                        });
-                    }
-                },
-                error: function (errormessage) {
-                    console.log(errormessage.responseText);
-                }
+                });
             });
         });
-
     </script>
 }

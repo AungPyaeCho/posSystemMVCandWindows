@@ -1,53 +1,58 @@
 ﻿@model ItemResponseModel
 
 @{
-    // Layout = "~/Views/Shared/_IndexLayout.cshtml";
     ViewData["Title"] = "Item";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
     int _pageSize = Model.pageSize;
 
-    string _pageURL(int _pageNo)
+    string _sortField = Model.sortField ?? "itemCode";
+    string _sortOrder = Model.sortOrder ?? "asc";
+
+    string _pageURL(int _pageNo, string _sortField, string _sortOrder)
     {
-        return $"/Item/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/Item/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
     }
 }
 
-
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Items</h1>
-</div>
-
-<div lass="d-sm-flex align-items-center justify-content-between mb-4">
     <a href="/Item/Create" class="btn btn-outline-success">Add Item</a>
 </div>
 
-<di>
-    <p></p>
-</di>
-
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Item Code</th>
-            <th scope="col">Item Name</th>
-            <th scope="col">Item Price</th>
-            <th scope="col">Stock</th>
-            <th scope="col">Solded</th>
-            <th scope="col">Reaming</th>
-            <th scope="col">Category</th>
-            <th scope="col">Sub Category</th>
+            @foreach (var column in new[] {
+            new { Field = "itemCode", Title = "Item Code" },
+            new { Field = "itemName", Title = "Item Name" },
+            new { Field = "itemSalePrice", Title = "Price" },
+            new { Field = "itemStock", Title = "Stock" },
+            new { Field = "itemSold", Title = "Item Sold" },
+            new { Field = "itemRemainStock", Title = "Remain Stock" },
+            new { Field = "itemCategory", Title = "Category" },
+            new { Field = "itemSubCategory", Title = "Sub Category" },
+            new { Field = "itemBrand", Title = "Brand" },
+            new { Field = "itemSubBrnad", Title = "Sub Brand" }
+            })
+            {
+                <th scope="col">
+                    <a href="@_pageURL(_pageNo, column.Field, _sortOrder == "asc" ? "desc" : "asc")">
+                        @column.Title @(_sortField == column.Field ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                    </a>
+                </th>
+            }
             <th scope="col">Item Barcode</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Updated At</th>
-            <th scope="col">Item Inputed By</th>
+            <th scope="col">Create Date</th>
+            <th scope="col">Update Date</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
+
     <tbody>
-        @foreach (ItemModel item in Model.itemData)
+        @foreach (var item in Model.itemData)
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
@@ -59,112 +64,66 @@
                 <td>@item.itemRemainStock</td>
                 <td>@item.itemCategory</td>
                 <td>@item.itemSubCategory</td>
+                <td>@item.itemBrand</td>
+                <td>@item.itemSubBrnad</td>
                 <td>@item.itemBarcode</td>
                 <td>@item.itemCreateAt</td>
                 <td>@item.itemUpdateAt</td>
-                <td>@item.creatorName</td>
                 <td>
-                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.itemId">Delete</button>
+                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning btn-sm">Edit</a>
+                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.itemId">Delete</button>
                 </td>
             </tr>
         }
     </tbody>
+
     <tfoot>
         <tr>
-            <td>
-                <nav aria-label="...">
-                    <ul class="pagination">
-                        @if (_pageNo == 1)
+            <td colspan="15">
+                <nav aria-label="Page navigation">
+                    <ul class="pagination justify-content-center">
+                        @if (_pageNo > 1)
                         {
-                            <li class="page-item disabled">
-                                <a class="page-link">Previous</a>
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo - 1, _sortField, _sortOrder)" aria-label="Previous">
+                                    <span aria-hidden="true">&laquo;</span>
+                                </a>
                             </li>
                         }
                         else
                         {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo - 1)">Previous</a></li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&laquo;</span>
+                            </li>
                         }
 
-                        @if (_pageCount <= 9)
+                        @for (int i = 1; i <= _pageCount; i++)
                         {
-                            for (int i = 1; i <= _pageCount; i++)
+                            if (i == _pageNo)
                             {
-                                if (_pageNo == i)
-                                {
-                                    <li class="page-item active" aria-current="page">
-                                        <a class="page-link" href="@_pageURL(i)">@i</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                }
-                            }
-                        }
-                        else
-                        {
-                            if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
-                            {
-                                for (int i = 1; i <= 4; i++)
-                                {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
-                                }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                for (int i = _pageCount - 3; i <= _pageCount; i++)
-                                {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
-                                }
+                                <li class="page-item active">
+                                    <span class="page-link">@i</span>
+                                </li>
                             }
                             else
                             {
-                                <li class="page-item"><a class="page-link" href="@_pageURL(1)">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
-                                {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
-                                }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                <li class="page-item"><a class="page-link" href="@_pageURL(_pageCount)">@_pageCount</a></li>
+                                <li class="page-item"><a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a></li>
                             }
                         }
 
-                        @if (_pageNo == _pageCount)
+                        @if (_pageNo < _pageCount)
                         {
-                            <li class="page-item disabled">
-                                <a class="page-link">Next</a>
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo + 1, _sortField, _sortOrder)" aria-label="Next">
+                                    <span aria-hidden="true">&raquo;</span>
+                                </a>
                             </li>
                         }
                         else
                         {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo + 1)">Next</a></li>
+                            <li class="page-item disabled">
+                                <span class="page-link">&raquo;</span>
+                            </li>
                         }
                     </ul>
                 </nav>
@@ -206,7 +165,7 @@
                 dataType: "json",
                 success: function (result) {
                     console.log(result);
-                    if (result.IsSuccess) {
+                    if (result.isSuccess) {
                         Swal.fire({
                             title: "Deleted!",
                             text: result.responeMessage,
@@ -234,4 +193,3 @@
         }
     </script>
 }
-

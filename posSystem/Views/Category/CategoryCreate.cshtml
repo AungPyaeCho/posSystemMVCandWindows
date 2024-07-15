@@ -1,54 +1,70 @@
-﻿
-@{
+﻿@{
+    
 }
 
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Add Category</h5>
 
-<div class="mb-3">
-    <label for="Sub Category Name" class="form-label">Category Name</label>
-    <input type="text" class="form-control" id="catName" name="catName" placeholder="">
-</div>
+                    <div class="mb-3">
+                        <label for="catName" class="form-label">Category Name</label>
+                        <input type="text" class="form-control" id="catName" name="catName" placeholder="Enter category name">
+                    </div>
 
-<div class="mb-3">
-    <label for="Category Code" class="form-label">Category Code</label>
-    <input type="text" class="form-control" id="catCode" name="catCode" placeholder="">
-</div>
+                    <div class="mb-3">
+                        <label for="catCode" class="form-label">Category Code</label>
+                        <input type="text" class="form-control" id="catCode" name="catCode" placeholder="Enter category code">
+                    </div>
 
-<div class="mb-3">
-    <label for="Category Description" class="form-label">Category Description</label>
-    <input type="text" class="form-control" id="catDescription" name="catDescription" placeholder="">
-</div>
+                    <div class="mb-3">
+                        <label for="catDescription" class="form-label">Category Description</label>
+                        <textarea class="form-control" id="catDescription" name="catDescription" rows="3" placeholder="Enter category description"></textarea>
+                    </div>
 
-<div>
-    <a href="/Author" class="btn btn-dark">Back</a>
-    <button type="button" id="btnSave" class="btn btn-success">Save Category</button>
+                    <div class="mb-3">
+                        <label for="creatorName" class="form-label">Creator Name</label>
+                        <input type="text" class="form-control" id="creatorName" name="creatorName" placeholder="Enter creator name">
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" id="btnSaveCategory" class="btn btn-success">Save Category</button>
+                        <a href="/Category" class="btn btn-dark mt-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 @section scripts {
     <script>
-        $('#btnSave').click(function () {
+        $('#btnSaveCategory').click(function () {
             let catName = $('#catName').val();
             let catCode = $('#catCode').val();
             let catDescription = $('#catDescription').val();
+            let creatorName = $('#creatorName').val();
 
             let _reqModel = {
                 catName: catName,
                 catCode: catCode,
                 catDescription: catDescription,
+                creatorName: creatorName
             };
 
             $.ajax({
                 url: "/Category/Save",
                 data: { categoryModel: _reqModel },
                 type: "POST",
-                //json.spitfy သုံးရင်လို
-                //contentType: "application/json;charset=utf-8",
                 dataType: "json",
                 success: function (result) {
                     console.log(result);
                     if (result.IsSuccess) {
                         Swal.fire({
                             title: "Success!",
-                            text: result.responeMessage,
+                            text: result.responseMessage,
                             icon: "success",
                         }).then((result) => {
                             if (result.isConfirmed) {
@@ -59,7 +75,7 @@
                     else {
                         Swal.fire({
                             title: "Error!",
-                            text: result.responeMessage,
+                            text: result.responseMessage,
                             icon: "error"
                         });
                     }
@@ -68,6 +84,6 @@
                     console.log(errormessage.responseText);
                 }
             });
-        })
+        });
     </script>
 }

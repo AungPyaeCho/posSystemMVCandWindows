@@ -7,37 +7,40 @@
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
     int _pageSize = Model.pageSize;
+    string _sortField = Model.sortField ?? "Id";
+    string _sortOrder = Model.sortOrder ?? "asc";
 
-    string _pageURL(int _pageNo)
+    string _pageURL(int _pageNo, string _sortField, string _sortOrder)
     {
-        return $"/SubCategory/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/SubCategory/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
     }
 }
 
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Sub Category</h1>
-</div>
-
-<div lass="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-4">Sub Category</h1>
     <a href="/SubCategory/Create" class="btn btn-outline-success">Add Sub Category</a>
 </div>
 
-<di>
-    <p></p>
-</di>
-
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Sub Category Name</th>
-            <th scope="col">Sub Category Code</th>
+            <th scope="col">
+                <a href="@_pageURL(_pageNo, "subCatName", _sortOrder == "asc" ? "desc" : "asc")">
+                    Sub Category Name @(_sortField == "subCatName" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="@_pageURL(_pageNo, "subCatCode", _sortOrder == "asc" ? "desc" : "asc")">
+                    Sub Category Code @(_sortField == "subCatCode" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
             <th scope="col">Category Name</th>
             <th scope="col">Create Date</th>
             <th scope="col">Update Date</th>
             <th scope="col">Update Count</th>
-            <td scope="col">Action</td>
+            <th scope="col">Action</th>
         </tr>
     </thead>
     <tbody>
@@ -61,9 +64,9 @@
 
     <tfoot>
         <tr>
-            <td>
-                <nav aria-label="...">
-                    <ul class="pagination">
+            <td colspan="8">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
                         @if (_pageNo == 1)
                         {
                             <li class="page-item disabled">
@@ -72,23 +75,18 @@
                         }
                         else
                         {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo - 1)">Previous</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo - 1, _sortField, _sortOrder)">Previous</a>
+                            </li>
                         }
 
                         @if (_pageCount <= 9)
                         {
                             for (int i = 1; i <= _pageCount; i++)
                             {
-                                if (_pageNo == i)
-                                {
-                                    <li class="page-item active" aria-current="page">
-                                        <a class="page-link" href="@_pageURL(i)">@i</a>
-                                    </li>
-                                }
-                                else
-                                {
-                                    <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                }
+                                <li class="page-item @(i == _pageNo ? "active" : "")">
+                                    <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                </li>
                             }
                         }
                         else
@@ -97,51 +95,34 @@
                             {
                                 for (int i = 1; i <= 4; i++)
                                 {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
                                 }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link">...</a></li>
                                 for (int i = _pageCount - 3; i <= _pageCount; i++)
                                 {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
                                 }
                             }
                             else
                             {
-                                <li class="page-item"><a class="page-link" href="@_pageURL(1)">1</a></li>
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(1, _sortField, _sortOrder)">1</a>
+                                </li>
+                                <li class="page-item"><a class="page-link">...</a></li>
                                 for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
                                 {
-                                    if (_pageNo == i)
-                                    {
-                                        <li class="page-item active" aria-current="page">
-                                            <a class="page-link" href="@_pageURL(i)">@i</a>
-                                        </li>
-                                    }
-                                    else
-                                    {
-                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
-                                    }
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
                                 }
-                                <li class="page-item"><a class="page-link" href="#">...</a></li>
-                                <li class="page-item"><a class="page-link" href="@_pageURL(_pageCount)">@_pageCount</a></li>
+                                <li class="page-item"><a class="page-link">...</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(_pageCount, _sortField, _sortOrder)">@_pageCount</a>
+                                </li>
                             }
                         }
 
@@ -153,7 +134,9 @@
                         }
                         else
                         {
-                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo + 1)">Next</a></li>
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo + 1, _sortField, _sortOrder)">Next</a>
+                            </li>
                         }
                     </ul>
                 </nav>

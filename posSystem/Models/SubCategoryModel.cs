@@ -29,6 +29,8 @@ namespace posSystem.Models
         public int pageNo { get; set; }
         public int pageSize { get; set; }
         public int pageCount { get; set; }
+        public string sortField { get; set; }
+        public string sortOrder { get; set; }
 
         public bool isEndofpage => pageNo >= pageCount;
         public List<SubCategoryModel> subCategoryData { get; set; }

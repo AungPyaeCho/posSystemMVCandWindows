@@ -1,4 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Http;
+using System.Threading.Tasks;
+using System;
 
 namespace posSystem.Middlewares
 {
@@ -8,7 +11,7 @@ namespace posSystem.Middlewares
 
         public CookieMiddleware(RequestDelegate next)
         {
-            _next = next; 
+            _next = next;
         }
 
         public async Task InvokeAsync(HttpContext httpContext, AppDbContext appDbContext)
@@ -24,34 +27,32 @@ namespace posSystem.Middlewares
                 goto result;
             }
 
-            string adminId = cookies["AdminId"]!.ToString();
-            string sessionId = cookies["SessionId"]!.ToString();
+            string adminId = cookies["AdminId"]!;
+            string sessionId = cookies["SessionId"]!;
 
             var login = await appDbContext.LoginDetails.FirstOrDefaultAsync(x => x.sessionId == sessionId && x.adminId == adminId);
-            if(login is null)
+            if (login is null)
             {
                 httpContext.Response.Redirect("/Login");
                 goto result;
             }
 
-            if(login.sessionExpired < DateTime.Now)
+            if (login.sessionExpired < DateTime.Now)
             {
                 httpContext.Response.Redirect("/Login");
                 goto result;
             }
 
-
-            result:  
+        result:
             await _next(httpContext);
         }
     }
 
     public static class CookieMiddlewareExtensions
     {
-        public static IApplicationBuilder UseCookieMiddleware(
-            this IApplicationBuilder buulder)
+        public static IApplicationBuilder UseCookieMiddleware(this IApplicationBuilder builder)
         {
-            return buulder.UseMiddleware<CookieMiddleware>();
+            return builder.UseMiddleware<CookieMiddleware>();
         }
     }
 }
