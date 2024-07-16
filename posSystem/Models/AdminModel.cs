@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using posSystem.Middlewares;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using static posSystem.Controllers.AdminController;

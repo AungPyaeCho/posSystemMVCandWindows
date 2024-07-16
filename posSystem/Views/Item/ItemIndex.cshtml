@@ -18,7 +18,7 @@
 
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Items</h1>
-    <a href="/Item/Create" class="btn btn-outline-success">Add Item</a>
+    <a href="/Item/Create" class="btn btn-success">Add Item</a>
 </div>
 
 <table class="table table-hover">
@@ -165,15 +165,36 @@
                 dataType: "json",
                 success: function (result) {
                     console.log(result);
-                    if (result.isSuccess) {
+                    if (result.IsSuccess) {
+                        let timerInterval;
                         Swal.fire({
-                            title: "Deleted!",
-                            text: result.responeMessage,
-                            icon: "success"
-                        }).then(() => {
-                            location.reload(); // Refresh page after deletion
+                            title: "Deleting...",
+                            html: "Please wait, saving in <b></b> milliseconds.",
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getHtmlContainer().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = Swal.getTimerLeft();
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: result.responseMessage,
+                                    icon: "success",
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }
                         });
-                    } else {
+                    }
+                    else {
                         Swal.fire({
                             title: "Error!",
                             text: result.responeMessage,

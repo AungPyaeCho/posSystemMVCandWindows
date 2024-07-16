@@ -15,6 +15,14 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 }, ServiceLifetime.Transient, ServiceLifetime.Transient);
 
+builder.Services.AddSession(options =>
+{
+    options.Cookie.Name = ".YourApp.Session";
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+    options.Cookie.HttpOnly = true;
+    options.Cookie.IsEssential = true;
+});
+builder.Services.AddHttpContextAccessor();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -26,6 +34,8 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
+
+app.UseSession(); // Use session middleware
 
 app.UseCookieMiddleware();
 

@@ -66,13 +66,33 @@
                     success: function (result) {
                         console.log(result);
                         if (result.IsSuccess) {
+                            let timerInterval;
                             Swal.fire({
-                                title: "Success!",
-                                text: result.responseMessage,
-                                icon: "success",
+                                title: "Updating...",
+                                html: "Please wait, saving in <b></b> milliseconds.",
+                                timer: 1000,
+                                timerProgressBar: true,
+                                didOpen: () => {
+                                    Swal.showLoading();
+                                    const timer = Swal.getHtmlContainer().querySelector("b");
+                                    timerInterval = setInterval(() => {
+                                        timer.textContent = Swal.getTimerLeft();
+                                    }, 100);
+                                },
+                                willClose: () => {
+                                    clearInterval(timerInterval);
+                                }
                             }).then((result) => {
-                                if (result.isConfirmed) {
-                                    location.href = "/SubCategory";
+                                if (result.dismiss === Swal.DismissReason.timer) {
+                                    Swal.fire({
+                                        title: "Success!",
+                                        text: result.responseMessage,
+                                        icon: "success",
+                                    }).then((result) => {
+                                        if (result.isConfirmed) {
+                                            location.href = "/SubCategory";
+                                        }
+                                    });
                                 }
                             });
                         }

@@ -1,41 +1,35 @@
-﻿@model posSystem.Models.SubCategoryModel
-
-@{
-    var categories = ViewBag.Categories as List<CategoryModel>;
-}
+﻿@model BrandModel
 
 <div class="container mt-5">
     <div class="row justify-content-center">
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">Add SubCategory</h2>
+                    <h2 class="card-title mb-4">Update Brand</h2>
 
                     <div class="mb-3">
-                        <label for="subCatName" class="form-label">Sub Category Name</label>
-                        <input type="text" class="form-control" id="subCatName" name="subCatName" placeholder="Enter subcategory name">
+                        <label for="brandName" class="form-label">Brand Name</label>
+                        <input type="text" class="form-control" id="" name="" placeholder="Enter brand name" value="@Model.brandId">
                     </div>
 
                     <div class="mb-3">
-                        <label for="subCatCode" class="form-label">Sub Category Code</label>
-                        <input type="text" class="form-control" id="subCatCode" name="subCatCode" placeholder="Enter subcategory code">
-                        
+                        <label for="brandName" class="form-label">Brand Name</label>
+                        <input type="text" class="form-control" id="brandName" name="brandName" placeholder="Enter brand name" value="@Model.brandName">
                     </div>
 
                     <div class="mb-3">
-                        <label for="catId" class="form-label">Category</label>
-                        <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a category</option>
-                            @foreach (var category in categories)
-                            {
-                                <option value="@category.catId">@category.catName</option>
-                            }
-                        </select>
+                        <label for="brandCode" class="form-label">Brand Code</label>
+                        <input type="text" class="form-control" id="brandCode" name="brandCode" placeholder="Enter category code" value="@Model.brandCode">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="brandDescription" class="form-label">Category Description</label>
+                        <textarea class="form-control" id="brandDescription" name="brandDescription" rows="3" placeholder="Enter category description">@Model.brandDescription</textarea>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="button" id="btnSave" class="btn btn-success">Save SubCategory</button>
-                        <a href="/SubCategory" class="btn btn-dark mt-2">Back</a>
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update Brand</button>
+                        <a href="/Brand" class="btn btn-dark mt-2">Back</a>
                     </div>
                 </div>
             </div>
@@ -44,23 +38,24 @@
 </div>
 
 @section scripts {
-    
     <script>
         $(document).ready(function () {
-            $('#btnSave').click(function () {
-                let subCatName = $('#subCatName').val();
-                let subCatCode = $('#subCatCode').val();
-                let catId = $('#catId').val();
+            $('#btnUpdate').click(function () {
+                let brandId = @Model.brandId; // Ensure this is the correct value
+                let brandName = $('#brandName').val();
+                let brandCode = $('#brandCode').val();
+                let brandDescription = $('#brandDescription').val();
 
                 let _reqModel = {
-                    subCatName: subCatName,
-                    subCatCode: subCatCode,
-                    catId: catId
+                    brandId: brandId,
+                    brandName: brandName,
+                    brandCode: brandCode,
+                    brandDescription: brandDescription
                 };
 
                 $.ajax({
-                    url: "/SubCategory/Save",
-                    data: { subCategoryModel: _reqModel },
+                    url: "/Brand/Update/" + brandId,
+                    data: _reqModel,
                     type: "POST",
                     dataType: "json",
                     success: function (result) {
@@ -68,7 +63,7 @@
                         if (result.IsSuccess) {
                             let timerInterval;
                             Swal.fire({
-                                title: "Saving...",
+                                title: "Updating...",
                                 html: "Please wait, saving in <b></b> milliseconds.",
                                 timer: 1000,
                                 timerProgressBar: true,
@@ -90,17 +85,10 @@
                                         icon: "success",
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            location.href = "/SubCategory";
+                                            location.href = "/Brand";
                                         }
                                     });
                                 }
-                            });
-                        }
-                        else {
-                            Swal.fire({
-                                title: "Error!",
-                                text: result.responseMessage,
-                                icon: "error"
                             });
                         }
                     },

@@ -47,8 +47,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "4dc7d508-b960-4edf-9103-b0ba83af4bbb",
-                            adminCreateAt = "7/15/2024 2:05:35 PM",
+                            id = "4f7fcd56-644a-41f2-8608-914d4318a0c5",
+                            adminCreateAt = "7/16/2024 10:33:34 AM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -263,6 +263,10 @@ namespace posSystem.Migrations
 
                     b.Property<string>("adminId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("adminName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("logOutAt")
                         .HasColumnType("nvarchar(max)");

@@ -1,8 +1,7 @@
-﻿@model SubCategoryResponseModel
+﻿@model BrandResponseModel
 
 @{
-    // Layout = "~/Views/Shared/_IndexLayout.cshtml";
-    ViewData["Title"] = "SubCategory";
+    ViewData["Title"] = "Brand";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
@@ -12,14 +11,13 @@
 
     string _pageURL(int _pageNo, string _sortField, string _sortOrder)
     {
-        return $"/SubCategory/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
+        return $"/Brand/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
     }
 }
 
-
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-4">Sub Category</h1>
-    <a href="/SubCategory/Create" class="btn btn-success">Add Sub Category</a>
+    <h1 class="h3 mb-4">Brand</h1>
+    <a href="/Brand/Create" class="btn btn-success">Add Brand</a>
 </div>
 
 <table class="table table-hover">
@@ -27,36 +25,37 @@
         <tr>
             <th scope="col">#</th>
             <th scope="col">
-                <a href="@_pageURL(_pageNo, "subCatName", _sortOrder == "asc" ? "desc" : "asc")">
-                    Sub Category Name @(_sortField == "subCatName" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                <a href="@_pageURL(_pageNo, "brandName", _sortOrder == "asc" ? "desc" : "asc")">
+                    Brand Name @(_sortField == "brandName" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
                 </a>
             </th>
             <th scope="col">
-                <a href="@_pageURL(_pageNo, "subCatCode", _sortOrder == "asc" ? "desc" : "asc")">
-                    Sub Category Code @(_sortField == "subCatCode" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                <a href="@_pageURL(_pageNo, "brandName", _sortOrder == "asc" ? "desc" : "asc")">
+                    Brand Code @(_sortField == "brandCode" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
                 </a>
             </th>
-            <th scope="col">Category Name</th>
+            <th scope="col">Brand Description</th>
             <th scope="col">Create Date</th>
             <th scope="col">Update Date</th>
             <th scope="col">Update Count</th>
             <th scope="col">Action</th>
         </tr>
     </thead>
+
     <tbody>
-        @foreach (SubCategoryModel item in Model.subCategoryData)
+        @foreach (BrandModel item in Model.brandData)
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.subCatName</td>
-                <td>@item.subCatCode</td>
-                <td>@item.catName</td>
-                <td>@item.subCatCreateAt</td>
-                <td>@item.subCatUpdateAt</td>
-                <td>@item.subCatUpdateCount</td>
+                <td>@item.brandName</td>
+                <td>@item.brandCode</td>
+                <td>@item.brandDescription</td>
+                <td>@item.brandCreatedAt</td>
+                <td>@item.brandUpdatedAt</td>
+                <td>@item.brandUpdateCount</td>
                 <td>
-                    <a href="/SubCategory/Edit?subCid=@item.subCId" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.subCId">Delete</button>
+                    <a href="/Brand/Edit/@item.brandId" class="btn btn-warning">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.brandId">Delete</button>
                 </td>
             </tr>
         }
@@ -148,8 +147,9 @@
 @section scripts {
     <script>
         // Function to handle delete operation
-        $(document).on('click', '.btn-delete', function () {
-            let id = $(this).data('id');
+        $(document).on('click', '.btn-delete', function (event) {
+            event.preventDefault(); 
+            let id = $(this).data('id'); // Use data('id') to match data-id attribute
             Swal.fire({
                 title: "Confirm?",
                 text: "You won't be able to revert this!",
@@ -166,13 +166,13 @@
         });
 
         // AJAX function to delete data
-        function deleteData(subCId) {
+        function deleteData(brandId) {
             let _reqModel = {
-                subCId: subCId
+                brandId: brandId
             };
 
             $.ajax({
-                url: `/SubCategory/Delete?subCId=${subCId}`,
+                url: "/Brand/Delete/" + brandId,
                 data: _reqModel,
                 type: "POST",
                 dataType: "json",
@@ -206,8 +206,7 @@
                                 });
                             }
                         });
-                    } 
-                    else {
+                    } else {
                         Swal.fire({
                             title: "Error!",
                             text: result.responeMessage,
@@ -226,5 +225,5 @@
             });
         }
     </script>
-}
 
+}

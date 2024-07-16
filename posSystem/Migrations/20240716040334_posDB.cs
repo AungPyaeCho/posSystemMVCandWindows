@@ -152,6 +152,7 @@ namespace posSystem.Migrations
                     ldId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     adminId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     adminEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    adminName = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     sessionId = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     sessionExpired = table.Column<DateTime>(type: "datetime2", nullable: true),
                     loginAt = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -336,6 +337,11 @@ namespace posSystem.Migrations
                         principalTable: "tblSale",
                         principalColumn: "saleId");
                 });
+
+            migrationBuilder.InsertData(
+                table: "tblAdmin",
+                columns: new[] { "id", "adminCreateAt", "adminEmail", "adminName", "adminPassword" },
+                values: new object[] { "4f7fcd56-644a-41f2-8608-914d4318a0c5", "7/16/2024 10:33:34 AM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_brandId",

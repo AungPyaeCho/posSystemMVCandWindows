@@ -11,6 +11,7 @@ namespace posSystem.Models
         public string? ldId { get; set; }
         public string? adminId { get; set; }
         public string? adminEmail { get; set; }
+        public string adminName { get; set; }
         public string? sessionId { get; set; }
         public DateTime? sessionExpired { get; set; }
         public string? loginAt { get; set; }

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Text;
 
-namespace posSystem
+namespace posSystem.Middlewares
 {
     public static class SimpleEncryptionHelper
     {

@@ -26,28 +26,55 @@ namespace posSystem.Controllers
         {
             adminModel.SetEncryptedPassword(adminModel.adminPassword);
             var encPsw = adminModel.adminPassword;
-            var item = _appDbContext.Admin.FirstOrDefault(x => x.adminEmail == adminModel.adminEmail && x.adminPassword == encPsw);
+            var item = _appDbContext.Admin.FirstOrDefault(x => x.adminEmail == adminModel.adminEmail && x.adminPassword == encPsw)!;
             if (item is null) return View();
 
             string sessionId = Guid.NewGuid().ToString();
-            DateTime sessionExpired = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddMinutes(360);
+            DateTime sessionExpired = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddMinutes(60);
 
-            CookieOptions cookie = new CookieOptions();
-            cookie.Expires = sessionExpired;
-            Response.Cookies.Append("AdminId", item.id, cookie);
-            Response.Cookies.Append("SessionId", sessionId, cookie);
+            CookieOptions cookieOptions = new CookieOptions
+            {
+                Expires = sessionExpired,
+                IsEssential = true, // Ensure cookies are essential for session management
+                SameSite = SameSiteMode.Strict,
+                HttpOnly = true,
+                Secure = true, // Ensure cookies are sent only over HTTPS if available
+            };
+
+            Response.Cookies.Append("AdminId", item.id, cookieOptions);
+            Response.Cookies.Append("SessionId", sessionId, cookieOptions);
+            Response.Cookies.Append("AdminName", item.adminName, cookieOptions);
+
+            HttpContext.Session.SetString("AdminId", item.id);
+            HttpContext.Session.SetString("AdminName", item.adminName);
+
+
 
             await _appDbContext.LoginDetails.AddAsync(new LoginDetailModel
             {
                 ldId = Guid.NewGuid().ToString(),
                 adminId = item.id,
                 adminEmail = item.adminEmail,
+                adminName = item.adminName,
                 sessionId = sessionId,
                 sessionExpired = sessionExpired,
                 loginAt = DateTime.Now.ToString("yyyy-MM-dd HH:mm:ss")
             });
+
             await _appDbContext.SaveChangesAsync();
             return Redirect("/Home");
+        }
+
+        [HttpPost]
+        public IActionResult Logout()
+        {
+            // Clear cookies when logging out
+            Response.Cookies.Delete("AdminId");
+            Response.Cookies.Delete("SessionId");
+
+            // Optionally, clear session data or log out from identity system if used
+
+            return RedirectToAction("Index", "Login"); // Redirect to login page after logout
         }
     }
 }

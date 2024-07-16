@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using System.Threading.Tasks;
 using System;
+using Azure.Core;
 
 namespace posSystem.Middlewares
 {
@@ -29,6 +30,7 @@ namespace posSystem.Middlewares
 
             string adminId = cookies["AdminId"]!;
             string sessionId = cookies["SessionId"]!;
+            string adminName = cookies["AdminName"]!;
 
             var login = await appDbContext.LoginDetails.FirstOrDefaultAsync(x => x.sessionId == sessionId && x.adminId == adminId);
             if (login is null)

@@ -1,4 +1,7 @@
-﻿<!doctype html>
+﻿@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
+
+<!doctype html>
 <html class="no-js" lang="en">
 
 <head>
@@ -50,7 +53,8 @@
                     <div class="bg-white py-2 collapse-inner rounded">
                         <a class="collapse-item" asp-area="" asp-controller="Category" asp-action="Index">1. Category</a>
                         <a class="collapse-item" asp-area="" asp-controller="SubCategory" asp-action="Index">2. Sub Category</a>
-                        <a class="collapse-item" asp-area="" asp-controller="Item" asp-action="Index">3. Item</a>
+                        <a class="collapse-item" asp-area="" asp-controller="Brand" asp-action="Index">3. Brand</a>
+                        <a class="collapse-item" asp-area="" asp-controller="Item" asp-action="Index">5. Item</a>
                     </div>
                 </div>
             </li>
@@ -144,8 +148,11 @@
                         <!-- Nav Item - User Information -->
                         <li class="nav-item dropdown no-arrow">
                             <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 small">Valerie Luna</span>
-                                <img class="img-profile rounded-circle" src="https://source.unsplash.com/QAB-WJcbgJk/60x60">
+                                @{
+                                    var adminName = HttpContextAccessor.HttpContext.Session.GetString("AdminName") ?? HttpContextAccessor.HttpContext.Request.Cookies["AdminName"];
+                                }
+                                <span id="AdminName" class="mr-2 d-none d-lg-inline text-gray-600 small">@adminName</span>
+                                <img class="img-profile rounded-circle" src="/img/images.png">
                             </a>
                             <!-- Dropdown - User Information -->
                             <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
@@ -162,10 +169,11 @@
                                     Activity Log
                                 </a>
                                 <div class="dropdown-divider"></div>
-                                <a class="dropdown-item" href="#" data-toggle="modal" data-target="#logoutModal">
+                                <a class="dropdown-item" href="#" id="logoutLink">
                                     <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
                                     Logout
                                 </a>
+                                <form id="logoutForm" action="/Login/Logout" method="post" style="display: none;"></form>
                             </div>
                         </li>
 
@@ -257,6 +265,13 @@
 
     <!-- template script end here-->
     @* <script src="~/js/main.js"></script> *@
+    <script>
+        document.getElementById('logoutLink').addEventListener('click', function (event) {
+            event.preventDefault();
+            document.getElementById('logoutForm').submit();
+        });
+    </script>
+
     @await RenderSectionAsync("scripts", required: false)
 </body>
 

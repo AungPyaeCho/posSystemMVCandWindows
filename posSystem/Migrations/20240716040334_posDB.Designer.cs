@@ -12,7 +12,7 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240709092739_posDB")]
+    [Migration("20240716040334_posDB")]
     partial class posDB
     {
         /// <inheritdoc />
@@ -46,6 +46,16 @@ namespace posSystem.Migrations
                     b.HasKey("id");
 
                     b.ToTable("tblAdmin");
+
+                    b.HasData(
+                        new
+                        {
+                            id = "4f7fcd56-644a-41f2-8608-914d4318a0c5",
+                            adminCreateAt = "7/16/2024 10:33:34 AM",
+                            adminEmail = "admin@pos.com",
+                            adminName = "Default Admin",
+                            adminPassword = "QWRtaW5AMTIz"
+                        });
                 });
 
             modelBuilder.Entity("posSystem.Models.BrandModel", b =>
@@ -256,6 +266,10 @@ namespace posSystem.Migrations
 
                     b.Property<string>("adminId")
                         .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("adminName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("logOutAt")
                         .HasColumnType("nvarchar(max)");

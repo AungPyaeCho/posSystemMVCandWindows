@@ -11,20 +11,12 @@
         return $"/Admin/Index?pageNo={_pageNo}&pageSize={_pageSize}";
     }
 }
-
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Admin</h1>
+    <a href="/Admin/Create" class="btn btn-success">Add Admin</a>
 </div>
 
-<div lass="d-sm-flex align-items-center justify-content-between mb-4">
-    <a href="/Admin/Create" class="btn btn-outline-success">Add Admin</a>
-</div>
-
-<di>
-    <p></p>
-</di>
-
-<table class="table">
+<table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
@@ -54,9 +46,9 @@
 
     <tfoot>
         <tr>
-            <td>
-                <nav aria-label="...">
-                    <ul class="pagination">
+            <td colspan="8">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
                         @if (_pageNo == 1)
                         {
                             <li class="page-item disabled">

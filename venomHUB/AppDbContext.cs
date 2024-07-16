@@ -1,10 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using posSystem.Middlewares;
-using posSystem.Models;
 using System;
 using System.Collections.Generic;
 
-namespace posSystem
+namespace venomHUB
 {
     public class AppDbContext : DbContext
     {
