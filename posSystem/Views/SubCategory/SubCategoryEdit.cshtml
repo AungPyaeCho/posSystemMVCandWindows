@@ -1,7 +1,7 @@
-﻿@model posSystem.Models.SubCategoryModel
+﻿@model SubCategoryModel
 
 @{
-    var categories = ViewBag.Categories as List<posSystem.Models.CategoryModel>;
+    var categories = ViewBag.Categories as List<CategoryModel>;
 }
 
 <div class="container mt-5">
@@ -9,7 +9,7 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">Update SubCategory</h2>
+                    <h2 class="card-title mb-4">Update Sub-Category</h2>
 
                     <div class="mb-3">
                         <label for="subCatName" class="form-label">Sub Category Name</label>
@@ -33,7 +33,7 @@
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="button" id="btnUpdate" class="btn btn-success">Update</button>
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update Sub-Category</button>
                         <a href="/SubCategory" class="btn btn-dark mt-2">Back</a>
                     </div>
                 </div>

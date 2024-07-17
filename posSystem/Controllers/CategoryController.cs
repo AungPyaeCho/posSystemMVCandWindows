@@ -1,9 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using posSystem.Models;
-using System.Text;
-using System.Security.Cryptography;
-using Microsoft.VisualBasic;
-using Microsoft.EntityFrameworkCore;
+
 
 namespace posSystem.Controllers
 {
@@ -36,6 +33,9 @@ namespace posSystem.Controllers
                 case "catcode":
                     query = ascending ? query.OrderBy(p => p.catCode) : query.OrderByDescending(p => p.catCode);
                     break;
+                default:
+                    query = ascending ? query.OrderBy(p => p.catId) : query.OrderByDescending(p => p.catId);
+                    break;
             }
 
             List<CategoryModel> list = query
@@ -47,7 +47,7 @@ namespace posSystem.Controllers
         }
 
         [ActionName("Index")]
-        public IActionResult CategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "catName", string sortOrder = "asc")
+        public IActionResult CategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
         {
             try
             {

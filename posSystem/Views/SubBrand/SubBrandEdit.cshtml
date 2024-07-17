@@ -1,7 +1,7 @@
-﻿@model posSystem.Models.SubCategoryModel
+﻿@model SubBrandModel
 
 @{
-    var categories = ViewBag.Categories as List<CategoryModel>;
+    var brands = ViewBag.Brands as List<BrandModel>;
 }
 
 <div class="container mt-5">
@@ -9,33 +9,32 @@
         <div class="col-md-6">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">Add Sub-Category</h2>
+                    <h2 class="card-title mb-4">Update Sub-Brand</h2>
 
                     <div class="mb-3">
-                        <label for="subCatName" class="form-label">Sub Category Name</label>
-                        <input type="text" class="form-control" id="subCatName" name="subCatName" placeholder="Enter subcategory name">
+                        <label for="subBrandName" class="form-label">Sub Brand Name</label>
+                        <input type="text" class="form-control" id="subBrandName" name="subBrandName" placeholder="Enter subbrand name" value="@Model.subBrandName">
                     </div>
 
                     <div class="mb-3">
-                        <label for="subCatCode" class="form-label">Sub Category Code</label>
-                        <input type="text" class="form-control" id="subCatCode" name="subCatCode" placeholder="Enter subcategory code">
-                        
+                        <label for="subBrandCode" class="form-label">Sub Brand Code</label>
+                        <input type="text" class="form-control" id="subBrandCode" name="subBrandCode" placeholder="Enter subbrand code" value="@Model.subBrandCode">
                     </div>
 
                     <div class="mb-3">
-                        <label for="catId" class="form-label">Category</label>
-                        <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a Category</option>
-                            @foreach (var category in categories)
+                        <label for="brandId" class="form-label">Brand</label>
+                        <select class="form-control" id="brandId" name="brandId">
+                            <option value="">Select a Brand</option>
+                            @foreach (var brand in brands!)
                             {
-                                <option value="@category.catId">@category.catName</option>
+                                <option value="@brand.brandId">@brand.brandName</option>
                             }
                         </select>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="button" id="btnSave" class="btn btn-success">Save Sub-Category</button>
-                        <a href="/SubCategory" class="btn btn-dark mt-2">Back</a>
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update Sub-Brand</button>
+                        <a href="/SubBrand" class="btn btn-dark mt-2">Back</a>
                     </div>
                 </div>
             </div>
@@ -44,23 +43,24 @@
 </div>
 
 @section scripts {
-    
     <script>
         $(document).ready(function () {
-            $('#btnSave').click(function () {
-                let subCatName = $('#subCatName').val();
-                let subCatCode = $('#subCatCode').val();
-                let catId = $('#catId').val();
+            $('#btnUpdate').click(function () {
+                let subBId = '@Model.subBId'; // Ensure this is the correct value
+                let subBrandName = $('#subBrandName').val();
+                let subBrandCode = $('#subBrandCode').val();
+                let brandId = $('#brandId').val();
 
                 let _reqModel = {
-                    subCatName: subCatName,
-                    subCatCode: subCatCode,
-                    catId: catId
+                    subBId: subBId,
+                    subBrandName: subBrandName,
+                    subBrandCode: subBrandCode,
+                    brandId: brandId
                 };
 
                 $.ajax({
-                    url: "/SubCategory/Save",
-                    data: { subCategoryModel: _reqModel },
+                    url: "/SubBrand/Update?subBId=" + subBId,
+                    data: _reqModel,
                     type: "POST",
                     dataType: "json",
                     success: function (result) {
@@ -68,7 +68,7 @@
                         if (result.IsSuccess) {
                             let timerInterval;
                             Swal.fire({
-                                title: "Saving...",
+                                title: "Updating...",
                                 html: "Please wait, saving in <b></b> milliseconds.",
                                 timer: 1000,
                                 timerProgressBar: true,
@@ -90,7 +90,7 @@
                                         icon: "success",
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            location.href = "/SubCategory";
+                                            location.href = "/SubBrand";
                                         }
                                     });
                                 }

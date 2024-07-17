@@ -1,8 +1,10 @@
 ﻿@model ItemModel
 
 @{
-    var categories = ViewBag.Categories as List<CategoryModel>;
-    var subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
+    var _categories = ViewBag.Categories as List<CategoryModel>;
+    var _subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
+    var _brands = ViewBag.Brands as List<BrandModel>;
+    var _subBrands = ViewBag.SubBrands as List<SubBrandModel>;
 }
 
 <div class="container mt-5">
@@ -23,15 +25,25 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemPrice" class="form-label">Item Price</label>
-                        <input type="number" class="form-control" id="itemPrice" name="itemPrice" value="@Model.itemSalePrice">
+                        <label for="itemBuyPrice" class="form-label">Original Price</label>
+                        <input type="number" class="form-control" id="itemBuyPrice" name="itemBuyPrice" placeholder="Enter original price" value="@Model.itemBuyPrice">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemSalePrice" class="form-label">Item Sale Price</label>
+                        <input type="number" class="form-control" id="itemSalePrice" name="itemSalePrice" placeholder="Enter item sale price" value="@Model.itemSalePrice">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemWholeSalePrice" class="form-label">Item Whole Sale Price</label>
+                        <input type="number" class="form-control" id="itemWholeSalePrice" name="itemWholeSalePrice" placeholder="Enter item whoel sale price" value="@Model.itemWholeSalePrice">
                     </div>
 
                     <div class="mb-3">
                         <label for="Category" class="form-label">Category</label>
                         <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a category</option>
-                            @foreach (var category in categories!)
+                            <option value="">Select a Category</option>
+                            @foreach (var category in _categories)
                             {
                                 <option value="@category.catId">@category.catName</option>
                             }
@@ -41,14 +53,35 @@
                     <div class="mb-3">
                         <label for="Sub Category" class="form-label">SubCategory</label>
                         <select class="form-control" id="subCId" name="subCId">
-                            <option value="">Select a sub category</option>
-                            @foreach (var subCategory in subCategories!)
+                            <option value="">Select a Sub Category</option>
+                            @foreach (var subCategory in _subCategories)
                             {
                                 <option value="@subCategory.subCId">@subCategory.subCatName</option>
                             }
                         </select>
                     </div>
 
+                    <div class="mb-3">
+                        <label for="brandId" class="form-label">Brand</label>
+                        <select class="form-control" id="brandId" name="brandId">
+                            <option value="">Select a Brand</option>
+                            @foreach (var brand in _brands)
+                            {
+                                <option value="@brand.brandId">@brand.brandName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subBId" class="form-label">Sub Brand</label>
+                        <select class="form-control" id="subBId" name="subBId">
+                            <option value="">Select a Sub Brand</option>
+                            @foreach (var subBrand in _subBrands)
+                            {
+                                <option value="@subBrand.subBId">@subBrand.subBrandName</option>
+                            }
+                        </select>
+                    </div>
                     <div class="mb-3">
                         <label for="itemDescription" class="form-label">Item Description</label>
                         <textarea class="form-control" id="itemDescription" name="itemDescription">@Model.itemDescription</textarea>
@@ -86,9 +119,13 @@
                 let itemId = @Model.itemId;
                 let itemCode = $('#itemCode').val();
                 let itemName = $('#itemName').val();
-                let itemPrice = $('#itemPrice').val();
+                let itemBuyPrice = $('#itemBuyPrice').val();
+                let itemSalePrice = $('#itemSalePrice').val();
+                let itemWholeSalePrice = $('#itemWholeSalePrice').val();
                 let catId = $('#catId').val();
                 let subCId = $('#subCId').val();
+                let brandId = $('#brandId').val();
+                let subBId = $('#subBId').val();
                 let itemDescription = $('#itemDescription').val();
                 let itemBarcode = $('#itemBarcode').val();
                 let itemStock = $('#itemStock').val();
@@ -98,9 +135,13 @@
                     itemId: itemId,
                     itemCode: itemCode,
                     itemName: itemName,
-                    itemPrice: itemPrice,
+                    itemBuyPrice: itemBuyPrice,
+                    itemSalePrice: itemSalePrice,
+                    itemWholeSalePrice: itemWholeSalePrice,
                     catId: catId,
                     subCId: subCId,
+                    brandId: brandId,
+                    subBId: subBId,
                     itemDescription: itemDescription,
                     itemBarcode: itemBarcode,
                     itemStock: itemStock,

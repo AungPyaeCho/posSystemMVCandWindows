@@ -46,7 +46,7 @@ namespace posSystem.Controllers
 
 
         [ActionName("Index")]
-        public IActionResult BrandIndex(int pageNo = 1, int pageSize = 10, string sortField = "Id", string sortOrder = "asc")
+        public IActionResult BrandIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
         {
             try
             {

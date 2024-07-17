@@ -7,7 +7,7 @@
     int _pageCount = Model.pageCount;
     int _pageSize = Model.pageSize;
 
-    string _sortField = Model.sortField ?? "itemCode";
+    string _sortField = Model.sortField ?? "";
     string _sortOrder = Model.sortOrder ?? "asc";
 
     string _pageURL(int _pageNo, string _sortField, string _sortOrder)
@@ -21,14 +21,16 @@
     <a href="/Item/Create" class="btn btn-success">Add Item</a>
 </div>
 
-<table class="table table-hover">
-    <thead>
+<table class="table table-hover table-bordered">
+    <thead class="">
         <tr>
             <th scope="col">#</th>
             @foreach (var column in new[] {
             new { Field = "itemCode", Title = "Item Code" },
             new { Field = "itemName", Title = "Item Name" },
-            new { Field = "itemSalePrice", Title = "Price" },
+            new { Field = "itemBuyPrice", Title = "Original Price" },
+            new { Field = "itemSalePrice", Title = "Sale Price" },
+            new { Field = "itemWholeSalePrice", Title = "Whole Sale Price" },
             new { Field = "itemStock", Title = "Stock" },
             new { Field = "itemSold", Title = "Item Sold" },
             new { Field = "itemRemainStock", Title = "Remain Stock" },
@@ -38,9 +40,13 @@
             new { Field = "itemSubBrnad", Title = "Sub Brand" }
             })
             {
-                <th scope="col">
+                <th scope="col" class="sortable">
                     <a href="@_pageURL(_pageNo, column.Field, _sortOrder == "asc" ? "desc" : "asc")">
-                        @column.Title @(_sortField == column.Field ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                        @column.Title
+                        @if (!string.IsNullOrEmpty(_sortField) && _sortField == column.Field)
+                        {
+                            @(_sortOrder == "asc" ? "▲" : "▼")
+                        }
                     </a>
                 </th>
             }
@@ -51,6 +57,8 @@
         </tr>
     </thead>
 
+
+
     <tbody>
         @foreach (var item in Model.itemData)
         {
@@ -58,7 +66,9 @@
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
                 <td>@item.itemCode</td>
                 <td>@item.itemName</td>
+                <td>@item.itemBuyPrice</td>
                 <td>@item.itemSalePrice</td>
+                <td>@item.itemWholeSalePrice</td>
                 <td>@item.itemStock</td>
                 <td>@item.itemSold</td>
                 <td>@item.itemRemainStock</td>

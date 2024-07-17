@@ -1,8 +1,10 @@
 ﻿@model ItemModel
 
 @{
-    var categories = ViewBag.Categories as List<CategoryModel>;
-    var subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
+    var _categories = ViewBag.Categories as List<CategoryModel>;
+    var _subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
+    var _brands = ViewBag.Brands as List<BrandModel>;
+    var _subBrands = ViewBag.SubBrands as List<SubBrandModel>;
 }
 
 <div class="container mt-5">
@@ -23,15 +25,25 @@
                     </div>
 
                     <div class="mb-3">
-                        <label for="itemPrice" class="form-label">Item Price</label>
-                        <input type="number" class="form-control" id="itemPrice" name="itemPrice" placeholder="Enter item price">
+                        <label for="itemBuyPrice" class="form-label">Original Price</label>
+                        <input type="number" class="form-control" id="itemBuyPrice" name="itemBuyPrice" placeholder="Enter original price">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemSalePrice" class="form-label">Item Sale Price</label>
+                        <input type="number" class="form-control" id="itemSalePrice" name="itemSalePrice" placeholder="Enter item sale price">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="itemWholeSalePrice" class="form-label">Item Whole Sale Price</label>
+                        <input type="number" class="form-control" id="itemWholeSalePrice" name="itemWholeSalePrice" placeholder="Enter item whoel sale price">
                     </div>
 
                     <div class="mb-3">
                         <label for="catId" class="form-label">Category</label>
                         <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a category</option>
-                            @foreach (var category in categories!)
+                            <option value="">Select a Category</option>
+                            @foreach (var category in _categories)
                             {
                                 <option value="@category.catId">@category.catName</option>
                             }
@@ -41,10 +53,32 @@
                     <div class="mb-3">
                         <label for="subCId" class="form-label">Sub Category</label>
                         <select class="form-control" id="subCId" name="subCId">
-                            <option value="">Select a sub category</option>
-                            @foreach (var subCategory in subCategories!)
+                            <option value="">Select a Sub Category</option>
+                            @foreach (var subCategory in _subCategories)
                             {
                                 <option value="@subCategory.subCId">@subCategory.subCatName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="brandId" class="form-label">Brand</label>
+                        <select class="form-control" id="brandId" name="brandId">
+                            <option value="">Select a Brand</option>
+                            @foreach (var brand in _brands)
+                            {
+                                <option value="@brand.brandId">@brand.brandName</option>
+                            }
+                        </select>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="subBId" class="form-label">Sub Brand</label>
+                        <select class="form-control" id="subBId" name="subBId">
+                            <option value="">Select a Sub Brand</option>
+                            @foreach (var subBrand in _subBrands)
+                            {
+                                <option value="@subBrand.subBId">@subBrand.subBrandName</option>
                             }
                         </select>
                     </div>
@@ -71,7 +105,7 @@
 
                     <div class="d-flex justify-content-between">
                         <a href="/Item" class="btn btn-dark">Back</a>
-                        <button type="button" id="btnSaveItem" class="btn btn-success">Save Item</button>
+                        <button type="button" id="btnSave" class="btn btn-success">Save Item</button>
                     </div>
                 </div>
             </div>
@@ -82,12 +116,16 @@
 @section scripts {
     <script>
         $(document).ready(function () {
-            $('#btnSaveItem').click(function () {
+            $('#btnSave').click(function () {
                 let itemCode = $('#itemCode').val();
                 let itemName = $('#itemName').val();
-                let itemPrice = $('#itemPrice').val();
+                let itemBuyPrice = $('#itemBuyPrice').val();
+                let itemSalePrice = $('#itemSalePrice').val();
+                let itemWholeSalePrice = $('#itemWholeSalePrice').val();
                 let catId = $('#catId').val();
                 let subCId = $('#subCId').val();
+                let brandId = $('#brandId').val();
+                let subBId = $('#subBId').val();
                 let itemDescription = $('#itemDescription').val();
                 let itemBarcode = $('#itemBarcode').val();
                 let itemStock = $('#itemStock').val();
@@ -96,9 +134,13 @@
                 let _reqModel = {
                     itemCode: itemCode,
                     itemName: itemName,
-                    itemPrice: itemPrice,
+                    itemBuyPrice: itemBuyPrice,
+                    itemSalePrice: itemSalePrice,
+                    itemWholeSalePrice: itemWholeSalePrice,
                     catId: catId,
                     subCId: subCId,
+                    brandId: brandId,
+                    subBId: subBId,
                     itemDescription: itemDescription,
                     itemBarcode: itemBarcode,
                     itemStock: itemStock,

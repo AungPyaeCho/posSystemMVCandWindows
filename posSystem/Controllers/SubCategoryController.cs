@@ -36,7 +36,7 @@ namespace posSystem.Controllers
                     query = ascending ? query.OrderBy(p => p.subCatCode) : query.OrderByDescending(p => p.subCatCode);
                     break;
                 default:
-                    query = ascending ? query.OrderBy(p => p.subCatName) : query.OrderByDescending(p => p.subCatName);
+                    query = ascending ? query.OrderBy(p => p.subCId) : query.OrderByDescending(p => p.subCId);
                     break;
             }
 
@@ -64,7 +64,7 @@ namespace posSystem.Controllers
 
 
         [ActionName("Index")]
-        public IActionResult SubCategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "catName", string sortOrder = "asc")
+        public IActionResult SubCategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
         {
             try
             {

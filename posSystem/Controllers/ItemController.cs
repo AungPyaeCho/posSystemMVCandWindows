@@ -31,8 +31,14 @@ namespace posSystem.Controllers
                 case "itemname":
                     query = ascending ? query.OrderBy(p => p.itemName) : query.OrderByDescending(p => p.itemName);
                     break;
+                case "itembuyprice":
+                    query = ascending ? query.OrderBy(p => p.itemBuyPrice) : query.OrderByDescending(p => p.itemBuyPrice);
+                    break;
                 case "itemsaleprice":
                     query = ascending ? query.OrderBy(p => p.itemSalePrice) : query.OrderByDescending(p => p.itemSalePrice);
+                    break;
+                case "itemwholesaleprice":
+                    query = ascending ? query.OrderBy(p => p.itemWholeSalePrice) : query.OrderByDescending(p => p.itemWholeSalePrice);
                     break;
                 case "itemstock":
                     query = ascending ? query.OrderBy(p => p.itemStock) : query.OrderByDescending(p => p.itemStock);
@@ -56,7 +62,7 @@ namespace posSystem.Controllers
                     query = ascending ? query.OrderBy(p => p.itemSubBrnad) : query.OrderByDescending(p => p.itemSubBrnad);
                     break;
                 default:
-                    query = ascending ? query.OrderBy(p => p.itemCode) : query.OrderByDescending(p => p.itemCode);
+                    query = ascending ? query.OrderBy(p => p.itemId) : query.OrderByDescending(p => p.itemId);
                     break;
             }
 
@@ -72,7 +78,9 @@ namespace posSystem.Controllers
                     itemId = s.itemId,
                     itemCode = s.itemCode,
                     itemName = s.itemName,
+                    itemBuyPrice = s.itemBuyPrice,
                     itemSalePrice = s.itemSalePrice,
+                    itemWholeSalePrice = s.itemWholeSalePrice,
                     catCode = s.catCode,
                     subCatCode = s.subCatCode,
                     itemDescription = s.itemDescription,
@@ -112,7 +120,7 @@ namespace posSystem.Controllers
         }
 
         [ActionName("Index")]
-        public IActionResult ItemIndex(int pageNo = 1, int pageSize = 10, string sortField = "itemName", string sortOrder = "asc")
+        public IActionResult ItemIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
         {
             try
             {
@@ -142,8 +150,13 @@ namespace posSystem.Controllers
         {
             var categories = _appDbContext.Categories.ToList();
             var subCategories = _appDbContext.SubCategories.ToList();
+            var brands = _appDbContext.Brands.ToList();
+            var subBrands = _appDbContext.SubBrands.ToList();
             ViewBag.Categories = categories;
             ViewBag.SubCategories = subCategories;
+            ViewBag.Brands = brands;
+            ViewBag.SubBrands = subBrands;
+
             return View("ItemCreate");
         }
 
@@ -155,6 +168,10 @@ namespace posSystem.Controllers
             itemModel.catCode = catItem.catCode;
             var subCatItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == itemModel.subCId)!;
             itemModel.subCatCode = subCatItem.subCatCode;
+            var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == itemModel.brandId)!;
+            itemModel.brandCode = brandItem.brandCode;
+            var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == itemModel.subBId)!;
+            itemModel.subBrandCode = subBrandItem.subBrandCode;
 
             itemModel.itemCreateAt = DateTime.Now.ToString();
             _appDbContext.Items.Add(itemModel);
@@ -181,8 +198,12 @@ namespace posSystem.Controllers
 
             var categories = _appDbContext.Categories.ToList();
             var subCategories = _appDbContext.SubCategories.ToList();
+            var brands = _appDbContext.Brands.ToList();
+            var subBrands = _appDbContext.SubBrands.ToList();
             ViewBag.Categories = categories;
             ViewBag.SubCategories = subCategories;
+            ViewBag.Brands = brands;
+            ViewBag.SubBrands = subBrands;
 
             return View("ItemEdit", item);
         }
@@ -191,7 +212,6 @@ namespace posSystem.Controllers
         [ActionName("Update")]
         public IActionResult ItemUpdate(int itemId, ItemModel itemModel)
         {
-            Console.WriteLine($"Received Id: {itemId}");
             MsgResopnseModel rspModel = new MsgResopnseModel();
             var item = _appDbContext.Items.FirstOrDefault(x => x.itemId == itemId);
             if (item is null)
@@ -228,14 +248,8 @@ namespace posSystem.Controllers
             item.itemBarcode = itemModel.itemBarcode;
             item.creatorName = itemModel.creatorName;
             item.itemUpdateAt = DateTime.Now.ToString();
-            if (item.itemUpdateCount is null)
-            {
-                item.itemUpdateCount = 1;
-            }
-            else
-            {
-                item.itemUpdateCount++;
-            }
+            item.itemUpdateCount ??= 0;
+            item.itemUpdateCount++;
 
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Update Success" : "Update Fail";

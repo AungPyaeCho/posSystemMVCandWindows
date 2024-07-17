@@ -1,0 +1,229 @@
+﻿@model SubBrandResponseModel
+
+@{
+    ViewData["Title"] = "SubBrand";
+    int count = 0;
+    int _pageNo = Model.pageNo;
+    int _pageCount = Model.pageCount;
+    int _pageSize = Model.pageSize;
+    string _sortField = Model.sortField ?? "Id";
+    string _sortOrder = Model.sortOrder ?? "asc";
+
+    string _pageURL(int _pageNo, string _sortField, string _sortOrder)
+    {
+        return $"/SubBrand/Index?pageNo={_pageNo}&pageSize={_pageSize}&sortField={_sortField}&sortOrder={_sortOrder}";
+    }
+}
+
+
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-4">Sub Brand</h1>
+    <a href="/SubBrand/Create" class="btn btn-success">Add Sub Brand</a>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">
+                <a href="@_pageURL(_pageNo, "subBrandName", _sortOrder == "asc" ? "desc" : "asc")">
+                    Sub Brand Name @(_sortField == "subBrandName" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th scope="col">
+                <a href="@_pageURL(_pageNo, "subBrandCode", _sortOrder == "asc" ? "desc" : "asc")">
+                    Sub Brand Code @(_sortField == "subBrandCode" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                </a>
+            </th>
+            <th scope="col">Brand Name</th>
+            <th scope="col">Create Date</th>
+            <th scope="col">Update Date</th>
+            <th scope="col">Update Count</th>
+            <th scope="col">Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (SubBrandModel item in Model.subBrandData)
+        {
+            <tr>
+                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                <td>@item.subBrandName</td>
+                <td>@item.subBrandCode</td>
+                <td>@item.brandName</td>
+                <td>@item.subBrandCreateAt</td>
+                <td>@item.subBrandUpdateAt</td>
+                <td>@item.subBrandUpdateCount</td>
+                <td>
+                    <a href="/SubBrand/Edit?subBid=@item.subBId" class="btn btn-warning">Edit</a>
+                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.subBId">Delete</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+
+    <tfoot>
+        <tr>
+            <td colspan="8">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
+                        @if (_pageNo == 1)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Previous</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo - 1, _sortField, _sortOrder)">Previous</a>
+                            </li>
+                        }
+
+                        @if (_pageCount <= 9)
+                        {
+                            for (int i = 1; i <= _pageCount; i++)
+                            {
+                                <li class="page-item @(i == _pageNo ? "active" : "")">
+                                    <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                </li>
+                            }
+                        }
+                        else
+                        {
+                            if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
+                            {
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item"><a class="page-link">...</a></li>
+                                for (int i = _pageCount - 3; i <= _pageCount; i++)
+                                {
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
+                                }
+                            }
+                            else
+                            {
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(1, _sortField, _sortOrder)">1</a>
+                                </li>
+                                <li class="page-item"><a class="page-link">...</a></li>
+                                for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
+                                {
+                                    <li class="page-item @(i == _pageNo ? "active" : "")">
+                                        <a class="page-link" href="@_pageURL(i, _sortField, _sortOrder)">@i</a>
+                                    </li>
+                                }
+                                <li class="page-item"><a class="page-link">...</a></li>
+                                <li class="page-item">
+                                    <a class="page-link" href="@_pageURL(_pageCount, _sortField, _sortOrder)">@_pageCount</a>
+                                </li>
+                            }
+                        }
+
+                        @if (_pageNo == _pageCount)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Next</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item">
+                                <a class="page-link" href="@_pageURL(_pageNo + 1, _sortField, _sortOrder)">Next</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+
+@section scripts {
+    <script>
+        // Function to handle delete operation
+        $(document).on('click', '.btn-delete', function () {
+            let id = $(this).data('id');
+            Swal.fire({
+                title: "Confirm?",
+                text: "You won't be able to revert this!",
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete it!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteData(id);
+                }
+            });
+        });
+
+        // AJAX function to delete data
+        function deleteData(subBId) {
+            let _reqModel = {
+                subBId: subBId
+            };
+
+            $.ajax({
+                url: `/SubBrand/Delete?subBId=${subBId}`,
+                data: _reqModel,
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        let timerInterval;
+                        Swal.fire({
+                            title: "Deleting...",
+                            html: "Please wait, deleting in <b></b> milliseconds.",
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getHtmlContainer().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = Swal.getTimerLeft();
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: result.responseMessage,
+                                    icon: "success",
+                                }).then((result) => {
+                                    location.reload();
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An error occurred while deleting.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
+    </script>
+}
+
