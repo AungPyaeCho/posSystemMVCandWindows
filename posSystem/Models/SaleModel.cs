@@ -10,7 +10,7 @@ namespace posSystem.Models
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int saleId { get; set; }
-        public string? staffId { get; set; }
+        public int staffId { get; set; }
         public string? staffName { get; set; }
         public string? memberId { get; set; }
         public string? memberName { get; set; }

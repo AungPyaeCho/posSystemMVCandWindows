@@ -22,4 +22,8 @@
 	    <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
 	  </Content>
 	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Migrations\" />
+	  <Folder Include="wwwroot\staffimages\" />
+	</ItemGroup>
 </Project>

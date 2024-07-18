@@ -1,0 +1,214 @@
+﻿@model StaffModel
+@{
+    ViewData["Title"] = "Edit Staff";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Update Staff Account</h5>
+
+                    <form id="staffForm" class="user" enctype="multipart/form-data">
+                        <input type="hidden" id="staffId" value="@Model.staffId" />
+
+                        <div class="form-group">
+                            <label for="staffCode">Staff Code</label>
+                            <input id="staffCode" class="form-control" placeholder="Enter staff code" value="@Model.staffCode" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffName">Staff Name</label>
+                            <input id="staffName" class="form-control" placeholder="Enter staff name" value="@Model.staffName" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffRole">Staff Role</label>
+                            <input id="staffRole" class="form-control" placeholder="Enter staff role" value="@Model.staffRole" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffPhone">Phone</label>
+                            <input id="staffPhone" class="form-control" placeholder="Enter phone number" value="@Model.staffPhone" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffAddress">Address</label>
+                            <textarea id="staffAddress" class="form-control" placeholder="Enter address">@Model.staffAddress</textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffJoinedDate">Joined Date</label>
+                            <input id="staffJoinedDate" class="form-control" type="date" placeholder="Select joined date" value="@Model.staffJoinedDate" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffEmail">Email</label>
+                            <input id="staffEmail" class="form-control" placeholder="Enter email address" value="@Model.staffEmail" />
+                            <span id="emailFeedback"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffPassword">Password</label>
+                            <input id="staffPassword" type="password" class="form-control" placeholder="Enter password" oninput="validatePassword()" disabled />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Repeat Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password" oninput="validatePassword()" disabled/>
+                            <span style="margin-bottom: 1em; color: red;" id="error-message"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label" for="staffPhoto">User Photo</label>
+                            <div class="custom-file">
+                                <input type="file" class="custom-file-input" id="staffPhoto" name="staffPhoto" disabled>
+                                <label class="custom-file-label" for="staffPhoto">Choose file...</label>
+                            </div>
+                            <div class="form-check mt-2">
+                                <input type="checkbox" class="form-check-input" id="updatePhoto">
+                                <label class="form-check-label" for="updatePhoto">Update current photo</label>
+                            </div>
+                        </div>
+
+                        @if (!string.IsNullOrEmpty(Model.staffPhoto))
+                        {
+                            <div class="mt-3">
+                                <label>Current Photo:</label><br />
+                                <img src="@Model.staffPhoto" alt="Current Photo" class="img-thumbnail" style="max-width: 300px; max-height: 300px;" />
+                            </div>
+                        }
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success" id="btnUpdate">
+                                Update Staff Account
+                            </button>
+                            <a href="/Staff" class="btn btn-dark mt-2">Back</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        // document.getElementById('staffPassword').addEventListener('input', validatePassword);
+        // document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+        // function validatePassword() {
+        //     const staffPassword = document.getElementById('staffPassword').value;
+        //     const confirmPassword = document.getElementById('confirmPassword').value;
+        //     const errorMessage = document.getElementById('error-message');
+
+        //     if (staffPassword !== confirmPassword) {
+        //         errorMessage.textContent = 'Passwords do not match';
+        //         return false; // Prevent form submission
+        //     }
+
+        //     errorMessage.textContent = ''; // Clear any previous error message
+        //     return true; // Allow form submission
+        // }
+
+        $(document).ready(function () {
+            $('#staffEmail').on('input', function () {
+                let staffEmail = $('#staffEmail').val();
+
+                if (staffEmail) {
+                    $.ajax({
+                        url: "/Staff/Check",
+                        data: { email: staffEmail },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isEmailRegistered) {
+                                $('#emailFeedback').text("This email is already registered").css("color", "red");
+                            } else {
+                                $('#emailFeedback').text("This email is available").css("color", "green");
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage.responseText);
+                        }
+                    });
+                } else {
+                    $('#emailFeedback').text("");
+                }
+            });
+
+            $('#staffPhoto').prop('disabled', true);
+
+            $('#updatePhoto').change(function () {
+                if ($(this).is(':checked')) {
+                    $('#staffPhoto').prop('disabled', false); // Enable file upload
+                } else {
+                    $('#staffPhoto').prop('disabled', true); // Disable file upload
+                }
+            });
+
+            $('#btnUpdate').click(function () {
+                let staffId = $('#staffId').val();
+                let staffCode = $('#staffCode').val();
+                let staffName = $('#staffName').val();
+                let staffRole = $('#staffRole').val();
+                let staffPhone = $('#staffPhone').val();
+                let staffAddress = $('#staffAddress').val();
+                let staffJoinedDate = $('#staffJoinedDate').val();
+                let staffEmail = $('#staffEmail').val();
+                let staffPhoto = $('#staffPhoto')[0].files[0]; // Get the selected file
+                let updatePhoto = $('#updatePhoto').is(':checked'); // Checkbox to update photo
+
+                // Validate other fields (omitted for brevity)
+
+                let formData = new FormData();
+                formData.append('staffId', staffId);
+                formData.append('staffCode', staffCode);
+                formData.append('staffName', staffName);
+                formData.append('staffRole', staffRole);
+                formData.append('staffPhone', staffPhone);
+                formData.append('staffAddress', staffAddress);
+                formData.append('staffJoinedDate', staffJoinedDate);
+                formData.append('staffEmail', staffEmail);
+
+                if (staffPhoto && updatePhoto) {
+                    formData.append('staffPhoto', staffPhoto); // Append the file if selected and checkbox is checked
+                }
+
+                formData.append('updatePhoto', updatePhoto);
+
+                $.ajax({
+                    url: "/Staff/Update",
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Staff";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                    }
+                });
+            });
+        });
+    </script>
+}

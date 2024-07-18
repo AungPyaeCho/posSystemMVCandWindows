@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace posSystem.Migrations
 {
     /// <inheritdoc />
-    public partial class posDB : Migration
+    public partial class posdb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -127,10 +127,12 @@ namespace posSystem.Migrations
                 name: "tblStaff",
                 columns: table => new
                 {
-                    staffId = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    staffCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    staffId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    staffCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    staffPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffPhone = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffAddress = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     staffRole = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -165,7 +167,8 @@ namespace posSystem.Migrations
                         name: "FK_tblLoginDetail_tblAdmin_adminId",
                         column: x => x.adminId,
                         principalTable: "tblAdmin",
-                        principalColumn: "id");
+                        principalColumn: "id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -224,7 +227,7 @@ namespace posSystem.Migrations
                 {
                     saleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    staffId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    staffId = table.Column<int>(type: "int", nullable: false),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -247,7 +250,8 @@ namespace posSystem.Migrations
                         name: "FK_tblSale_tblStaff_staffId",
                         column: x => x.staffId,
                         principalTable: "tblStaff",
-                        principalColumn: "staffId");
+                        principalColumn: "staffId",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -341,7 +345,7 @@ namespace posSystem.Migrations
             migrationBuilder.InsertData(
                 table: "tblAdmin",
                 columns: new[] { "id", "adminCreateAt", "adminEmail", "adminName", "adminPassword" },
-                values: new object[] { "4f7fcd56-644a-41f2-8608-914d4318a0c5", "7/16/2024 10:33:34 AM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
+                values: new object[] { "e0a1ec1d-01d4-499d-bb33-2afe58b5b01d", "7/18/2024 3:36:06 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_brandId",

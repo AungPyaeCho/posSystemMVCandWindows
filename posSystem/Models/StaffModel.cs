@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using posSystem.Middlewares;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -8,10 +9,12 @@ namespace posSystem.Models
     public class StaffModel
     {
         [Key]
-        public string staffId { get; set; }
-        public string staffCode { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int staffId { get; set; }
+        public string? staffCode { get; set; }
         public string? staffName { get; set; }
         public string? staffEmail { get; set; }
+        public string? staffPassword { get; set; }
         public string? staffPhone { get; set; }
         public string? staffAddress { get; set; }
         public string? staffRole { get; set; }
@@ -20,6 +23,16 @@ namespace posSystem.Models
         public string? staffCreateAt { get; set; }
         public string? staffUpdateAt { get; set; }
         public int? staffUpdateCount { get; set; }
+
+        public void SetEncryptedPassword(string plainPassword)
+        {
+            this.staffPassword = SimpleEncryptionHelper.Encrypt(plainPassword);
+        }
+
+        public string GetDecryptedPassword()
+        {
+            return SimpleEncryptionHelper.Decrypt(this.staffPassword)!;
+        }
     }
 
     public class StaffResponseModel

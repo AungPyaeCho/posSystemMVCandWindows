@@ -47,8 +47,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "4f7fcd56-644a-41f2-8608-914d4318a0c5",
-                            adminCreateAt = "7/16/2024 10:33:34 AM",
+                            id = "e0a1ec1d-01d4-499d-bb33-2afe58b5b01d",
+                            adminCreateAt = "7/18/2024 3:36:06 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -436,8 +436,8 @@ namespace posSystem.Migrations
                     b.Property<int?>("saleQty")
                         .HasColumnType("int");
 
-                    b.Property<string>("staffId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("staffId")
+                        .HasColumnType("int");
 
                     b.Property<string>("staffName")
                         .HasColumnType("nvarchar(max)");
@@ -456,14 +456,16 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.StaffModel", b =>
                 {
-                    b.Property<string>("staffId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("staffId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("staffId"));
 
                     b.Property<string>("staffAddress")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("staffCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("staffCreateAt")
@@ -476,6 +478,9 @@ namespace posSystem.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("staffName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("staffPassword")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("staffPhone")
@@ -607,7 +612,8 @@ namespace posSystem.Migrations
                 {
                     b.HasOne("posSystem.Models.AdminModel", "Admin")
                         .WithMany()
-                        .HasForeignKey("adminId");
+                        .HasForeignKey("adminId")
+                        .OnDelete(DeleteBehavior.Cascade);
 
                     b.Navigation("Admin");
                 });
@@ -635,7 +641,9 @@ namespace posSystem.Migrations
 
                     b.HasOne("posSystem.Models.StaffModel", "Staff")
                         .WithMany()
-                        .HasForeignKey("staffId");
+                        .HasForeignKey("staffId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Member");
 

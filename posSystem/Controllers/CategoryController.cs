@@ -127,14 +127,8 @@ namespace posSystem.Controllers
             item.catCode = categoryModel.catCode;
             item.catDescription = categoryModel.catDescription;
             item.catUpdatedAt = DateTime.Now.ToString();
-            if (item.catUpdateCount is null)
-            {
-                item.catUpdateCount = 1;
-            }
-            else
-            {
-                item.catUpdateCount++;
-            }
+            item.catUpdateCount ??= 0;
+            item.catUpdateCount++;
 
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Update Success" : "Update Fail";

@@ -184,14 +184,8 @@ namespace posSystem.Controllers
             item.catId = subCategoryModel.catId;
             item.catCode = catItem.catCode;
             item.subCatUpdateAt = DateTime.Now.ToString();
-            if (item.subCatUpdateCount is null)
-            {
-                item.subCatUpdateCount = 1;
-            }
-            else
-            {
-                item.subCatUpdateCount++;
-            }
+            item.subCatUpdateCount ??= 0;
+            item.subCatUpdateCount++;
 
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "Update Success" : "Update Fail";

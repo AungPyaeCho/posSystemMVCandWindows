@@ -81,6 +81,12 @@ namespace posSystem
                 .WithMany()
                 .HasForeignKey(sd => sd.itemId);
 
+            modelBuilder.Entity<LoginDetailModel>()
+                .HasOne(ld => ld.Admin)
+                .WithMany()
+                .HasForeignKey(ld => ld.adminId)
+                .OnDelete(DeleteBehavior.Cascade);
+
             // Seed default admin user
             string defaultAdminId = Guid.NewGuid().ToString();
             string defaultAdminEmail = "admin@pos.com";

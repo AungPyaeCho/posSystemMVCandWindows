@@ -9,7 +9,7 @@ namespace posSystem.Models
     {
         [Key]
         public string? ldId { get; set; }
-        public string? staffId { get; set; }
+        public int? staffId { get; set; }
         public string? staffName { get; set; }
         public string? staffRole {  get; set; }
         public string? sessionId { get; set; }

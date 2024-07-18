@@ -1,0 +1,187 @@
+﻿
+@{
+    ViewData["Title"] = "Create Staff";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Create Staff Account</h5>
+
+                    <form class="user" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="staffCode">Staff Code</label>
+                            <input id="staffCode" class="form-control" placeholder="Enter staff code" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffName">Staff Name</label>
+                            <input id="staffName" class="form-control" placeholder="Enter staff name" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffRole">Staff Role</label>
+                            <input id="staffRole" class="form-control" placeholder="Enter staff role" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffPhone">Phone</label>
+                            <input id="staffPhone" class="form-control" placeholder="Enter phone number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffAddress">Address</label>
+                            <textarea id="staffAddress" class="form-control" placeholder="Enter address"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffJoinedDate">Joined Date</label>
+                            <input id="staffJoinedDate" class="form-control" type="date" placeholder="Select joined date" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffEmail">Email</label>
+                            <input id="staffEmail" class="form-control" placeholder="Enter email address" />
+                            <span id="emailFeedback"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="staffPassword">Password</label>
+                            <input id="staffPassword" type="password" class="form-control" placeholder="Enter password" oninput="validatePassword()" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Repeat Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password" oninput="validatePassword()" />
+                            <span style="margin-bottom: 1em; color: red;" id="error-message"></span>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="from-label" for="staffPhoto">User Photo</label>
+                            <input type="file" name="staffPhoto" id="staffPhoto" class="">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success" id="btnSave">
+                                Save Staff Account
+                            </button>
+                            <a href="/Staff" class="btn btn-dark mt-2">Back</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+            </div>
+            </div>
+            </div>
+            
+            @section scripts {
+                <script>
+                    document.getElementById('staffPassword').addEventListener('input', validatePassword);
+                    document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+                    function validatePassword() {
+                        const staffPassword = document.getElementById('staffPassword').value;
+                        const confirmPassword = document.getElementById('confirmPassword').value;
+                        const errorMessage = document.getElementById('error-message');
+
+                        if (staffPassword !== confirmPassword) {
+                            errorMessage.textContent = 'Passwords do not match';
+                            return false; // Prevent form submission
+                        }
+
+                        errorMessage.textContent = ''; // Clear any previous error message
+                        return true; // Allow form submission
+                    }
+
+                    $(document).ready(function () {
+                        $('#staffEmail').on('input', function () {
+                            let staffEmail = $('#staffEmail').val();
+
+                            if (staffEmail) {
+                                $.ajax({
+                                    url: "/Staff/Check",
+                                    data: { email: staffEmail },
+                                    type: "POST",
+                                    dataType: "json",
+                                    success: function (response) {
+                                        if (response.isEmailRegistered) {
+                                            $('#emailFeedback').text("This email is already registered").css("color", "red");
+                                        } else {
+                                            $('#emailFeedback').text("This email is available").css("color", "green");
+                                        }
+                                    },
+                                    error: function (errormessage) {
+                                        console.log(errormessage.responseText);
+                                    }
+                                });
+                            } else {
+                                $('#emailFeedback').text("");
+                            }
+                        });
+
+                        $('#btnSave').click(function () {
+                            let staffCode = $('#staffCode').val();
+                            let staffName = $('#staffName').val();
+                            let staffRole = $('#staffRole').val();
+                            let staffPhone = $('#staffPhone').val();
+                            let staffAddress = $('#staffAddress').val();
+                            let staffJoinedDate = $('#staffJoinedDate').val();
+                            let staffEmail = $('#staffEmail').val();
+                            let staffPassword = $('#staffPassword').val();
+                            let staffPhoto = $('#staffPhoto')[0].files[0]; // Get the selected file
+
+                            // Validate other fields (omitted for brevity)
+
+                            let formData = new FormData();
+                            formData.append('staffCode', staffCode);
+                            formData.append('staffName', staffName);
+                            formData.append('staffRole', staffRole);
+                            formData.append('staffPhone', staffPhone);
+                            formData.append('staffAddress', staffAddress);
+                            formData.append('staffJoinedDate', staffJoinedDate);
+                            formData.append('staffEmail', staffEmail);
+                            formData.append('staffPassword', staffPassword);
+                            formData.append('staffPhoto', staffPhoto); // Append the file
+
+                            $.ajax({
+                                url: "/Staff/Save",
+                                data: formData,
+                                type: "POST",
+                                processData: false,
+                                contentType: false,
+                                success: function (result) {
+                                    console.log(result);
+                                    if (result.IsSuccess) {
+                                        Swal.fire({
+                                            title: "Success!",
+                                            text: result.responseMessage,
+                                            icon: "success",
+                                        }).then((result) => {
+                                            if (result.isConfirmed) {
+                                                location.href = "/Staff";
+                                            }
+                                        });
+                                    } else {
+                                        Swal.fire({
+                                            title: "Error!",
+                                            text: result.responseMessage,
+                                            icon: "error"
+                                        });
+                                    }
+                                },
+                                error: function (errormessage) {
+                                    console.log(errormessage.responseText);
+                                    Swal.fire({
+                                        title: "Error!",
+                                        text: "An error occurred while saving.",
+                                        icon: "error"
+                                    });
+                                }
+                            });
+                        });
+                    });
+                </script>
+            }
