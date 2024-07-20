@@ -1,8 +1,11 @@
 using Microsoft.EntityFrameworkCore;
+using OfficeOpenXml;
 using posSystem;
 using posSystem.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
+
+ExcelPackage.LicenseContext = LicenseContext.Commercial;
 
 // Add services to the container.
 builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
@@ -22,7 +25,11 @@ builder.Services.AddSession(options =>
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
+
+
 builder.Services.AddHttpContextAccessor();
+builder.Services.AddTransient<IExcelService, ExcelService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

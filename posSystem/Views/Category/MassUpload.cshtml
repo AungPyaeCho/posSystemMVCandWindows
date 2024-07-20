@@ -1,0 +1,88 @@
+﻿@{
+    ViewData["Title"] = "Mass Upload/Update Categories";
+}
+
+<div class="container">
+    <h2>Mass Upload/Update Categories</h2>
+
+    <form id="uploadForm" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="fileUpload">Select Excel File</label>
+            <input type="file" name="file" id="fileUpload" class="form-control" accept=".xlsx, .xls" />
+        </div>
+        <button type="submit" class="btn btn-primary" id="btnSave" name="action" value="save">Save Categories</button>
+        <button type="submit" class="btn btn-warning" id="btnUpdate" name="action" value="update">Update Categories</button>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            $('#uploadForm').on('submit', function (event) {
+                event.preventDefault(); // Prevent default form submission
+
+                const fileInput = $('#fileUpload')[0];
+                const file = fileInput.files[0];
+
+                if (!file) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Please select a file to upload.",
+                        icon: "error"
+                    });
+                    return;
+                } else if (!file.name.endsWith('.xlsx') && !file.name.endsWith('.xls')) {
+                    Swal.fire({
+                        title: "Error!",
+                        text: "Please select a valid Excel file (xlsx or xls).",
+                        icon: "error"
+                    });
+                    return;
+                }
+
+                // Determine which button was clicked
+                const action = $("button[type='submit']:focus").val();
+                const url = action === 'save' ? "/Category/MassUpload" : "/Category/MassUpdate";
+
+                // Create a FormData object
+                let formData = new FormData();
+                formData.append('file', file);
+
+                // Perform AJAX file upload
+                $.ajax({
+                    url: url,
+                    type: 'POST',
+                    data: formData,
+                    contentType: false,
+                    processData: false,
+                    success: function (result) {
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responeMessage,
+                                icon: "success",
+                                timer: 2000,
+                                timerProgressBar: true
+                            }).then(() => {
+                                location.href = "/Category";// Redirect to index page
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responeMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An error occurred while processing the file.",
+                            icon: "error"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}
