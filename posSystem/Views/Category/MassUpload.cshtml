@@ -1,5 +1,6 @@
 ﻿@{
     ViewData["Title"] = "Mass Upload/Update Categories";
+    bool hasData = ViewBag.HasData;
 }
 
 <div class="container">
@@ -11,7 +12,7 @@
             <input type="file" name="file" id="fileUpload" class="form-control" accept=".xlsx, .xls" />
         </div>
         <button type="submit" class="btn btn-primary" id="btnSave" name="action" value="save">Save Categories</button>
-        <button type="submit" class="btn btn-warning" id="btnUpdate" name="action" value="update">Update Categories</button>
+        <button type="submit" class="btn btn-warning" id="btnUpdate" name="action" value="update" @(hasData ? "enable" : "disabled")>Update Categories</button>
     </form>
 </div>
 

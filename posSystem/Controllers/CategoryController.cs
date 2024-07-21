@@ -20,6 +20,8 @@ namespace posSystem.Controllers
         [ActionName("MassUpload")]
         public IActionResult MassUpload()
         {
+            bool hasData = _appDbContext.Categories.Any(); // Replace with your actual data check
+            ViewBag.HasData = hasData;
             return View();
         }
 
