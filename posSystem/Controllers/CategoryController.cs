@@ -305,8 +305,8 @@ namespace posSystem.Controllers
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
 
-            var categories = _appDbContext.Categories.ToList();
-            if (categories.Count == 0)
+            var items = _appDbContext.Categories.ToList();
+            if (items.Count is 0)
             {
                 rspModel = new MsgResopnseModel()
                 {
@@ -316,7 +316,7 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
-            _appDbContext.Categories.RemoveRange(categories);
+            _appDbContext.Categories.RemoveRange(items);
             int result = _appDbContext.SaveChanges();
             string message = result > 0 ? "All categories deleted successfully." : "Failed to delete categories.";
             rspModel = new MsgResopnseModel()
@@ -326,6 +326,5 @@ namespace posSystem.Controllers
             };
             return Json(rspModel);
         }
-
     }
 }
