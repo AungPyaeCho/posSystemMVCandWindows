@@ -2,6 +2,8 @@
 
 @{
     var categories = ViewBag.Categories as List<CategoryModel>;
+    var _catName = ViewBag.CategoryName;
+    var _catId = ViewBag.catId;
 }
 
 <div class="container mt-5">
@@ -24,7 +26,7 @@
                     <div class="mb-3">
                         <label for="Category" class="form-label">Category</label>
                         <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a Category</option>
+                            <option value="@_catId">@_catName</option>
                             @foreach (var category in categories!)
                             {
                                 <option value="@category.catId">@category.catName</option>
@@ -50,6 +52,10 @@
                 let subCatName = $('#subCatName').val();
                 let subCatCode = $('#subCatCode').val();
                 let catId = $('#catId').val();
+
+                if (!catId) {
+                    catId = '@Model.catId'; // Replace with the value you want to use from ViewBag
+                }
 
                 let _reqModel = {
                     subCId: subCId,

@@ -28,7 +28,7 @@ namespace posSystem.Models
         public string? itemBrand { get; set; }
         public int? subBId { get; set; }
         public string? subBrandCode { get; set; }
-        public string? itemSubBrnad { get; set; }
+        public string? itemSubBrand { get; set; }
         public string? itemColor { get; set; }
         public string? itemBarcode { get; set; }
 

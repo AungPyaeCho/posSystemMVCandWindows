@@ -260,6 +260,17 @@ namespace posSystem.Controllers
                 return Redirect("/SubBrand");
             }
 
+            // Get the corresponding category for the subcategory
+            var brand = _appDbContext.Brands
+                .FirstOrDefault(c => c.brandId == item.brandId && c.brandCode == item.brandCode);
+
+            // If the category is found, add its name to the ViewBag
+            if (brand != null)
+            {
+                ViewBag.BrandName = brand.brandName;
+                ViewBag.BrandId = brand.brandId;
+            }
+
             var brands = _appDbContext.Brands.ToList();
             ViewBag.Brands = brands;
 
@@ -282,11 +293,11 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
-            var catItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == subBrandModel.subBId)!;
+            var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == subBrandModel.brandId)!;
             item.subBrandName = subBrandModel.subBrandName;
             item.subBrandCode = subBrandModel.subBrandCode;
             item.brandId = subBrandModel.brandId;
-            item.brandCode = subBrandModel.brandCode;
+            item.brandCode = brandItem.brandCode;
             item.subBrandUpdateAt = DateTime.Now.ToString();
             item.subBrandUpdateCount ??= 0;
             item.subBrandUpdateCount++;
@@ -341,7 +352,7 @@ namespace posSystem.Controllers
 
         [HttpPost]
         [ActionName("DeleteAll")]
-        public IActionResult DeleteAllSubCategories()
+        public IActionResult DeleteAllSubBrands()
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
             try

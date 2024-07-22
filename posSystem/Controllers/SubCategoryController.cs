@@ -263,11 +263,23 @@ namespace posSystem.Controllers
                 return Redirect("/SubCategory");
             }
 
+            // Get the corresponding category for the subcategory
+            var category = _appDbContext.Categories
+                .FirstOrDefault(c => c.catId == item.catId && c.catCode == item.catCode);
+
+            // If the category is found, add its name to the ViewBag
+            if (category != null)
+            {
+                ViewBag.CategoryName = category.catName;
+                ViewBag.CategoryId = category.catId;
+            }
+
             var categories = _appDbContext.Categories.ToList();
             ViewBag.Categories = categories;
 
             return View("SubCategoryEdit", item);
         }
+
 
         [HttpPost]
         [ActionName("Update")]

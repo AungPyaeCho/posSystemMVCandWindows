@@ -5,6 +5,18 @@
     var _subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
     var _brands = ViewBag.Brands as List<BrandModel>;
     var _subBrands = ViewBag.SubBrands as List<SubBrandModel>;
+
+    var _BN = ViewBag.BrandName;
+    var _BI = ViewBag.BrandId;
+
+    var _SBN = ViewBag.SubBrandName;
+    var _SBI = ViewBag.SubBrandId;
+
+    var _CN = ViewBag.CategoryName;
+    var _CI = ViewBag.CategoryId;
+
+    var _SCN = ViewBag.SubCatName;
+    var _SCI = ViewBag.SubCatId;
 }
 
 <div class="container mt-5">
@@ -42,7 +54,7 @@
                     <div class="mb-3">
                         <label for="Category" class="form-label">Category</label>
                         <select class="form-control" id="catId" name="catId">
-                            <option value="">Select a Category</option>
+                            <option value="@_CI">@_CN</option>
                             @foreach (var category in _categories)
                             {
                                 <option value="@category.catId">@category.catName</option>
@@ -53,7 +65,7 @@
                     <div class="mb-3">
                         <label for="Sub Category" class="form-label">SubCategory</label>
                         <select class="form-control" id="subCId" name="subCId">
-                            <option value="">Select a Sub Category</option>
+                            <option value="@_SCI">@_SCN</option>
                             @foreach (var subCategory in _subCategories)
                             {
                                 <option value="@subCategory.subCId">@subCategory.subCatName</option>
@@ -64,7 +76,7 @@
                     <div class="mb-3">
                         <label for="brandId" class="form-label">Brand</label>
                         <select class="form-control" id="brandId" name="brandId">
-                            <option value="">Select a Brand</option>
+                            <option value="@_BI">@_BN</option>
                             @foreach (var brand in _brands)
                             {
                                 <option value="@brand.brandId">@brand.brandName</option>
@@ -75,7 +87,7 @@
                     <div class="mb-3">
                         <label for="subBId" class="form-label">Sub Brand</label>
                         <select class="form-control" id="subBId" name="subBId">
-                            <option value="">Select a Sub Brand</option>
+                            <option value="@_SBI">@_SBN</option>
                             @foreach (var subBrand in _subBrands)
                             {
                                 <option value="@subBrand.subBId">@subBrand.subBrandName</option>
@@ -131,6 +143,21 @@
                 let itemStock = $('#itemStock').val();
                 let creatorName = $('#creatorName').val();
 
+                if (!catId) {
+                    catId = '@Model.catId'; // Replace with the value you want to use from ViewBag
+                }
+
+                if (!subCId) {
+                    subCId = '@Model.subCId'; // Replace with the value you want to use from ViewBag
+                }
+
+                if (!brandId) {
+                    brandId = '@Model.brandId'; // Replace with the value you want to use from ViewBag
+                }
+
+                if (!subBId) {
+                    subBId = '@Model.subBId'; // Replace with the value you want to use from ViewBag
+                }
                 let _reqModel = {
                     itemId: itemId,
                     itemCode: itemCode,

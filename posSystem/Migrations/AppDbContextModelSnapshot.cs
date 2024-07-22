@@ -47,8 +47,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "1dfa6a85-f7b4-4c58-b3db-81d4122be6b8",
-                            adminCreateAt = "7/22/2024 11:42:47 AM",
+                            id = "e99889d9-360d-4e3b-81e1-4732197381b2",
+                            adminCreateAt = "7/22/2024 5:33:27 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -213,7 +213,7 @@ namespace posSystem.Migrations
                     b.Property<int?>("itemStock")
                         .HasColumnType("int");
 
-                    b.Property<string>("itemSubBrnad")
+                    b.Property<string>("itemSubBrand")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemSubCategory")

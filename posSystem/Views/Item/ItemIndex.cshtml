@@ -16,9 +16,20 @@
     }
 }
 
-<div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Items</h1>
-    <a href="/Item/Create" class="btn btn-success">Add Item</a>
+
+<div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-4 mb-sm-0">Item Management</h1>
+    <div>
+        <a href="/Item/Create" class="btn btn-success mr-2">
+            <i class="fas fa-plus-circle"></i> Add Item
+        </a>
+        <a href="/Item/MassUpload" class="btn btn-primary mr-2">
+            <i class="fas fa-upload"></i> Mass Upload/Update Items
+        </a>
+        <button type="button" id="btnDeleteAll" class="btn btn-danger">
+            <i class="fas fa-trash-alt"></i> Delete All Items
+        </button>
+    </div>
 </div>
 
 <table class="table table-hover table-bordered">
@@ -75,13 +86,21 @@
                 <td>@item.itemCategory</td>
                 <td>@item.itemSubCategory</td>
                 <td>@item.itemBrand</td>
-                <td>@item.itemSubBrnad</td>
+                <td>@item.itemSubBrand</td>
                 <td>@item.itemBarcode</td>
                 <td>@item.itemCreateAt</td>
                 <td>@item.itemUpdateAt</td>
-                <td>
-                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning btn-sm">Edit</a>
-                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.itemId">Delete</button>
+
+                <td class="text-center">
+                    <!-- Edit Button -->
+                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+
+                    <!-- Delete Button -->
+                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.itemId">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
                 </td>
             </tr>
         }
@@ -144,6 +163,77 @@
 
 @section scripts {
     <script>
+        // Function to handle delete all operation
+        $(document).on('click', '#btnDeleteAll', function () {
+            Swal.fire({
+                title: "Confirm?",
+                text: "Are you sure you want to delete all items? This action cannot be undone.",
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: "Yes, delete all!"
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    deleteAllCategories();
+                }
+            });
+        });
+
+        // AJAX function to delete all categories
+        function deleteAllCategories() {
+            $.ajax({
+                url: "/Item/DeleteAll",
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        let timerInterval;
+                        Swal.fire({
+                            title: "Deleting...",
+                            html: "Please wait, deleting in <b></b> milliseconds.",
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getHtmlContainer().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = Swal.getTimerLeft();
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire({
+                                    title: "Deleted!",
+                                    text: result.responseMessage,
+                                    icon: "success",
+                                }).then(() => {
+                                    location.reload();
+                                });
+                            }
+                        });
+                    } else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responeMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    Swal.fire({
+                        title: "Error!",
+                        text: "An error occurred while deleting.",
+                        icon: "error"
+                    });
+                }
+            });
+        }
         // Function to handle delete operation
         $(document).on('click', '.btn-delete', function () {
             let id = $(this).data('id');

@@ -2,6 +2,8 @@
 
 @{
     var brands = ViewBag.Brands as List<BrandModel>;
+    var _branName = ViewBag.BrandName;
+    var _brandId = ViewBag.BrandId;
 }
 
 <div class="container mt-5">
@@ -24,7 +26,7 @@
                     <div class="mb-3">
                         <label for="brandId" class="form-label">Brand</label>
                         <select class="form-control" id="brandId" name="brandId">
-                            <option value="">Select a Brand</option>
+                            <option value="@_brandId">@_branName</option>
                             @foreach (var brand in brands!)
                             {
                                 <option value="@brand.brandId">@brand.brandName</option>
@@ -50,7 +52,9 @@
                 let subBrandName = $('#subBrandName').val();
                 let subBrandCode = $('#subBrandCode').val();
                 let brandId = $('#brandId').val();
-
+                // if (!brandId) {
+                //     catId = '@_brandId'; // Replace with the value you want to use from ViewBag
+                // }
                 let _reqModel = {
                     subBId: subBId,
                     subBrandName: subBrandName,

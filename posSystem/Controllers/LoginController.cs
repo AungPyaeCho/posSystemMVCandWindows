@@ -24,13 +24,15 @@ namespace posSystem.Controllers
         [HttpPost]
         public async Task<IActionResult> Index(AdminModel adminModel, bool rememberMe)
         {
+            Console.WriteLine(adminModel);
+            Console.WriteLine(rememberMe);
             adminModel.SetEncryptedPassword(adminModel.adminPassword);
             var encPsw = adminModel.adminPassword;
-            var item = _appDbContext.Admin.FirstOrDefault(x => x.adminEmail == adminModel.adminEmail && x.adminPassword == encPsw)!;
-            if (item is null) return View();
+            var item = _appDbContext.Admin.FirstOrDefault(x => x.adminEmail == adminModel.adminEmail && x.adminPassword == encPsw);
+            if (item == null) return View();
 
             string sessionId = Guid.NewGuid().ToString();
-            DateTime sessionExpired = rememberMe ? DateTime.Now.AddDays(30) : DateTime.Now.AddMinutes(60);
+            DateTime sessionExpired = rememberMe ? DateTime.Now.AddMonths(1) : DateTime.Now.AddHours(1);
 
             CookieOptions cookieOptions = new CookieOptions
             {
@@ -47,8 +49,6 @@ namespace posSystem.Controllers
 
             HttpContext.Session.SetString("AdminId", item.id);
             HttpContext.Session.SetString("AdminName", item.adminName);
-
-
 
             await _appDbContext.LoginDetails.AddAsync(new LoginDetailModel
             {
@@ -71,8 +71,10 @@ namespace posSystem.Controllers
             // Clear cookies when logging out
             Response.Cookies.Delete("AdminId");
             Response.Cookies.Delete("SessionId");
+            Response.Cookies.Delete("AdminName");
 
             // Optionally, clear session data or log out from identity system if used
+            HttpContext.Session.Clear();
 
             return RedirectToAction("Index", "Login"); // Redirect to login page after logout
         }

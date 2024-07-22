@@ -355,7 +355,7 @@ namespace posSystem.Controllers
         // POST action to delete all brands
         [HttpPost]
         [ActionName("DeleteAll")]
-        public IActionResult DeleteAllCategories()
+        public IActionResult DeleteAllBrands()
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
 
