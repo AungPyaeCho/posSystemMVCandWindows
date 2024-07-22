@@ -333,7 +333,7 @@ namespace posSystem.Controllers
 
         [HttpPost]
         [ActionName("DeleteAll")]
-        public IActionResult DeleteAllCategories()
+        public IActionResult DeleteAllSubCategories()
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
 

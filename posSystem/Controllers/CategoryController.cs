@@ -279,27 +279,42 @@ namespace posSystem.Controllers
         public IActionResult CategoryDelete(int catId)
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
-            var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == catId);
-            if (item is null)
+
+            try
+            {
+                var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == catId);
+                if (item is null)
+                {
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No data found"
+                    };
+                    return Json(rspModel);
+                }
+
+                _appDbContext.Categories.Remove(item);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Delete Success" : "Delete Fail";
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
             {
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
-                    responeMessage = "No data found"
+                    //responeMessage = $"An error occurred: {ex.Message}"
+                    responeMessage = "You have to delete subcategories first!"
                 };
-                return Json(rspModel);
             }
 
-            _appDbContext.Categories.Remove(item);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Delete Success" : "Delete Fail";
-            rspModel = new MsgResopnseModel()
-            {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
             return Json(rspModel);
         }
+
 
         [HttpPost]
         [ActionName("DeleteAll")]
@@ -307,26 +322,40 @@ namespace posSystem.Controllers
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
 
-            var items = _appDbContext.Categories.ToList();
-            if (items.Count is 0)
+            try
+            {
+                var items = _appDbContext.Categories.ToList();
+                if (items.Count == 0)
+                {
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No categories found to delete."
+                    };
+                    return Json(rspModel);
+                }
+
+                _appDbContext.Categories.RemoveRange(items);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "All categories deleted successfully." : "Failed to delete categories.";
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
             {
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
-                    responeMessage = "No categories found to delete."
+                    //responeMessage = $"An error occurred: {ex.Message}"
+                    responeMessage = "You have to delete subcategories first!"
                 };
-                return Json(rspModel);
             }
 
-            _appDbContext.Categories.RemoveRange(items);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "All categories deleted successfully." : "Failed to delete categories.";
-            rspModel = new MsgResopnseModel()
-            {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
             return Json(rspModel);
         }
+
     }
 }

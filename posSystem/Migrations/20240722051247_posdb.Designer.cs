@@ -12,7 +12,7 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240718090607_posdb")]
+    [Migration("20240722051247_posdb")]
     partial class posdb
     {
         /// <inheritdoc />
@@ -20,7 +20,7 @@ namespace posSystem.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.6")
+                .HasAnnotation("ProductVersion", "8.0.7")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -50,8 +50,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "e0a1ec1d-01d4-499d-bb33-2afe58b5b01d",
-                            adminCreateAt = "7/18/2024 3:36:06 PM",
+                            id = "1dfa6a85-f7b4-4c58-b3db-81d4122be6b8",
+                            adminCreateAt = "7/22/2024 11:42:47 AM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
