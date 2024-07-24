@@ -85,7 +85,8 @@ namespace posSystem.Migrations
                 name: "tblMember",
                 columns: table => new
                 {
-                    memberId = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    memberId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     memberCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
@@ -228,8 +229,10 @@ namespace posSystem.Migrations
                     saleId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     staffId = table.Column<int>(type: "int", nullable: false),
+                    staffCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    memberId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    memberId = table.Column<int>(type: "int", nullable: true),
+                    memberCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     saleQty = table.Column<int>(type: "int", nullable: true),
                     totalAmount = table.Column<int>(type: "int", nullable: true),
@@ -276,7 +279,7 @@ namespace posSystem.Migrations
                     itemBrand = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     subBId = table.Column<int>(type: "int", nullable: true),
                     subBrandCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    itemSubBrnad = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    itemSubBrand = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemColor = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemBarcode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     itemStock = table.Column<int>(type: "int", nullable: true),
@@ -345,7 +348,7 @@ namespace posSystem.Migrations
             migrationBuilder.InsertData(
                 table: "tblAdmin",
                 columns: new[] { "id", "adminCreateAt", "adminEmail", "adminName", "adminPassword" },
-                values: new object[] { "1dfa6a85-f7b4-4c58-b3db-81d4122be6b8", "7/22/2024 11:42:47 AM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
+                values: new object[] { "eb75f840-9626-444c-a7a1-671e4c00526c", "7/24/2024 3:33:48 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_brandId",

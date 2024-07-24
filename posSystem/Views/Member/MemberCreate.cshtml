@@ -1,0 +1,179 @@
+﻿@{
+    ViewData["Title"] = "Create Member";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Create Member Account</h5>
+
+                    <form class="user" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="memberCode">Member Code</label>
+                            <input id="memberCode" class="form-control" placeholder="Enter member code" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberName">Member Name</label>
+                            <input id="memberName" class="form-control" placeholder="Enter member name" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberEmail">Email</label>
+                            <input id="memberEmail" class="form-control" placeholder="Enter email address" />
+                            <span id="emailFeedback"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberPhone">Phone</label>
+                            <input id="memberPhone" class="form-control" placeholder="Enter phone number" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberAddress">Address</label>
+                            <textarea id="memberAddress" class="form-control" placeholder="Enter address"></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberPassword">Password</label>
+                            <input id="memberPassword" type="password" class="form-control" placeholder="Enter password" oninput="validatePassword()" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="confirmPassword" class="form-label">Repeat Password</label>
+                            <input type="password" class="form-control" id="confirmPassword" placeholder="Repeat password" oninput="validatePassword()" />
+                            <span style="margin-bottom: 1em; color: red;" id="error-message"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberPoints">Points</label>
+                            <input id="memberPoints" class="form-control" type="number" placeholder="Enter points" value="0" />
+                        </div>
+
+                        <div class="form-group">
+                            <label for="memberPhoto">Member Photo</label>
+                            <input type="file" name="memberPhoto" id="memberPhoto" class="form-control">
+                        </div>
+
+                        <div class="d-grid gap-2">
+                            <button type="button" class="btn btn-success" id="btnSave">
+                                Save Member Account
+                            </button>
+                            <a href="/Member" class="btn btn-dark mt-2">Back</a>
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        document.getElementById('memberPassword').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+
+        function validatePassword() {
+            const staffPassword = document.getElementById('memberPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
+
+            if (staffPassword !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                return false; // Prevent form submission
+            }
+
+            errorMessage.textContent = ''; // Clear any previous error message
+            return true; // Allow form submission
+        }
+
+        $(document).ready(function () {
+            $('#memberEmail').on('input', function () {
+                let memberEmail = $('#memberEmail').val();
+
+                if (memberEmail) {
+                    $.ajax({
+                        url: "/Member/CheckEmail",
+                        data: { email: memberEmail },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isEmailRegistered) {
+                                $('#emailFeedback').text("This email is already registered").css("color", "red");
+                            } else {
+                                $('#emailFeedback').text("This email is available").css("color", "green");
+                            }
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage.responseText);
+                        }
+                    });
+                } else {
+                    $('#emailFeedback').text("");
+                }
+            });
+
+            $('#btnSave').click(function () {
+                let memberCode = $('#memberCode').val();
+                let memberName = $('#memberName').val();
+                let memberEmail = $('#memberEmail').val();
+                let memberPassword = $('#memberPassword').val();
+                let memberPhone = $('#memberPhone').val();
+                let memberAddress = $('#memberAddress').val();
+                let memberPoints = $('#memberPoints').val();
+                let memberPhoto = $('#memberPhoto')[0].files[0]; // Get the selected file
+
+                // Validate other fields (omitted for brevity)
+
+                let formData = new FormData();
+                formData.append('memberCode', memberCode);
+                formData.append('memberName', memberName);
+                formData.append('memberEmail', memberEmail);
+                formData.append('memberPassword', memberPassword);
+                formData.append('memberPhone', memberPhone);
+                formData.append('memberAddress', memberAddress);
+                formData.append('memberPoints', memberPoints);
+                formData.append('memberPhoto', memberPhoto); // Append the file
+
+                $.ajax({
+                    url: "/Member/Save",
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Member";
+                                }
+                            });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An error occurred while saving.",
+                            icon: "error"
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -47,8 +47,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "e99889d9-360d-4e3b-81e1-4732197381b2",
-                            adminCreateAt = "7/22/2024 5:33:27 PM",
+                            id = "eb75f840-9626-444c-a7a1-671e4c00526c",
+                            adminCreateAt = "7/24/2024 3:33:48 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -289,8 +289,11 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.MemberModel", b =>
                 {
-                    b.Property<string>("memberId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("memberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("memberId"));
 
                     b.Property<string>("memberAddress")
                         .HasColumnType("nvarchar(max)");
@@ -418,8 +421,12 @@ namespace posSystem.Migrations
                     b.Property<string>("discount")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("memberId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("memberCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("memberId")
+                        .HasColumnType("int");
 
                     b.Property<string>("memberName")
                         .HasColumnType("nvarchar(max)");
@@ -435,6 +442,10 @@ namespace posSystem.Migrations
 
                     b.Property<int?>("saleQty")
                         .HasColumnType("int");
+
+                    b.Property<string>("staffCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("staffId")
                         .HasColumnType("int");

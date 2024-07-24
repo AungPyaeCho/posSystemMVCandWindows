@@ -11,8 +11,10 @@ namespace posSystem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int saleId { get; set; }
         public int staffId { get; set; }
+        public string staffCode { get; set; }
         public string? staffName { get; set; }
-        public string? memberId { get; set; }
+        public int? memberId { get; set; }
+        public string memberCode { get; set; }
         public string? memberName { get; set; }
         public int? saleQty { get; set; }
         public int? totalAmount { get; set; }

@@ -12,7 +12,7 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240722051247_posdb")]
+    [Migration("20240724090348_posdb")]
     partial class posdb
     {
         /// <inheritdoc />
@@ -50,8 +50,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "1dfa6a85-f7b4-4c58-b3db-81d4122be6b8",
-                            adminCreateAt = "7/22/2024 11:42:47 AM",
+                            id = "eb75f840-9626-444c-a7a1-671e4c00526c",
+                            adminCreateAt = "7/24/2024 3:33:48 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -216,7 +216,7 @@ namespace posSystem.Migrations
                     b.Property<int?>("itemStock")
                         .HasColumnType("int");
 
-                    b.Property<string>("itemSubBrnad")
+                    b.Property<string>("itemSubBrand")
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("itemSubCategory")
@@ -292,8 +292,11 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.MemberModel", b =>
                 {
-                    b.Property<string>("memberId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("memberId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("memberId"));
 
                     b.Property<string>("memberAddress")
                         .HasColumnType("nvarchar(max)");
@@ -421,8 +424,12 @@ namespace posSystem.Migrations
                     b.Property<string>("discount")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("memberId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<string>("memberCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("memberId")
+                        .HasColumnType("int");
 
                     b.Property<string>("memberName")
                         .HasColumnType("nvarchar(max)");
@@ -438,6 +445,10 @@ namespace posSystem.Migrations
 
                     b.Property<int?>("saleQty")
                         .HasColumnType("int");
+
+                    b.Property<string>("staffCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("staffId")
                         .HasColumnType("int");

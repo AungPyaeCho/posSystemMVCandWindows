@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using posSystem.Middlewares;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,7 +10,8 @@ namespace posSystem.Models
     public class MemberModel
     {
         [Key]
-        public string memberId { get; set; }
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int memberId { get; set; }
         public string memberCode { get; set; }
         public string? memberName { get; set; }
         public string? memberEmail { get; set; }
@@ -23,6 +25,16 @@ namespace posSystem.Models
         public string? memberCreateAt { get; set; }
         public string? memberUpdateAt { get; set; }
         public int? memberUpdateCount { get; set; }
+
+        public void SetEncryptedPassword(string plainPassword)
+        {
+            this.memberPassword = SimpleEncryptionHelper.Encrypt(plainPassword);
+        }
+
+        public string GetDecryptedPassword()
+        {
+            return SimpleEncryptionHelper.Decrypt(this.memberPassword)!;
+        }
     }
 
     public class MemberResponseModel
@@ -30,8 +42,10 @@ namespace posSystem.Models
         public int pageNo { get; set; }
         public int pageSize { get; set; }
         public int pageCount { get; set; }
+        public string sortField { get; set; }
+        public string sortOrder { get; set; }
 
-        public bool isEndofpage => pageNo >= pageCount;
+        public bool? isEndofpage => pageNo >= pageCount;
         public List<MemberModel> memberData { get; set; }
     }
 }
