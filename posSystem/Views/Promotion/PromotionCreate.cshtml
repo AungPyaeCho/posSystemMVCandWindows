@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "Add Promotion";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Add Promotion</h5>
+                    <div class="mb-3">
+                        <label for="proName" class="form-label">Promotion Name</label>
+                        <input type="text" class="form-control" id="proName" name="proName" placeholder="Enter promotion name" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="proCode" class="form-label">Promotion Code</label>
+                        <input type="text" class="form-control" id="proCode" name="proCode" placeholder="Enter promotion code" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="proDescription" class="form-label">Promotion Description</label>
+                        <textarea class="form-control" id="proDescription" name="proDescription" rows="3" placeholder="Enter promotion description" required></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" id="btnSave" class="btn btn-success">Save Promotion</button>
+                        <a href="/Promotion" class="btn btn-dark mt-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts {
+    <script>
+        $('#btnSave').click(function () {
+            let proName = $('#proName').val();
+            let proCode = $('#proCode').val();
+            let proDescription = $('#proDescription').val();
+
+            let _reqModel = {
+                proName: proName,
+                proCode: proCode,
+                proDescription: proDescription
+            };
+
+            $.ajax({
+                url: "/Promotion/Save",
+                data: { promotionModel: _reqModel },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        let timerInterval;
+                        Swal.fire({
+                            title: "Saving...",
+                            html: "Please wait, saving in <b></b> milliseconds.",
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getHtmlContainer().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = Swal.getTimerLeft();
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: result.responseMessage,
+                                    icon: "success",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = "/Promotion";
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responseMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+}

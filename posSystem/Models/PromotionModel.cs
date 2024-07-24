@@ -17,4 +17,14 @@ namespace posSystem.Models
         public string? proUpdateAt { get; set; }
         public int? proUpdateCount { get; set; }
     }
+
+    public class PromotionResponseModel
+    {
+        public List<PromotionModel> promotionData { get; set; }
+        public int pageSize { get; set; }
+        public int pageCount { get; set; }
+        public int pageNo { get; set; }
+        public string sortField { get; set; }
+        public string sortOrder { get; set; }
+    }
 }

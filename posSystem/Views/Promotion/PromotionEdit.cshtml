@@ -1,30 +1,29 @@
-﻿@model BrandModel
+﻿@model PromotionModel
 
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
+        <div class="col-md-8">
             <div class="card shadow">
                 <div class="card-body">
-                    <h2 class="card-title mb-4">Update Brand</h2>
-
+                    <h5 class="card-title mb-4">Update Promotion</h5>
                     <div class="mb-3">
-                        <label for="brandName" class="form-label">Brand Name</label>
-                        <input type="text" class="form-control" id="brandName" name="brandName" placeholder="Enter brand name" value="@Model.brandName">
+                        <label for="proName" class="form-label">Promotion Name</label>
+                        <input type="text" class="form-control" id="proName" name="proName" placeholder="Enter promotion name" value="@Model.proName" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="brandCode" class="form-label">Brand Code</label>
-                        <input type="text" class="form-control" id="brandCode" name="brandCode" placeholder="Enter category code" value="@Model.brandCode">
+                        <label for="proCode" class="form-label">Promotion Code</label>
+                        <input type="text" class="form-control" id="proCode" name="proCode" placeholder="Enter promotion code" value="@Model.proCode" required>
                     </div>
 
                     <div class="mb-3">
-                        <label for="brandDescription" class="form-label">Category Description</label>
-                        <textarea class="form-control" id="brandDescription" name="brandDescription" rows="3" placeholder="Enter category description">@Model.brandDescription</textarea>
+                        <label for="proDescription" class="form-label">Promotion Description</label>
+                        <textarea class="form-control" id="proDescription" name="proDescription" rows="3" placeholder="Enter promotion description" required>@Model.proDescription</textarea>
                     </div>
 
                     <div class="d-grid gap-2">
-                        <button type="button" id="btnUpdate" class="btn btn-success">Update Brand</button>
-                        <a href="/Brand" class="btn btn-dark mt-2">Back</a>
+                        <button type="button" id="btnUpdate" class="btn btn-success">Update Promotion</button>
+                        <a href="/Promotion" class="btn btn-dark mt-2">Back</a>
                     </div>
                 </div>
             </div>
@@ -36,20 +35,20 @@
     <script>
         $(document).ready(function () {
             $('#btnUpdate').click(function () {
-                let brandId = @Model.brandId; // Ensure this is the correct value
-                let brandName = $('#brandName').val();
-                let brandCode = $('#brandCode').val();
-                let brandDescription = $('#brandDescription').val();
+                let proId = @Model.proId; // Ensure this is the correct value
+                let proName = $('#proName').val();
+                let proCode = $('#proCode').val();
+                let proDescription = $('#proDescription').val();
 
                 let _reqModel = {
-                    brandId: brandId,
-                    brandName: brandName,
-                    brandCode: brandCode,
-                    brandDescription: brandDescription
+                    proId: proId,
+                    proName: proName,
+                    proCode: proCode,
+                    proDescription: proDescription
                 };
 
                 $.ajax({
-                    url: "/Brand/Update/" + brandId,
+                    url: "/Promotion/Update/" + proId,
                     data: _reqModel,
                     type: "POST",
                     dataType: "json",
@@ -80,7 +79,7 @@
                                         icon: "success",
                                     }).then((result) => {
                                         if (result.isConfirmed) {
-                                            location.href = "/Brand";
+                                            location.href = "/Promotion";
                                         }
                                     });
                                 }

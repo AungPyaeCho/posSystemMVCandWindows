@@ -1,0 +1,96 @@
+﻿@model DiscountModel
+@{
+    ViewData["Title"] = "Add Discount";
+}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-body">
+                    <h5 class="card-title mb-4">Add Discount</h5>
+
+                    <div class="mb-3">
+                        <label for="disName" class="form-label">Discount Name</label>
+                        <input type="text" class="form-control" id="disName" name="disName" placeholder="Enter discount name">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="disDescription" class="form-label">Discount Description</label>
+                        <textarea class="form-control" id="disDescription" name="disDescription" rows="3" placeholder="Enter discount description"></textarea>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="button" id="btnSave" class="btn btn-success">Save Discount</button>
+                        <a href="/Discount" class="btn btn-dark mt-2">Back</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts {
+    <script>
+        $('#btnSave').click(function () {
+            let disName = $('#disName').val();
+            let disDescription = $('#disDescription').val();
+
+            let _reqModel = {
+                disName: disName,
+                disDescription: disDescription
+            };
+
+            $.ajax({
+                url: "/Discount/Save",
+                data: { discountModel: _reqModel },
+                type: "POST",
+                dataType: "json",
+                success: function (result) {
+                    console.log(result);
+                    if (result.IsSuccess) {
+                        let timerInterval;
+                        Swal.fire({
+                            title: "Saving...",
+                            html: "Please wait, saving in <b></b> milliseconds.",
+                            timer: 1000,
+                            timerProgressBar: true,
+                            didOpen: () => {
+                                Swal.showLoading();
+                                const timer = Swal.getHtmlContainer().querySelector("b");
+                                timerInterval = setInterval(() => {
+                                    timer.textContent = Swal.getTimerLeft();
+                                }, 100);
+                            },
+                            willClose: () => {
+                                clearInterval(timerInterval);
+                            }
+                        }).then((result) => {
+                            if (result.dismiss === Swal.DismissReason.timer) {
+                                Swal.fire({
+                                    title: "Success!",
+                                    text: result.responseMessage,
+                                    icon: "success",
+                                }).then((result) => {
+                                    if (result.isConfirmed) {
+                                        location.href = "/Discount";
+                                    }
+                                });
+                            }
+                        });
+                    }
+                    else {
+                        Swal.fire({
+                            title: "Error!",
+                            text: result.responseMessage,
+                            icon: "error"
+                        });
+                    }
+                },
+                error: function (errormessage) {
+                    console.log(errormessage.responseText);
+                }
+            });
+        });
+    </script>
+}

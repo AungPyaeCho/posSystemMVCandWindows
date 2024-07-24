@@ -16,4 +16,14 @@ namespace posSystem.Models
         public string? disUpdateAt { get; set; }
         public int? disUpdateCount { get; set; }
     }
+
+    public class DiscountResponseModel
+    {
+        public List<DiscountModel> discountData { get; set; }
+        public int pageSize { get; set; }
+        public int pageCount { get; set; }
+        public int pageNo { get; set; }
+        public string sortField { get; set; }
+        public string sortOrder { get; set; }
+    }
 }
