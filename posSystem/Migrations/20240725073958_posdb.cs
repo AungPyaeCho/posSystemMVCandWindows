@@ -18,7 +18,7 @@ namespace posSystem.Migrations
                     id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     adminName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminEmail = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    adminPassword = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    adminPassword = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     adminCreateAt = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
@@ -232,14 +232,15 @@ namespace posSystem.Migrations
                     staffCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     staffName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberId = table.Column<int>(type: "int", nullable: true),
-                    memberCode = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    memberCode = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     memberName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     saleQty = table.Column<int>(type: "int", nullable: true),
                     totalAmount = table.Column<int>(type: "int", nullable: true),
-                    saleDate = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    saleDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     paymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     promotion = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    discount = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    discount = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    invoiceNo = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -348,7 +349,7 @@ namespace posSystem.Migrations
             migrationBuilder.InsertData(
                 table: "tblAdmin",
                 columns: new[] { "id", "adminCreateAt", "adminEmail", "adminName", "adminPassword" },
-                values: new object[] { "eb75f840-9626-444c-a7a1-671e4c00526c", "7/24/2024 3:33:48 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
+                values: new object[] { "6a81707a-5a1b-48a2-b077-96ecbcd2ed09", "7/25/2024 2:09:58 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_brandId",

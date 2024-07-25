@@ -13,10 +13,19 @@ builder.Services.AddControllersWithViews().AddJsonOptions(opt =>
     opt.JsonSerializerOptions.PropertyNamingPolicy = null;
 });
 
+//builder.Services.AddDbContext<AppDbContext>(options =>
+//{
+//    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+//}, ServiceLifetime.Transient, ServiceLifetime.Transient);
+
 builder.Services.AddDbContext<AppDbContext>(options =>
-{
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
-}, ServiceLifetime.Transient, ServiceLifetime.Transient);
+    options.UseSqlServer(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        sqlServerOptions => sqlServerOptions.EnableRetryOnFailure(
+            maxRetryCount: 5,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null)));
+
 
 builder.Services.AddSession(options =>
 {
@@ -52,13 +61,13 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    pattern: "{controller=Login}/{action=Index}/{id?}");
 
 // Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())
 {
     var context = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    context.Database.Migrate(); // Applies any pending migrations and creates the database if it does not exist
+    //context.Database.Migrate(); // Applies any pending migrations and creates the database if it does not exist
 }
 
 app.Run();

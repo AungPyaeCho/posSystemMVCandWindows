@@ -12,8 +12,8 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240725035517_sale")]
-    partial class sale
+    [Migration("20240725073958_posdb")]
+    partial class posdb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -40,7 +40,6 @@ namespace posSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("adminPassword")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("id");
@@ -50,8 +49,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "8f7c357c-969b-4d7b-8bde-c96bf618dd43",
-                            adminCreateAt = "7/25/2024 10:25:16 AM",
+                            id = "6a81707a-5a1b-48a2-b077-96ecbcd2ed09",
+                            adminCreateAt = "7/25/2024 2:09:58 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
