@@ -1,12 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using posSystem.Models;
 using posSystem.ViewModels;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
+
 
 namespace posSystem.Controllers
 {
@@ -24,17 +21,16 @@ namespace posSystem.Controllers
         public async Task<IActionResult> Index()
         {
             // Fetch data for sales chart
-            var salesData = _context.Sales
-                .Where(s => !string.IsNullOrEmpty(s.saleDate)) // Ensure saleDate is not null or empty
-                .AsEnumerable() // Switch to client-side evaluation
-                .GroupBy(s => DateTime.Parse(s.saleDate).Date) // Group by Date part of DateTime
+            var salesData = await _context.Sales
+                .Where(s => s.saleDate != null) // Ensure saleDate is not null
+                .GroupBy(s => s.saleDate.Value.Date) // Group by Date part of DateTime
                 .Select(g => new SalesDataViewModel
                 {
                     Date = g.Key,
                     TotalAmount = g.Sum(s => s.totalAmount ?? 0)
                 })
                 .OrderBy(d => d.Date)
-                .ToList();
+                .ToListAsync();
 
             // Fetch data for members chart
             var membersData = await _context.Members

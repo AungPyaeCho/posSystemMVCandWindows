@@ -78,6 +78,26 @@
 
             <hr class="sidebar-divider">
 
+            <!-- Sales Section -->
+            <div class="sidebar-heading">
+                Sales
+            </div>
+
+            <li class="nav-item">
+                <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#collapseSales" aria-expanded="true" aria-controls="collapseSales">
+                    <i class="fas fa-cash-register"></i>
+                    <span>Sales</span>
+                </a>
+                <div id="collapseSales" class="collapse" aria-labelledby="headingSales" data-parent="#accordionSidebar">
+                    <div class="bg-white py-2 collapse-inner rounded">
+                        <a class="collapse-item" asp-area="" asp-controller="Sale" asp-action="Index">1. Sale</a>
+                    </div>
+                </div>
+            </li>
+
+
+            <hr class="sidebar-divider">
+
             <!-- Admin Section -->
             <div class="sidebar-heading">
                 Admin
