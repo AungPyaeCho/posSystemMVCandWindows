@@ -14,6 +14,7 @@ namespace VenomHubLibrary.Queries
             SELECT 
                 I.itemCode,
                 I.itemName,
+                I.itemSalePrice,
                 C.catName,
                 B.brandName,
                 SB.subBrandName,
