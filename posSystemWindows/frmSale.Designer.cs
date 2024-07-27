@@ -46,6 +46,12 @@
             btnSearch = new Button();
             btnShowAll = new Button();
             dgvItems = new DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column2 = new DataGridViewTextBoxColumn();
+            Column4 = new DataGridViewTextBoxColumn();
+            Column6 = new DataGridViewTextBoxColumn();
+            Column5 = new DataGridViewTextBoxColumn();
+            Column7 = new DataGridViewTextBoxColumn();
             btnRemove = new Button();
             btnCheckOut = new Button();
             groupBox1 = new GroupBox();
@@ -53,12 +59,6 @@
             Column3 = new DataGridViewTextBoxColumn();
             Column8 = new DataGridViewTextBoxColumn();
             Column9 = new DataGridViewTextBoxColumn();
-            Column1 = new DataGridViewTextBoxColumn();
-            Column2 = new DataGridViewTextBoxColumn();
-            Column4 = new DataGridViewTextBoxColumn();
-            Column6 = new DataGridViewTextBoxColumn();
-            Column5 = new DataGridViewTextBoxColumn();
-            Column7 = new DataGridViewTextBoxColumn();
             panel1.SuspendLayout();
             groupBox2.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvItems).BeginInit();
@@ -104,7 +104,7 @@
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(6, 438);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(193, 39);
+            comboBox3.Size = new Size(193, 25);
             comboBox3.TabIndex = 11;
             // 
             // label5
@@ -112,7 +112,7 @@
             label5.AutoSize = true;
             label5.Location = new Point(6, 404);
             label5.Name = "label5";
-            label5.Size = new Size(194, 32);
+            label5.Size = new Size(113, 19);
             label5.TabIndex = 10;
             label5.Text = "by Sub-Category";
             // 
@@ -121,7 +121,7 @@
             comboBox4.FormattingEnabled = true;
             comboBox4.Location = new Point(6, 363);
             comboBox4.Name = "comboBox4";
-            comboBox4.Size = new Size(193, 39);
+            comboBox4.Size = new Size(193, 25);
             comboBox4.TabIndex = 9;
             // 
             // label6
@@ -129,7 +129,7 @@
             label6.AutoSize = true;
             label6.Location = new Point(6, 329);
             label6.Name = "label6";
-            label6.Size = new Size(143, 32);
+            label6.Size = new Size(84, 19);
             label6.TabIndex = 8;
             label6.Text = "by Category";
             // 
@@ -138,7 +138,7 @@
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(6, 288);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(193, 39);
+            comboBox2.Size = new Size(193, 25);
             comboBox2.TabIndex = 7;
             // 
             // label4
@@ -146,7 +146,7 @@
             label4.AutoSize = true;
             label4.Location = new Point(6, 254);
             label4.Name = "label4";
-            label4.Size = new Size(160, 32);
+            label4.Size = new Size(93, 19);
             label4.TabIndex = 6;
             label4.Text = "by Sub-Brand";
             // 
@@ -155,7 +155,7 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(6, 214);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(193, 39);
+            comboBox1.Size = new Size(193, 25);
             comboBox1.TabIndex = 5;
             // 
             // label3
@@ -163,7 +163,7 @@
             label3.AutoSize = true;
             label3.Location = new Point(6, 179);
             label3.Name = "label3";
-            label3.Size = new Size(109, 32);
+            label3.Size = new Size(64, 19);
             label3.TabIndex = 4;
             label3.Text = "by Brand";
             // 
@@ -171,7 +171,7 @@
             // 
             textBox2.Location = new Point(6, 140);
             textBox2.Name = "textBox2";
-            textBox2.Size = new Size(193, 38);
+            textBox2.Size = new Size(193, 25);
             textBox2.TabIndex = 3;
             // 
             // label2
@@ -179,7 +179,7 @@
             label2.AutoSize = true;
             label2.Location = new Point(6, 106);
             label2.Name = "label2";
-            label2.Size = new Size(133, 32);
+            label2.Size = new Size(77, 19);
             label2.TabIndex = 2;
             label2.Text = "by Barcode";
             // 
@@ -187,7 +187,7 @@
             // 
             textBox1.Location = new Point(6, 68);
             textBox1.Name = "textBox1";
-            textBox1.Size = new Size(193, 38);
+            textBox1.Size = new Size(193, 25);
             textBox1.TabIndex = 1;
             // 
             // label1
@@ -195,7 +195,7 @@
             label1.AutoSize = true;
             label1.Location = new Point(6, 33);
             label1.Name = "label1";
-            label1.Size = new Size(111, 32);
+            label1.Size = new Size(64, 19);
             label1.TabIndex = 0;
             label1.Text = "by Name";
             // 
@@ -243,6 +243,60 @@
             dgvItems.RowHeadersWidth = 72;
             dgvItems.Size = new Size(834, 667);
             dgvItems.TabIndex = 1;
+            // 
+            // Column1
+            // 
+            Column1.DataPropertyName = "itemCode";
+            Column1.HeaderText = "Item Code";
+            Column1.MinimumWidth = 9;
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Width = 70;
+            // 
+            // Column2
+            // 
+            Column2.DataPropertyName = "itemName";
+            Column2.HeaderText = "Item Name";
+            Column2.MinimumWidth = 9;
+            Column2.Name = "Column2";
+            Column2.ReadOnly = true;
+            Column2.Width = 200;
+            // 
+            // Column4
+            // 
+            Column4.DataPropertyName = "catName";
+            Column4.HeaderText = "Category";
+            Column4.MinimumWidth = 9;
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            Column4.Width = 120;
+            // 
+            // Column6
+            // 
+            Column6.DataPropertyName = "brandName";
+            Column6.HeaderText = "Brand";
+            Column6.MinimumWidth = 9;
+            Column6.Name = "Column6";
+            Column6.ReadOnly = true;
+            Column6.Width = 120;
+            // 
+            // Column5
+            // 
+            Column5.DataPropertyName = "subCatName";
+            Column5.HeaderText = "Sub Category";
+            Column5.MinimumWidth = 9;
+            Column5.Name = "Column5";
+            Column5.ReadOnly = true;
+            Column5.Width = 120;
+            // 
+            // Column7
+            // 
+            Column7.DataPropertyName = "subBrandName";
+            Column7.HeaderText = "Sub Brand";
+            Column7.MinimumWidth = 9;
+            Column7.Name = "Column7";
+            Column7.ReadOnly = true;
+            Column7.Width = 120;
             // 
             // btnRemove
             // 
@@ -309,63 +363,9 @@
             Column9.ReadOnly = true;
             Column9.Width = 175;
             // 
-            // Column1
-            // 
-            Column1.DataPropertyName = "itemCode";
-            Column1.HeaderText = "Item Code";
-            Column1.MinimumWidth = 9;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 70;
-            // 
-            // Column2
-            // 
-            Column2.DataPropertyName = "itemName";
-            Column2.HeaderText = "Item Name";
-            Column2.MinimumWidth = 9;
-            Column2.Name = "Column2";
-            Column2.ReadOnly = true;
-            Column2.Width = 200;
-            // 
-            // Column4
-            // 
-            Column4.DataPropertyName = "catName";
-            Column4.HeaderText = "Category";
-            Column4.MinimumWidth = 9;
-            Column4.Name = "Column4";
-            Column4.ReadOnly = true;
-            Column4.Width = 120;
-            // 
-            // Column6
-            // 
-            Column6.DataPropertyName = "brandName";
-            Column6.HeaderText = "Brand";
-            Column6.MinimumWidth = 9;
-            Column6.Name = "Column6";
-            Column6.ReadOnly = true;
-            Column6.Width = 120;
-            // 
-            // Column5
-            // 
-            Column5.DataPropertyName = "subCatName";
-            Column5.HeaderText = "Sub Category";
-            Column5.MinimumWidth = 9;
-            Column5.Name = "Column5";
-            Column5.ReadOnly = true;
-            Column5.Width = 120;
-            // 
-            // Column7
-            // 
-            Column7.DataPropertyName = "subBrandName";
-            Column7.HeaderText = "Sub Brand";
-            Column7.MinimumWidth = 9;
-            Column7.Name = "Column7";
-            Column7.ReadOnly = true;
-            Column7.Width = 120;
-            // 
             // frmSale
             // 
-            AutoScaleDimensions = new SizeF(13F, 31F);
+            AutoScaleDimensions = new SizeF(7F, 17F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
@@ -376,6 +376,7 @@
             Controls.Add(dgvItems);
             Controls.Add(panel1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
+            FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(4, 3, 4, 3);
             Name = "frmSale";
             StartPosition = FormStartPosition.CenterScreen;
