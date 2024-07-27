@@ -20,22 +20,11 @@ namespace posSystemWindows
 
         private void frmSale_Load(object sender, EventArgs e)
         {
-            //    dgvItems.AutoGenerateColumns = false;
-            //string query = @"
-            //SELECT 
-            //    I.itemCode,
-            //    I.itemName,
-            //    I.itemStock,
-            //    C.catName,
-            //    B.brandName,
-            //    SB.subBrandName,
-            //    SC.subCatName
-            //FROM tblItem I
-            //INNER JOIN tblBrand B ON I.brandCode = B.brandCode
-            //INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
-            //INNER JOIN tblCategory C ON I.catCode = C.catCode
-            //INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode";
+            loadData();
+        }
 
+        private void loadData()
+        {
             try
             {
                 // Fetch data using Dapper and bind it to the DataGridView
