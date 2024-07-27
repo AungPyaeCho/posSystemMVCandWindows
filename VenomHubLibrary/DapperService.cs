@@ -14,6 +14,16 @@ namespace VenomHubLibrary
         {
             _connectionString = connectionString;
         }
+        public DataTable QueryDataTable(string query, object? param = null)
+        {
+            using IDbConnection connection = new SqlConnection(_connectionString);
+            var dataTable = new DataTable();
+            using (var reader = connection.ExecuteReader(query, param))
+            {
+                dataTable.Load(reader);
+            }
+            return dataTable;
+        }
 
         public List<T> Query<T>(string query, object ? param = null)
         {
