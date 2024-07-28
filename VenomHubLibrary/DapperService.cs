@@ -25,6 +25,20 @@ namespace VenomHubLibrary
             return dataTable;
         }
 
+        public DataRow? QueryDataRow(string query, object? param = null)
+        {
+            using IDbConnection connection = new SqlConnection(_connectionString);
+            var dataTable = new DataTable();
+            using (var reader = connection.ExecuteReader(query, param))
+            {
+                dataTable.Load(reader);
+            }
+
+            // Return the first row if available, otherwise null
+            return dataTable.Rows.Count > 0 ? dataTable.Rows[0] : null;
+        }
+
+
         public List<T> Query<T>(string query, object ? param = null)
         {
             using IDbConnection connection = new SqlConnection(_connectionString);
