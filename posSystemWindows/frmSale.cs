@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using Microsoft.IdentityModel.Tokens;
 using posSystemWindows.Models;
 using System.Data;
 using System.Data.SqlClient;
@@ -12,6 +13,7 @@ namespace posSystemWindows
     public partial class frmSale : Form
     {
         private readonly DapperService _dapperService;
+        DataTable DataTable = new DataTable();
 
         public frmSale()
         {
@@ -19,6 +21,7 @@ namespace posSystemWindows
             _dapperService = new DapperService(ConnectionStrings._sqlConnectionStringBuilder.ConnectionString);
             dgvItems.AutoGenerateColumns = false;
             dgvCart.AutoGenerateColumns = false;
+            txtBarcode.Focus();
         }
 
         private void frmSale_Load(object sender, EventArgs e)
@@ -285,6 +288,46 @@ namespace posSystemWindows
             {
                 MessageBox.Show("Please select a row to remove.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private void txtBarcode_TextChanged(object sender, EventArgs e)
+        {
+            string itemBarcode = txtBarcode.Text;
+            LoadItemsByBarcode(itemBarcode);
+        }
+
+        private void LoadItemsByBarcode(string itemBarcode)
+        {
+            var parameters = new
+            {
+                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode
+            };
+
+            var dataTable = _dapperService.QueryDataTable(Queries.GetItemsByBarcode, parameters);
+
+            if (dataTable.Rows.Count > 0)
+            {
+                dgvItems.DataSource = dataTable;
+            }
+        }
+
+        private void btnCheckOut_Click(object sender, EventArgs e)
+        {
+            List<DataGridViewRow> cartData = new List<DataGridViewRow>();
+            foreach (DataGridViewRow row in dgvCart.Rows)
+            {
+                // Skip the new row placeholder if it's there
+                if (!row.IsNewRow)
+                {
+                    cartData.Add(row);
+                }
+            }
+
+            frmCheckOut frmCheckOut = new frmCheckOut();
+            frmCheckOut.LoadData(cartData);
+            frmCheckOut.Show();
+            this.Hide();
+            
         }
     }
 }

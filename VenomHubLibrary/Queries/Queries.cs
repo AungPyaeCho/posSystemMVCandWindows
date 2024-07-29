@@ -8,7 +8,10 @@ namespace VenomHubLibrary.Queries
 {
     public class Queries
     {
-        public static string Create { get; set; } = @"";
+        public static string Create { get; set; } = @"
+            INSERT Into {Table}
+            Value
+            ";
 
         public static string GetItems { get; } = @"
             SELECT DISTINCT

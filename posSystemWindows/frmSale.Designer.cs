@@ -49,6 +49,7 @@
             txtItemName = new TextBox();
             label7 = new Label();
             groupBox3 = new GroupBox();
+            btnRemove = new Button();
             label9 = new Label();
             textBox1 = new TextBox();
             label16 = new Label();
@@ -86,7 +87,6 @@
             quantity = new DataGridViewTextBoxColumn();
             colItemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
-            btnRemove = new Button();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -110,7 +110,7 @@
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(txtByName);
             groupBox2.Controls.Add(label1);
-            groupBox2.Location = new Point(3, 12);
+            groupBox2.Location = new Point(9, 12);
             groupBox2.Name = "groupBox2";
             groupBox2.Size = new Size(220, 491);
             groupBox2.TabIndex = 6;
@@ -191,6 +191,7 @@
             txtBarcode.Name = "txtBarcode";
             txtBarcode.Size = new Size(208, 38);
             txtBarcode.TabIndex = 3;
+            txtBarcode.TextChanged += txtBarcode_TextChanged;
             // 
             // label2
             // 
@@ -221,7 +222,7 @@
             // 
             btnExit.Anchor = AnchorStyles.Bottom;
             btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Location = new Point(12, 954);
+            btnExit.Location = new Point(12, 950);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(207, 50);
             btnExit.TabIndex = 5;
@@ -232,7 +233,7 @@
             // btnSearch
             // 
             btnSearch.FlatStyle = FlatStyle.Flat;
-            btnSearch.Location = new Point(9, 509);
+            btnSearch.Location = new Point(12, 509);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(208, 50);
             btnSearch.TabIndex = 1;
@@ -243,7 +244,7 @@
             // btnShowAll
             // 
             btnShowAll.FlatStyle = FlatStyle.Flat;
-            btnShowAll.Location = new Point(9, 621);
+            btnShowAll.Location = new Point(12, 621);
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(208, 50);
             btnShowAll.TabIndex = 0;
@@ -261,13 +262,13 @@
             panel1.Dock = DockStyle.Left;
             panel1.Location = new Point(0, 0);
             panel1.Name = "panel1";
-            panel1.Size = new Size(226, 1016);
+            panel1.Size = new Size(232, 1016);
             panel1.TabIndex = 0;
             // 
             // btnSearchRange
             // 
             btnSearchRange.FlatStyle = FlatStyle.Flat;
-            btnSearchRange.Location = new Point(9, 565);
+            btnSearchRange.Location = new Point(12, 565);
             btnSearchRange.Name = "btnSearchRange";
             btnSearchRange.Size = new Size(208, 50);
             btnSearchRange.TabIndex = 7;
@@ -279,6 +280,7 @@
             // 
             txtItemName.Location = new Point(6, 69);
             txtItemName.Name = "txtItemName";
+            txtItemName.ReadOnly = true;
             txtItemName.Size = new Size(196, 38);
             txtItemName.TabIndex = 13;
             // 
@@ -317,12 +319,23 @@
             groupBox3.Controls.Add(txtItemPrice);
             groupBox3.Controls.Add(label7);
             groupBox3.Controls.Add(txtItemName);
-            groupBox3.Location = new Point(226, 811);
+            groupBox3.Location = new Point(238, 819);
             groupBox3.Name = "groupBox3";
             groupBox3.Size = new Size(1524, 197);
             groupBox3.TabIndex = 18;
             groupBox3.TabStop = false;
             groupBox3.Text = "Details";
+            // 
+            // btnRemove
+            // 
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.Location = new Point(1301, 37);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(208, 50);
+            btnRemove.TabIndex = 44;
+            btnRemove.Text = "&Remove";
+            btnRemove.UseVisualStyleBackColor = true;
+            btnRemove.Click += btnRemove_Click;
             // 
             // label9
             // 
@@ -335,9 +348,9 @@
             // 
             // textBox1
             // 
-            textBox1.Enabled = false;
             textBox1.Location = new Point(208, 145);
             textBox1.Name = "textBox1";
+            textBox1.ReadOnly = true;
             textBox1.Size = new Size(196, 38);
             textBox1.TabIndex = 37;
             // 
@@ -352,9 +365,9 @@
             // 
             // textBox2
             // 
-            textBox2.Enabled = false;
             textBox2.Location = new Point(6, 145);
             textBox2.Name = "textBox2";
+            textBox2.ReadOnly = true;
             textBox2.Size = new Size(196, 38);
             textBox2.TabIndex = 35;
             // 
@@ -363,19 +376,20 @@
             btnCheckOut.BackColor = SystemColors.Control;
             btnCheckOut.FlatStyle = FlatStyle.Flat;
             btnCheckOut.ForeColor = Color.Black;
-            btnCheckOut.Location = new Point(1304, 138);
+            btnCheckOut.Location = new Point(1301, 131);
             btnCheckOut.Name = "btnCheckOut";
             btnCheckOut.Size = new Size(208, 50);
             btnCheckOut.TabIndex = 33;
             btnCheckOut.Text = "&Check Out";
             btnCheckOut.UseVisualStyleBackColor = false;
+            btnCheckOut.Click += btnCheckOut_Click;
             // 
             // btnAddCart
             // 
             btnAddCart.BackColor = SystemColors.Control;
             btnAddCart.FlatStyle = FlatStyle.Flat;
             btnAddCart.ForeColor = Color.Black;
-            btnAddCart.Location = new Point(1016, 138);
+            btnAddCart.Location = new Point(1016, 131);
             btnAddCart.Name = "btnAddCart";
             btnAddCart.Size = new Size(196, 50);
             btnAddCart.TabIndex = 31;
@@ -404,9 +418,9 @@
             // 
             // txtSubCategory
             // 
-            txtSubCategory.Enabled = false;
             txtSubCategory.Location = new Point(1016, 69);
             txtSubCategory.Name = "txtSubCategory";
+            txtSubCategory.ReadOnly = true;
             txtSubCategory.Size = new Size(196, 38);
             txtSubCategory.TabIndex = 25;
             // 
@@ -421,9 +435,9 @@
             // 
             // txtCategory
             // 
-            txtCategory.Enabled = false;
             txtCategory.Location = new Point(814, 69);
             txtCategory.Name = "txtCategory";
+            txtCategory.ReadOnly = true;
             txtCategory.Size = new Size(196, 38);
             txtCategory.TabIndex = 23;
             // 
@@ -455,9 +469,9 @@
             // 
             // txtSubBrand
             // 
-            txtSubBrand.Enabled = false;
             txtSubBrand.Location = new Point(612, 69);
             txtSubBrand.Name = "txtSubBrand";
+            txtSubBrand.ReadOnly = true;
             txtSubBrand.Size = new Size(196, 38);
             txtSubBrand.TabIndex = 21;
             // 
@@ -472,9 +486,9 @@
             // 
             // txtBrand
             // 
-            txtBrand.Enabled = false;
             txtBrand.Location = new Point(410, 69);
             txtBrand.Name = "txtBrand";
+            txtBrand.ReadOnly = true;
             txtBrand.Size = new Size(196, 38);
             txtBrand.TabIndex = 19;
             // 
@@ -489,9 +503,9 @@
             // 
             // txtWholeSalePrice
             // 
-            txtWholeSalePrice.Enabled = false;
             txtWholeSalePrice.Location = new Point(612, 145);
             txtWholeSalePrice.Name = "txtWholeSalePrice";
+            txtWholeSalePrice.ReadOnly = true;
             txtWholeSalePrice.Size = new Size(196, 38);
             txtWholeSalePrice.TabIndex = 17;
             // 
@@ -506,16 +520,16 @@
             // 
             // txtItemPrice
             // 
-            txtItemPrice.Enabled = false;
             txtItemPrice.Location = new Point(410, 145);
             txtItemPrice.Name = "txtItemPrice";
+            txtItemPrice.ReadOnly = true;
             txtItemPrice.Size = new Size(196, 38);
             txtItemPrice.TabIndex = 15;
             // 
             // groupBox1
             // 
             groupBox1.Controls.Add(dgvItems);
-            groupBox1.Location = new Point(232, 12);
+            groupBox1.Location = new Point(244, 12);
             groupBox1.Name = "groupBox1";
             groupBox1.Size = new Size(758, 781);
             groupBox1.TabIndex = 41;
@@ -615,7 +629,7 @@
             // groupBox4
             // 
             groupBox4.Controls.Add(dgvCart);
-            groupBox4.Location = new Point(996, 12);
+            groupBox4.Location = new Point(1011, 12);
             groupBox4.Name = "groupBox4";
             groupBox4.Size = new Size(742, 781);
             groupBox4.TabIndex = 43;
@@ -669,24 +683,13 @@
             netAmount.Name = "netAmount";
             netAmount.Width = 160;
             // 
-            // btnRemove
-            // 
-            btnRemove.FlatStyle = FlatStyle.Flat;
-            btnRemove.Location = new Point(1304, 37);
-            btnRemove.Name = "btnRemove";
-            btnRemove.Size = new Size(208, 50);
-            btnRemove.TabIndex = 44;
-            btnRemove.Text = "&Remove";
-            btnRemove.UseVisualStyleBackColor = true;
-            btnRemove.Click += btnRemove_Click;
-            // 
             // frmSale
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(1750, 1016);
+            ClientSize = new Size(1765, 1016);
             Controls.Add(groupBox4);
             Controls.Add(groupBox1);
             Controls.Add(groupBox3);
