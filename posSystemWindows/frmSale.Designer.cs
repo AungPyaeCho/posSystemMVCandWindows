@@ -31,7 +31,7 @@
             groupBox2 = new GroupBox();
             comboBox3 = new ComboBox();
             label5 = new Label();
-            cboCategories = new ComboBox();
+            comboBox4 = new ComboBox();
             label6 = new Label();
             comboBox2 = new ComboBox();
             label4 = new Label();
@@ -44,18 +44,26 @@
             btnExit = new Button();
             btnSearch = new Button();
             btnShowAll = new Button();
+            dgvItems = new DataGridView();
+            Column1 = new DataGridViewTextBoxColumn();
+            itemName = new DataGridViewTextBoxColumn();
+            catName = new DataGridViewTextBoxColumn();
+            brandName = new DataGridViewTextBoxColumn();
+            subCatName = new DataGridViewTextBoxColumn();
+            subBrandName = new DataGridViewTextBoxColumn();
+            itemPrice = new DataGridViewTextBoxColumn();
+            itemWholeSalePrice = new DataGridViewTextBoxColumn();
+            groupBox1 = new GroupBox();
+            dgvCart = new DataGridView();
+            Column3 = new DataGridViewTextBoxColumn();
+            quantity = new DataGridViewTextBoxColumn();
+            Column8 = new DataGridViewTextBoxColumn();
+            netAmount = new DataGridViewTextBoxColumn();
             panel1 = new Panel();
             btnSearchRange = new Button();
-            btnRemove = new Button();
             txtItemName = new TextBox();
             label7 = new Label();
             groupBox3 = new GroupBox();
-            label9 = new Label();
-            textBox1 = new TextBox();
-            label16 = new Label();
-            textBox2 = new TextBox();
-            btnCheckOut = new Button();
-            btnAddCart = new Button();
             chbWholeSale = new CheckBox();
             label15 = new Label();
             txtSubCategory = new TextBox();
@@ -71,36 +79,24 @@
             txtWholeSalePrice = new TextBox();
             label10 = new Label();
             txtItemPrice = new TextBox();
-            groupBox1 = new GroupBox();
-            dgvItems = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
-            itemName = new DataGridViewTextBoxColumn();
-            catName = new DataGridViewTextBoxColumn();
-            brandName = new DataGridViewTextBoxColumn();
-            subCatName = new DataGridViewTextBoxColumn();
-            subBrandName = new DataGridViewTextBoxColumn();
-            itemPrice = new DataGridViewTextBoxColumn();
-            itemWholeSalePrice = new DataGridViewTextBoxColumn();
+            btnAddCart = new Button();
             groupBox4 = new GroupBox();
-            dgvCart = new DataGridView();
-            colItemName = new DataGridViewTextBoxColumn();
-            quantity = new DataGridViewTextBoxColumn();
-            colItemPrice = new DataGridViewTextBoxColumn();
-            netAmount = new DataGridViewTextBoxColumn();
+            btnCheckOut = new Button();
+            btnRemove = new Button();
             groupBox2.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvItems).BeginInit();
+            groupBox1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvCart).BeginInit();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
-            groupBox1.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvItems).BeginInit();
             groupBox4.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)dgvCart).BeginInit();
             SuspendLayout();
             // 
             // groupBox2
             // 
             groupBox2.Controls.Add(comboBox3);
             groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(cboCategories);
+            groupBox2.Controls.Add(comboBox4);
             groupBox2.Controls.Add(label6);
             groupBox2.Controls.Add(comboBox2);
             groupBox2.Controls.Add(label4);
@@ -110,9 +106,9 @@
             groupBox2.Controls.Add(label2);
             groupBox2.Controls.Add(txtByName);
             groupBox2.Controls.Add(label1);
-            groupBox2.Location = new Point(3, 12);
+            groupBox2.Location = new Point(11, 124);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(220, 491);
+            groupBox2.Size = new Size(208, 491);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Search";
@@ -122,7 +118,7 @@
             comboBox3.FormattingEnabled = true;
             comboBox3.Location = new Point(6, 438);
             comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(208, 39);
+            comboBox3.Size = new Size(196, 39);
             comboBox3.TabIndex = 11;
             // 
             // label5
@@ -134,13 +130,13 @@
             label5.TabIndex = 10;
             label5.Text = "by Sub-Category";
             // 
-            // cboCategories
+            // comboBox4
             // 
-            cboCategories.FormattingEnabled = true;
-            cboCategories.Location = new Point(6, 363);
-            cboCategories.Name = "cboCategories";
-            cboCategories.Size = new Size(208, 39);
-            cboCategories.TabIndex = 9;
+            comboBox4.FormattingEnabled = true;
+            comboBox4.Location = new Point(6, 363);
+            comboBox4.Name = "comboBox4";
+            comboBox4.Size = new Size(196, 39);
+            comboBox4.TabIndex = 9;
             // 
             // label6
             // 
@@ -156,7 +152,7 @@
             comboBox2.FormattingEnabled = true;
             comboBox2.Location = new Point(6, 288);
             comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(208, 39);
+            comboBox2.Size = new Size(196, 39);
             comboBox2.TabIndex = 7;
             // 
             // label4
@@ -173,7 +169,7 @@
             comboBox1.FormattingEnabled = true;
             comboBox1.Location = new Point(6, 214);
             comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(208, 39);
+            comboBox1.Size = new Size(196, 39);
             comboBox1.TabIndex = 5;
             // 
             // label3
@@ -189,7 +185,7 @@
             // 
             txtBarcode.Location = new Point(6, 140);
             txtBarcode.Name = "txtBarcode";
-            txtBarcode.Size = new Size(208, 38);
+            txtBarcode.Size = new Size(196, 38);
             txtBarcode.TabIndex = 3;
             // 
             // label2
@@ -205,7 +201,7 @@
             // 
             txtByName.Location = new Point(6, 68);
             txtByName.Name = "txtByName";
-            txtByName.Size = new Size(208, 38);
+            txtByName.Size = new Size(196, 38);
             txtByName.TabIndex = 1;
             // 
             // label1
@@ -221,7 +217,7 @@
             // 
             btnExit.Anchor = AnchorStyles.Bottom;
             btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Location = new Point(12, 954);
+            btnExit.Location = new Point(12, 997);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(207, 50);
             btnExit.TabIndex = 5;
@@ -232,7 +228,7 @@
             // btnSearch
             // 
             btnSearch.FlatStyle = FlatStyle.Flat;
-            btnSearch.Location = new Point(9, 509);
+            btnSearch.Location = new Point(12, 68);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(208, 50);
             btnSearch.TabIndex = 1;
@@ -243,7 +239,7 @@
             // btnShowAll
             // 
             btnShowAll.FlatStyle = FlatStyle.Flat;
-            btnShowAll.Location = new Point(9, 621);
+            btnShowAll.Location = new Point(12, 12);
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(208, 50);
             btnShowAll.TabIndex = 0;
@@ -251,303 +247,21 @@
             btnShowAll.UseVisualStyleBackColor = true;
             btnShowAll.Click += btnShowAll_Click;
             // 
-            // panel1
-            // 
-            panel1.Controls.Add(btnSearchRange);
-            panel1.Controls.Add(groupBox2);
-            panel1.Controls.Add(btnExit);
-            panel1.Controls.Add(btnSearch);
-            panel1.Controls.Add(btnShowAll);
-            panel1.Dock = DockStyle.Left;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(226, 1016);
-            panel1.TabIndex = 0;
-            // 
-            // btnSearchRange
-            // 
-            btnSearchRange.FlatStyle = FlatStyle.Flat;
-            btnSearchRange.Location = new Point(9, 565);
-            btnSearchRange.Name = "btnSearchRange";
-            btnSearchRange.Size = new Size(208, 50);
-            btnSearchRange.TabIndex = 7;
-            btnSearchRange.Text = "Search Range";
-            btnSearchRange.UseVisualStyleBackColor = true;
-            btnSearchRange.Click += btnSearchRange_Click;
-            // 
-            // btnRemove
-            // 
-            btnRemove.BackColor = SystemColors.Control;
-            btnRemove.FlatStyle = FlatStyle.Flat;
-            btnRemove.ForeColor = Color.Black;
-            btnRemove.Location = new Point(1304, 24);
-            btnRemove.Name = "btnRemove";
-            btnRemove.Size = new Size(208, 50);
-            btnRemove.TabIndex = 32;
-            btnRemove.Text = "Remove Item";
-            btnRemove.UseVisualStyleBackColor = false;
-            // 
-            // txtItemName
-            // 
-            txtItemName.Location = new Point(6, 69);
-            txtItemName.Name = "txtItemName";
-            txtItemName.Size = new Size(196, 38);
-            txtItemName.TabIndex = 13;
-            // 
-            // label7
-            // 
-            label7.AutoSize = true;
-            label7.Location = new Point(6, 34);
-            label7.Name = "label7";
-            label7.Size = new Size(133, 32);
-            label7.TabIndex = 12;
-            label7.Text = "Item Name";
-            // 
-            // groupBox3
-            // 
-            groupBox3.Controls.Add(label9);
-            groupBox3.Controls.Add(textBox1);
-            groupBox3.Controls.Add(label16);
-            groupBox3.Controls.Add(textBox2);
-            groupBox3.Controls.Add(btnCheckOut);
-            groupBox3.Controls.Add(btnRemove);
-            groupBox3.Controls.Add(btnAddCart);
-            groupBox3.Controls.Add(chbWholeSale);
-            groupBox3.Controls.Add(label15);
-            groupBox3.Controls.Add(txtSubCategory);
-            groupBox3.Controls.Add(label14);
-            groupBox3.Controls.Add(txtCategory);
-            groupBox3.Controls.Add(txtQuantity);
-            groupBox3.Controls.Add(label13);
-            groupBox3.Controls.Add(label8);
-            groupBox3.Controls.Add(txtSubBrand);
-            groupBox3.Controls.Add(label12);
-            groupBox3.Controls.Add(txtBrand);
-            groupBox3.Controls.Add(label11);
-            groupBox3.Controls.Add(txtWholeSalePrice);
-            groupBox3.Controls.Add(label10);
-            groupBox3.Controls.Add(txtItemPrice);
-            groupBox3.Controls.Add(label7);
-            groupBox3.Controls.Add(txtItemName);
-            groupBox3.Location = new Point(226, 811);
-            groupBox3.Name = "groupBox3";
-            groupBox3.Size = new Size(1524, 197);
-            groupBox3.TabIndex = 18;
-            groupBox3.TabStop = false;
-            groupBox3.Text = "Details";
-            // 
-            // label9
-            // 
-            label9.AutoSize = true;
-            label9.Location = new Point(208, 110);
-            label9.Name = "label9";
-            label9.Size = new Size(108, 32);
-            label9.TabIndex = 36;
-            label9.Text = "Discount";
-            // 
-            // textBox1
-            // 
-            textBox1.Enabled = false;
-            textBox1.Location = new Point(208, 145);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(196, 38);
-            textBox1.TabIndex = 37;
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new Point(6, 110);
-            label16.Name = "label16";
-            label16.Size = new Size(126, 32);
-            label16.TabIndex = 34;
-            label16.Text = "Promotion";
-            // 
-            // textBox2
-            // 
-            textBox2.Enabled = false;
-            textBox2.Location = new Point(6, 145);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(196, 38);
-            textBox2.TabIndex = 35;
-            // 
-            // btnCheckOut
-            // 
-            btnCheckOut.BackColor = SystemColors.Control;
-            btnCheckOut.FlatStyle = FlatStyle.Flat;
-            btnCheckOut.ForeColor = Color.Black;
-            btnCheckOut.Location = new Point(1304, 138);
-            btnCheckOut.Name = "btnCheckOut";
-            btnCheckOut.Size = new Size(208, 50);
-            btnCheckOut.TabIndex = 33;
-            btnCheckOut.Text = "Check Out";
-            btnCheckOut.UseVisualStyleBackColor = false;
-            // 
-            // btnAddCart
-            // 
-            btnAddCart.BackColor = SystemColors.Control;
-            btnAddCart.FlatStyle = FlatStyle.Flat;
-            btnAddCart.ForeColor = Color.Black;
-            btnAddCart.Location = new Point(1016, 138);
-            btnAddCart.Name = "btnAddCart";
-            btnAddCart.Size = new Size(196, 50);
-            btnAddCart.TabIndex = 31;
-            btnAddCart.Text = "&Add Cart";
-            btnAddCart.UseVisualStyleBackColor = false;
-            btnAddCart.Click += btnAddCart_Click;
-            // 
-            // chbWholeSale
-            // 
-            chbWholeSale.AutoSize = true;
-            chbWholeSale.Location = new Point(814, 145);
-            chbWholeSale.Name = "chbWholeSale";
-            chbWholeSale.Size = new Size(74, 36);
-            chbWholeSale.TabIndex = 30;
-            chbWholeSale.Text = "Yes";
-            chbWholeSale.UseVisualStyleBackColor = true;
-            // 
-            // label15
-            // 
-            label15.AutoSize = true;
-            label15.Location = new Point(1016, 34);
-            label15.Name = "label15";
-            label15.Size = new Size(158, 32);
-            label15.TabIndex = 24;
-            label15.Text = "Sub Category";
-            // 
-            // txtSubCategory
-            // 
-            txtSubCategory.Enabled = false;
-            txtSubCategory.Location = new Point(1016, 69);
-            txtSubCategory.Name = "txtSubCategory";
-            txtSubCategory.Size = new Size(196, 38);
-            txtSubCategory.TabIndex = 25;
-            // 
-            // label14
-            // 
-            label14.AutoSize = true;
-            label14.Location = new Point(814, 34);
-            label14.Name = "label14";
-            label14.Size = new Size(110, 32);
-            label14.TabIndex = 22;
-            label14.Text = "Category";
-            // 
-            // txtCategory
-            // 
-            txtCategory.Enabled = false;
-            txtCategory.Location = new Point(814, 69);
-            txtCategory.Name = "txtCategory";
-            txtCategory.Size = new Size(196, 38);
-            txtCategory.TabIndex = 23;
-            // 
-            // txtQuantity
-            // 
-            txtQuantity.Location = new Point(208, 69);
-            txtQuantity.Name = "txtQuantity";
-            txtQuantity.Size = new Size(196, 38);
-            txtQuantity.TabIndex = 24;
-            txtQuantity.Text = "1";
-            // 
-            // label13
-            // 
-            label13.AutoSize = true;
-            label13.Location = new Point(612, 34);
-            label13.Name = "label13";
-            label13.Size = new Size(124, 32);
-            label13.TabIndex = 20;
-            label13.Text = "Sub Brand";
-            // 
-            // label8
-            // 
-            label8.AutoSize = true;
-            label8.Location = new Point(208, 34);
-            label8.Name = "label8";
-            label8.Size = new Size(106, 32);
-            label8.TabIndex = 23;
-            label8.Text = "Quantity";
-            // 
-            // txtSubBrand
-            // 
-            txtSubBrand.Enabled = false;
-            txtSubBrand.Location = new Point(612, 69);
-            txtSubBrand.Name = "txtSubBrand";
-            txtSubBrand.Size = new Size(196, 38);
-            txtSubBrand.TabIndex = 21;
-            // 
-            // label12
-            // 
-            label12.AutoSize = true;
-            label12.Location = new Point(410, 34);
-            label12.Name = "label12";
-            label12.Size = new Size(76, 32);
-            label12.TabIndex = 18;
-            label12.Text = "Brand";
-            // 
-            // txtBrand
-            // 
-            txtBrand.Enabled = false;
-            txtBrand.Location = new Point(410, 69);
-            txtBrand.Name = "txtBrand";
-            txtBrand.Size = new Size(196, 38);
-            txtBrand.TabIndex = 19;
-            // 
-            // label11
-            // 
-            label11.AutoSize = true;
-            label11.Location = new Point(612, 110);
-            label11.Name = "label11";
-            label11.Size = new Size(192, 32);
-            label11.TabIndex = 16;
-            label11.Text = "Whole Sale Price";
-            // 
-            // txtWholeSalePrice
-            // 
-            txtWholeSalePrice.Enabled = false;
-            txtWholeSalePrice.Location = new Point(612, 145);
-            txtWholeSalePrice.Name = "txtWholeSalePrice";
-            txtWholeSalePrice.Size = new Size(196, 38);
-            txtWholeSalePrice.TabIndex = 17;
-            // 
-            // label10
-            // 
-            label10.AutoSize = true;
-            label10.Location = new Point(410, 110);
-            label10.Name = "label10";
-            label10.Size = new Size(65, 32);
-            label10.TabIndex = 14;
-            label10.Text = "Price";
-            // 
-            // txtItemPrice
-            // 
-            txtItemPrice.Enabled = false;
-            txtItemPrice.Location = new Point(410, 145);
-            txtItemPrice.Name = "txtItemPrice";
-            txtItemPrice.Size = new Size(196, 38);
-            txtItemPrice.TabIndex = 15;
-            // 
-            // groupBox1
-            // 
-            groupBox1.Controls.Add(dgvItems);
-            groupBox1.Location = new Point(232, 12);
-            groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(758, 781);
-            groupBox1.TabIndex = 41;
-            groupBox1.TabStop = false;
-            groupBox1.Text = "Products";
-            // 
             // dgvItems
             // 
             dgvItems.AllowUserToAddRows = false;
             dgvItems.AllowUserToDeleteRows = false;
+            dgvItems.Anchor = AnchorStyles.Top;
             dgvItems.BackgroundColor = SystemColors.Window;
             dgvItems.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             dgvItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dgvItems.Columns.AddRange(new DataGridViewColumn[] { Column1, itemName, catName, brandName, subCatName, subBrandName, itemPrice, itemWholeSalePrice });
-            dgvItems.Location = new Point(0, 37);
+            dgvItems.Location = new Point(232, 0);
             dgvItems.Name = "dgvItems";
             dgvItems.ReadOnly = true;
             dgvItems.RowHeadersWidth = 72;
-            dgvItems.Size = new Size(752, 738);
-            dgvItems.TabIndex = 42;
+            dgvItems.Size = new Size(749, 659);
+            dgvItems.TabIndex = 1;
             dgvItems.CellContentClick += dgvItems_CellContentClick;
             // 
             // Column1
@@ -624,62 +338,302 @@
             itemWholeSalePrice.Visible = false;
             itemWholeSalePrice.Width = 175;
             // 
-            // groupBox4
+            // groupBox1
             // 
-            groupBox4.Controls.Add(dgvCart);
-            groupBox4.Location = new Point(996, 12);
-            groupBox4.Name = "groupBox4";
-            groupBox4.Size = new Size(742, 781);
-            groupBox4.TabIndex = 43;
-            groupBox4.TabStop = false;
-            groupBox4.Text = "Shopping Cart";
+            groupBox1.Controls.Add(dgvCart);
+            groupBox1.Location = new Point(987, 12);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Size = new Size(751, 796);
+            groupBox1.TabIndex = 8;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "Shopping Cart";
             // 
             // dgvCart
             // 
-            dgvCart.AllowUserToAddRows = false;
-            dgvCart.BackgroundColor = SystemColors.Control;
-            dgvCart.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
-            dgvCart.ColumnHeadersHeight = 72;
-            dgvCart.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvCart.Columns.AddRange(new DataGridViewColumn[] { colItemName, quantity, colItemPrice, netAmount });
-            dgvCart.Location = new Point(6, 37);
+            dgvCart.BackgroundColor = Color.White;
+            dgvCart.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dgvCart.Columns.AddRange(new DataGridViewColumn[] { Column3, quantity, Column8, netAmount });
+            dgvCart.Location = new Point(6, 38);
             dgvCart.Name = "dgvCart";
             dgvCart.RowHeadersWidth = 72;
-            dgvCart.Size = new Size(730, 738);
-            dgvCart.TabIndex = 44;
+            dgvCart.Size = new Size(736, 752);
+            dgvCart.TabIndex = 0;
             dgvCart.CellEndEdit += dgvCart_CellEndEdit;
             // 
-            // colItemName
+            // Column3
             // 
-            colItemName.DataPropertyName = "itemName";
-            colItemName.HeaderText = "Item Name";
-            colItemName.MinimumWidth = 9;
-            colItemName.Name = "colItemName";
-            colItemName.Width = 180;
+            Column3.DataPropertyName = "itemName";
+            Column3.HeaderText = "Item Name";
+            Column3.MinimumWidth = 9;
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            Column3.Width = 200;
             // 
             // quantity
             // 
-            quantity.DataPropertyName = "quantity";
             quantity.HeaderText = "Quantity";
             quantity.MinimumWidth = 9;
             quantity.Name = "quantity";
-            quantity.Width = 155;
+            quantity.Width = 175;
             // 
-            // colItemPrice
+            // Column8
             // 
-            colItemPrice.DataPropertyName = "itemPrice";
-            colItemPrice.HeaderText = "Item Price";
-            colItemPrice.MinimumWidth = 9;
-            colItemPrice.Name = "colItemPrice";
-            colItemPrice.Width = 160;
+            Column8.DataPropertyName = "itemPrice";
+            Column8.HeaderText = "Price";
+            Column8.MinimumWidth = 9;
+            Column8.Name = "Column8";
+            Column8.ReadOnly = true;
+            Column8.Width = 150;
             // 
             // netAmount
             // 
-            netAmount.DataPropertyName = "netAmount";
             netAmount.HeaderText = "Amount";
             netAmount.MinimumWidth = 9;
             netAmount.Name = "netAmount";
-            netAmount.Width = 160;
+            netAmount.Width = 175;
+            // 
+            // panel1
+            // 
+            panel1.Controls.Add(btnSearchRange);
+            panel1.Controls.Add(groupBox2);
+            panel1.Controls.Add(btnExit);
+            panel1.Controls.Add(btnSearch);
+            panel1.Controls.Add(btnShowAll);
+            panel1.Dock = DockStyle.Left;
+            panel1.Location = new Point(0, 0);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(226, 1059);
+            panel1.TabIndex = 0;
+            // 
+            // btnSearchRange
+            // 
+            btnSearchRange.FlatStyle = FlatStyle.Flat;
+            btnSearchRange.Location = new Point(12, 621);
+            btnSearchRange.Name = "btnSearchRange";
+            btnSearchRange.Size = new Size(208, 50);
+            btnSearchRange.TabIndex = 7;
+            btnSearchRange.Text = "Search Range";
+            btnSearchRange.UseVisualStyleBackColor = true;
+            btnSearchRange.Click += btnSearchRange_Click;
+            // 
+            // txtItemName
+            // 
+            txtItemName.Location = new Point(6, 69);
+            txtItemName.Name = "txtItemName";
+            txtItemName.Size = new Size(196, 38);
+            txtItemName.TabIndex = 13;
+            // 
+            // label7
+            // 
+            label7.AutoSize = true;
+            label7.Location = new Point(6, 34);
+            label7.Name = "label7";
+            label7.Size = new Size(133, 32);
+            label7.TabIndex = 12;
+            label7.Text = "Item Name";
+            // 
+            // groupBox3
+            // 
+            groupBox3.Anchor = AnchorStyles.Bottom;
+            groupBox3.Controls.Add(chbWholeSale);
+            groupBox3.Controls.Add(label15);
+            groupBox3.Controls.Add(txtSubCategory);
+            groupBox3.Controls.Add(label14);
+            groupBox3.Controls.Add(txtCategory);
+            groupBox3.Controls.Add(txtQuantity);
+            groupBox3.Controls.Add(label13);
+            groupBox3.Controls.Add(label8);
+            groupBox3.Controls.Add(txtSubBrand);
+            groupBox3.Controls.Add(label12);
+            groupBox3.Controls.Add(txtBrand);
+            groupBox3.Controls.Add(label11);
+            groupBox3.Controls.Add(txtWholeSalePrice);
+            groupBox3.Controls.Add(label10);
+            groupBox3.Controls.Add(txtItemPrice);
+            groupBox3.Controls.Add(label7);
+            groupBox3.Controls.Add(txtItemName);
+            groupBox3.Location = new Point(232, 697);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Size = new Size(749, 350);
+            groupBox3.TabIndex = 18;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "Details";
+            // 
+            // chbWholeSale
+            // 
+            chbWholeSale.AutoSize = true;
+            chbWholeSale.Location = new Point(612, 69);
+            chbWholeSale.Name = "chbWholeSale";
+            chbWholeSale.Size = new Size(74, 36);
+            chbWholeSale.TabIndex = 30;
+            chbWholeSale.Text = "Yes";
+            chbWholeSale.UseVisualStyleBackColor = true;
+            // 
+            // label15
+            // 
+            label15.AutoSize = true;
+            label15.Location = new Point(208, 186);
+            label15.Name = "label15";
+            label15.Size = new Size(158, 32);
+            label15.TabIndex = 24;
+            label15.Text = "Sub Category";
+            // 
+            // txtSubCategory
+            // 
+            txtSubCategory.Enabled = false;
+            txtSubCategory.Location = new Point(208, 221);
+            txtSubCategory.Name = "txtSubCategory";
+            txtSubCategory.Size = new Size(196, 38);
+            txtSubCategory.TabIndex = 25;
+            // 
+            // label14
+            // 
+            label14.AutoSize = true;
+            label14.Location = new Point(6, 186);
+            label14.Name = "label14";
+            label14.Size = new Size(110, 32);
+            label14.TabIndex = 22;
+            label14.Text = "Category";
+            // 
+            // txtCategory
+            // 
+            txtCategory.Enabled = false;
+            txtCategory.Location = new Point(6, 221);
+            txtCategory.Name = "txtCategory";
+            txtCategory.Size = new Size(196, 38);
+            txtCategory.TabIndex = 23;
+            // 
+            // txtQuantity
+            // 
+            txtQuantity.Location = new Point(6, 300);
+            txtQuantity.Name = "txtQuantity";
+            txtQuantity.Size = new Size(196, 38);
+            txtQuantity.TabIndex = 24;
+            txtQuantity.Text = "1";
+            // 
+            // label13
+            // 
+            label13.AutoSize = true;
+            label13.Location = new Point(208, 110);
+            label13.Name = "label13";
+            label13.Size = new Size(124, 32);
+            label13.TabIndex = 20;
+            label13.Text = "Sub Brand";
+            // 
+            // label8
+            // 
+            label8.AutoSize = true;
+            label8.Location = new Point(6, 265);
+            label8.Name = "label8";
+            label8.Size = new Size(106, 32);
+            label8.TabIndex = 23;
+            label8.Text = "Quantity";
+            // 
+            // txtSubBrand
+            // 
+            txtSubBrand.Enabled = false;
+            txtSubBrand.Location = new Point(208, 145);
+            txtSubBrand.Name = "txtSubBrand";
+            txtSubBrand.Size = new Size(196, 38);
+            txtSubBrand.TabIndex = 21;
+            // 
+            // label12
+            // 
+            label12.AutoSize = true;
+            label12.Location = new Point(6, 110);
+            label12.Name = "label12";
+            label12.Size = new Size(76, 32);
+            label12.TabIndex = 18;
+            label12.Text = "Brand";
+            // 
+            // txtBrand
+            // 
+            txtBrand.Enabled = false;
+            txtBrand.Location = new Point(6, 145);
+            txtBrand.Name = "txtBrand";
+            txtBrand.Size = new Size(196, 38);
+            txtBrand.TabIndex = 19;
+            // 
+            // label11
+            // 
+            label11.AutoSize = true;
+            label11.Location = new Point(410, 34);
+            label11.Name = "label11";
+            label11.Size = new Size(192, 32);
+            label11.TabIndex = 16;
+            label11.Text = "Whole Sale Price";
+            // 
+            // txtWholeSalePrice
+            // 
+            txtWholeSalePrice.Location = new Point(410, 69);
+            txtWholeSalePrice.Name = "txtWholeSalePrice";
+            txtWholeSalePrice.Size = new Size(196, 38);
+            txtWholeSalePrice.TabIndex = 17;
+            // 
+            // label10
+            // 
+            label10.AutoSize = true;
+            label10.Location = new Point(208, 34);
+            label10.Name = "label10";
+            label10.Size = new Size(65, 32);
+            label10.TabIndex = 14;
+            label10.Text = "Price";
+            // 
+            // txtItemPrice
+            // 
+            txtItemPrice.Location = new Point(208, 69);
+            txtItemPrice.Name = "txtItemPrice";
+            txtItemPrice.Size = new Size(196, 38);
+            txtItemPrice.TabIndex = 15;
+            // 
+            // btnAddCart
+            // 
+            btnAddCart.BackColor = Color.SeaGreen;
+            btnAddCart.FlatStyle = FlatStyle.Flat;
+            btnAddCart.ForeColor = Color.White;
+            btnAddCart.Location = new Point(6, 32);
+            btnAddCart.Name = "btnAddCart";
+            btnAddCart.Size = new Size(180, 180);
+            btnAddCart.TabIndex = 19;
+            btnAddCart.Text = "&Add Cart";
+            btnAddCart.UseVisualStyleBackColor = false;
+            btnAddCart.Click += btnAddCart_Click;
+            // 
+            // groupBox4
+            // 
+            groupBox4.Anchor = AnchorStyles.Bottom;
+            groupBox4.Controls.Add(btnCheckOut);
+            groupBox4.Controls.Add(btnAddCart);
+            groupBox4.Controls.Add(btnRemove);
+            groupBox4.Location = new Point(987, 814);
+            groupBox4.Name = "groupBox4";
+            groupBox4.Size = new Size(751, 233);
+            groupBox4.TabIndex = 19;
+            groupBox4.TabStop = false;
+            // 
+            // btnCheckOut
+            // 
+            btnCheckOut.BackColor = Color.SteelBlue;
+            btnCheckOut.FlatStyle = FlatStyle.Flat;
+            btnCheckOut.ForeColor = Color.White;
+            btnCheckOut.Location = new Point(562, 32);
+            btnCheckOut.Name = "btnCheckOut";
+            btnCheckOut.Size = new Size(180, 180);
+            btnCheckOut.TabIndex = 29;
+            btnCheckOut.Text = "Check Out";
+            btnCheckOut.UseVisualStyleBackColor = false;
+            // 
+            // btnRemove
+            // 
+            btnRemove.BackColor = Color.Brown;
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.ForeColor = Color.White;
+            btnRemove.Location = new Point(290, 32);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(180, 180);
+            btnRemove.TabIndex = 22;
+            btnRemove.Text = "Remove Item";
+            btnRemove.UseVisualStyleBackColor = false;
             // 
             // frmSale
             // 
@@ -687,10 +641,11 @@
             AutoScaleMode = AutoScaleMode.Font;
             AutoSize = true;
             AutoSizeMode = AutoSizeMode.GrowAndShrink;
-            ClientSize = new Size(1750, 1016);
+            ClientSize = new Size(1750, 1059);
+            Controls.Add(dgvItems);
             Controls.Add(groupBox4);
-            Controls.Add(groupBox1);
             Controls.Add(groupBox3);
+            Controls.Add(groupBox1);
             Controls.Add(panel1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.None;
@@ -701,24 +656,27 @@
             Load += frmSale_Load;
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)dgvItems).EndInit();
+            groupBox1.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)dgvCart).EndInit();
             panel1.ResumeLayout(false);
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
-            groupBox1.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvItems).EndInit();
             groupBox4.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)dgvCart).EndInit();
             ResumeLayout(false);
         }
 
         #endregion
+        private DataGridView dgvItems;
         private Button btnShowAll;
         private Button btnExit;
         private Button btnSearch;
+        private GroupBox groupBox1;
+        private DataGridView dgvCart;
         private GroupBox groupBox2;
         private ComboBox comboBox3;
         private Label label5;
-        private ComboBox cboCategories;
+        private ComboBox comboBox4;
         private Label label6;
         private ComboBox comboBox2;
         private Label label4;
@@ -728,6 +686,10 @@
         private Label label2;
         private TextBox txtByName;
         private Label label1;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn quantity;
+        private DataGridViewTextBoxColumn Column8;
+        private DataGridViewTextBoxColumn netAmount;
         private Panel panel1;
         private TextBox txtItemName;
         private Label label7;
@@ -744,19 +706,13 @@
         private TextBox txtWholeSalePrice;
         private Label label10;
         private TextBox txtItemPrice;
+        private Button btnAddCart;
+        private GroupBox groupBox4;
         private TextBox txtQuantity;
         private Label label8;
-        private CheckBox chbWholeSale;
-        private Button btnSearchRange;
         private Button btnCheckOut;
-        private Button btnAddCart;
         private Button btnRemove;
-        private Label label9;
-        private TextBox textBox1;
-        private Label label16;
-        private TextBox textBox2;
-        private GroupBox groupBox1;
-        private DataGridView dgvItems;
+        private CheckBox chbWholeSale;
         private DataGridViewTextBoxColumn Column1;
         private DataGridViewTextBoxColumn itemName;
         private DataGridViewTextBoxColumn catName;
@@ -765,11 +721,6 @@
         private DataGridViewTextBoxColumn subBrandName;
         private DataGridViewTextBoxColumn itemPrice;
         private DataGridViewTextBoxColumn itemWholeSalePrice;
-        private GroupBox groupBox4;
-        private DataGridView dgvCart;
-        private DataGridViewTextBoxColumn colItemName;
-        private DataGridViewTextBoxColumn quantity;
-        private DataGridViewTextBoxColumn colItemPrice;
-        private DataGridViewTextBoxColumn netAmount;
+        private Button btnSearchRange;
     }
 }

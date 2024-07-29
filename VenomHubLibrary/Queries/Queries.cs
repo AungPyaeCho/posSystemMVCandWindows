@@ -26,8 +26,8 @@ namespace VenomHubLibrary.Queries
             INNER JOIN tblCategory C ON I.catCode = C.catCode
             INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode";
 
-        public static string GetItemBy { get; } = @"
-            SELECT DISTINCT
+        public static string GetItemByNameOrBarcode { get; } = @"
+            SELECT 
                 I.itemCode,
                 I.itemName,
                 I.itemSalePrice,
@@ -43,8 +43,7 @@ namespace VenomHubLibrary.Queries
             INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
             WHERE 
                 (@itemName IS NULL OR I.itemName = @itemName) AND
-                (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode) AND
-                (@catCode IS NULL OR I.catCode = @catCode)";
+                (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode)";
 
         public static string GetItemByNameOrBarcodeUnKown { get; } = @"
             SELECT 
@@ -66,8 +65,5 @@ namespace VenomHubLibrary.Queries
                 (@itemBarcode IS NULL OR I.itemBarcode LIKE '%' + @itemBarcode + '%')";
 
 
-        public static string GetCategories { get; } = @"
-            SELECT catCode, catName
-            FROM tblCategory";
     }
 }
