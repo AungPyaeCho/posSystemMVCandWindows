@@ -29,13 +29,13 @@
         private void InitializeComponent()
         {
             groupBox2 = new GroupBox();
-            comboBox3 = new ComboBox();
+            cboSubCategories = new ComboBox();
             label5 = new Label();
             cboCategories = new ComboBox();
             label6 = new Label();
-            comboBox2 = new ComboBox();
+            cboSubBrands = new ComboBox();
             label4 = new Label();
-            comboBox1 = new ComboBox();
+            cboBrands = new ComboBox();
             label3 = new Label();
             txtBarcode = new TextBox();
             label2 = new Label();
@@ -46,7 +46,6 @@
             btnShowAll = new Button();
             panel1 = new Panel();
             btnSearchRange = new Button();
-            btnRemove = new Button();
             txtItemName = new TextBox();
             label7 = new Label();
             groupBox3 = new GroupBox();
@@ -87,6 +86,7 @@
             quantity = new DataGridViewTextBoxColumn();
             colItemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
+            btnRemove = new Button();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -98,13 +98,13 @@
             // 
             // groupBox2
             // 
-            groupBox2.Controls.Add(comboBox3);
+            groupBox2.Controls.Add(cboSubCategories);
             groupBox2.Controls.Add(label5);
             groupBox2.Controls.Add(cboCategories);
             groupBox2.Controls.Add(label6);
-            groupBox2.Controls.Add(comboBox2);
+            groupBox2.Controls.Add(cboSubBrands);
             groupBox2.Controls.Add(label4);
-            groupBox2.Controls.Add(comboBox1);
+            groupBox2.Controls.Add(cboBrands);
             groupBox2.Controls.Add(label3);
             groupBox2.Controls.Add(txtBarcode);
             groupBox2.Controls.Add(label2);
@@ -117,13 +117,13 @@
             groupBox2.TabStop = false;
             groupBox2.Text = "Search";
             // 
-            // comboBox3
+            // cboSubCategories
             // 
-            comboBox3.FormattingEnabled = true;
-            comboBox3.Location = new Point(6, 438);
-            comboBox3.Name = "comboBox3";
-            comboBox3.Size = new Size(208, 39);
-            comboBox3.TabIndex = 11;
+            cboSubCategories.FormattingEnabled = true;
+            cboSubCategories.Location = new Point(6, 438);
+            cboSubCategories.Name = "cboSubCategories";
+            cboSubCategories.Size = new Size(208, 39);
+            cboSubCategories.TabIndex = 11;
             // 
             // label5
             // 
@@ -151,13 +151,13 @@
             label6.TabIndex = 8;
             label6.Text = "by Category";
             // 
-            // comboBox2
+            // cboSubBrands
             // 
-            comboBox2.FormattingEnabled = true;
-            comboBox2.Location = new Point(6, 288);
-            comboBox2.Name = "comboBox2";
-            comboBox2.Size = new Size(208, 39);
-            comboBox2.TabIndex = 7;
+            cboSubBrands.FormattingEnabled = true;
+            cboSubBrands.Location = new Point(6, 288);
+            cboSubBrands.Name = "cboSubBrands";
+            cboSubBrands.Size = new Size(208, 39);
+            cboSubBrands.TabIndex = 7;
             // 
             // label4
             // 
@@ -168,13 +168,13 @@
             label4.TabIndex = 6;
             label4.Text = "by Sub-Brand";
             // 
-            // comboBox1
+            // cboBrands
             // 
-            comboBox1.FormattingEnabled = true;
-            comboBox1.Location = new Point(6, 214);
-            comboBox1.Name = "comboBox1";
-            comboBox1.Size = new Size(208, 39);
-            comboBox1.TabIndex = 5;
+            cboBrands.FormattingEnabled = true;
+            cboBrands.Location = new Point(6, 214);
+            cboBrands.Name = "cboBrands";
+            cboBrands.Size = new Size(208, 39);
+            cboBrands.TabIndex = 5;
             // 
             // label3
             // 
@@ -236,7 +236,7 @@
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(208, 50);
             btnSearch.TabIndex = 1;
-            btnSearch.Text = "Search";
+            btnSearch.Text = "&Search";
             btnSearch.UseVisualStyleBackColor = true;
             btnSearch.Click += btnSearch_Click;
             // 
@@ -247,7 +247,7 @@
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(208, 50);
             btnShowAll.TabIndex = 0;
-            btnShowAll.Text = "Show All Items";
+            btnShowAll.Text = "Show All &Items";
             btnShowAll.UseVisualStyleBackColor = true;
             btnShowAll.Click += btnShowAll_Click;
             // 
@@ -271,21 +271,9 @@
             btnSearchRange.Name = "btnSearchRange";
             btnSearchRange.Size = new Size(208, 50);
             btnSearchRange.TabIndex = 7;
-            btnSearchRange.Text = "Search Range";
+            btnSearchRange.Text = "Search &Range";
             btnSearchRange.UseVisualStyleBackColor = true;
             btnSearchRange.Click += btnSearchRange_Click;
-            // 
-            // btnRemove
-            // 
-            btnRemove.BackColor = SystemColors.Control;
-            btnRemove.FlatStyle = FlatStyle.Flat;
-            btnRemove.ForeColor = Color.Black;
-            btnRemove.Location = new Point(1304, 24);
-            btnRemove.Name = "btnRemove";
-            btnRemove.Size = new Size(208, 50);
-            btnRemove.TabIndex = 32;
-            btnRemove.Text = "Remove Item";
-            btnRemove.UseVisualStyleBackColor = false;
             // 
             // txtItemName
             // 
@@ -305,12 +293,12 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(btnRemove);
             groupBox3.Controls.Add(label9);
             groupBox3.Controls.Add(textBox1);
             groupBox3.Controls.Add(label16);
             groupBox3.Controls.Add(textBox2);
             groupBox3.Controls.Add(btnCheckOut);
-            groupBox3.Controls.Add(btnRemove);
             groupBox3.Controls.Add(btnAddCart);
             groupBox3.Controls.Add(chbWholeSale);
             groupBox3.Controls.Add(label15);
@@ -379,7 +367,7 @@
             btnCheckOut.Name = "btnCheckOut";
             btnCheckOut.Size = new Size(208, 50);
             btnCheckOut.TabIndex = 33;
-            btnCheckOut.Text = "Check Out";
+            btnCheckOut.Text = "&Check Out";
             btnCheckOut.UseVisualStyleBackColor = false;
             // 
             // btnAddCart
@@ -681,6 +669,17 @@
             netAmount.Name = "netAmount";
             netAmount.Width = 160;
             // 
+            // btnRemove
+            // 
+            btnRemove.FlatStyle = FlatStyle.Flat;
+            btnRemove.Location = new Point(1304, 37);
+            btnRemove.Name = "btnRemove";
+            btnRemove.Size = new Size(208, 50);
+            btnRemove.TabIndex = 44;
+            btnRemove.Text = "&Remove";
+            btnRemove.UseVisualStyleBackColor = true;
+            btnRemove.Click += btnRemove_Click;
+            // 
             // frmSale
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
@@ -716,13 +715,13 @@
         private Button btnExit;
         private Button btnSearch;
         private GroupBox groupBox2;
-        private ComboBox comboBox3;
+        private ComboBox cboSubCategories;
         private Label label5;
         private ComboBox cboCategories;
         private Label label6;
-        private ComboBox comboBox2;
+        private ComboBox cboSubBrands;
         private Label label4;
-        private ComboBox comboBox1;
+        private ComboBox cboBrands;
         private Label label3;
         private TextBox txtBarcode;
         private Label label2;
@@ -750,7 +749,6 @@
         private Button btnSearchRange;
         private Button btnCheckOut;
         private Button btnAddCart;
-        private Button btnRemove;
         private Label label9;
         private TextBox textBox1;
         private Label label16;
@@ -771,5 +769,6 @@
         private DataGridViewTextBoxColumn quantity;
         private DataGridViewTextBoxColumn colItemPrice;
         private DataGridViewTextBoxColumn netAmount;
+        private Button btnRemove;
     }
 }

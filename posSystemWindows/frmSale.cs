@@ -24,7 +24,7 @@ namespace posSystemWindows
         private void frmSale_Load(object sender, EventArgs e)
         {
             //loadData();
-            LoadCategories();
+            LoadCboData();
         }
 
         private void loadData()
@@ -66,6 +66,7 @@ namespace posSystemWindows
             txtSubBrand.Text = string.Empty;
             txtQuantity.Text = "1";
             txtByName.Text = string.Empty;
+            chbWholeSale.Checked = false;
         }
 
         private void btnShowAll_Click(object sender, EventArgs e)
@@ -82,14 +83,22 @@ namespace posSystemWindows
         {
             string itemName = txtByName.Text;
             string itemBarcode = txtBarcode.Text;
-            string categoryCode = cboCategories.SelectedValue.ToString();
+            string categoryCode = cboCategories.SelectedValue?.ToString();
+            string subCatCode = cboSubCategories.SelectedValue?.ToString();
+            string brandCode = cboBrands.SelectedValue?.ToString();
+            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
 
             var parameters = new
             {
                 itemName = string.IsNullOrEmpty(itemName) ? (string?)null : itemName,
                 itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode,
-                catCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode
+                catCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode,
+                subCatCode = string.IsNullOrEmpty(subCatCode) ? (string?)null : subCatCode,
+                brandCode = string.IsNullOrEmpty(brandCode) ? (string?)null : brandCode,
+                subBrandCode = string.IsNullOrEmpty(subBrandCode) ? (string?)null : subBrandCode
             };
+
+            DataTable dataTable = null;
 
             if (!string.IsNullOrEmpty(itemName) || !string.IsNullOrEmpty(itemBarcode))
             {
@@ -99,29 +108,24 @@ namespace posSystemWindows
                 if (dataRow != null)
                 {
                     // Convert DataRow to a DataTable with a single row to bind to DataGridView
-                    var singleRowTable = dataRow.Table.Clone(); // Create an empty DataTable with the same schema
-                    singleRowTable.ImportRow(dataRow); // Import the DataRow
-                    dgvItems.DataSource = singleRowTable;
-                }
-                else
-                {
-                    // Handle case when no item is found
-                    MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    dataTable = dataRow.Table.Clone(); // Create an empty DataTable with the same schema
+                    dataTable.ImportRow(dataRow); // Import the DataRow
                 }
             }
-            else if (!string.IsNullOrEmpty(categoryCode))
+            else
             {
-                // Fetch all rows for category search
-                var dataTable = _dapperService.QueryDataTable(Queries.GetItemBy, parameters);
+                // Fetch all rows for category, subcategory, brand, or subbrand search
+                dataTable = _dapperService.QueryDataTable(Queries.GetItemBy, parameters);
+            }
 
-                if (dataTable.Rows.Count > 0)
-                {
-                    dgvItems.DataSource = dataTable;
-                }
-                else
-                {
-                    MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+            if (dataTable != null && dataTable.Rows.Count > 0)
+            {
+                dgvItems.DataSource = dataTable;
+            }
+            else
+            {
+                // Handle case when no item is found
+                MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
 
@@ -232,28 +236,56 @@ namespace posSystemWindows
                 }
             }
         }
-
-        private void LoadCategories()
+        private void LoadCboData()
         {
             try
             {
-                var dataTable = _dapperService.QueryDataTable(Queries.GetCategories);
-
-                if (dataTable.Rows.Count > 0)
-                {
-                    cboCategories.DisplayMember = "catName";
-                    cboCategories.ValueMember = "catCode";
-                    cboCategories.DataSource = dataTable;
-                }
-                else
-                {
-                    MessageBox.Show("No categories found.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-                }
+                LoadComboBox(cboCategories, Queries.GetCategories, "catCode", "catName", "All Categories");
+                LoadComboBox(cboSubCategories, Queries.GetSubCategories, "subCatCode", "subCatName", "All Sub-Categories");
+                LoadComboBox(cboBrands, Queries.GetBrands, "brandCode", "brandName", "All Brands");
+                LoadComboBox(cboSubBrands, Queries.GetSubBrands, "subBrandCode", "subBrandName", "All Sub-Brands");
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"An error occurred while loading categories: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show($"An error occurred while loading combo box data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LoadComboBox(ComboBox comboBox, string query, string valueMember, string displayMember, string defaultDisplayText)
+        {
+            var dataTable = _dapperService.QueryDataTable(query);
+
+            // Add a default "All" row to the DataTable
+            DataRow defaultRow = dataTable.NewRow();
+            defaultRow[valueMember] = DBNull.Value; // or an appropriate value like -1 or "All"
+            defaultRow[displayMember] = defaultDisplayText;
+            dataTable.Rows.InsertAt(defaultRow, 0);
+
+            if (dataTable.Rows.Count > 0)
+            {
+                comboBox.DisplayMember = displayMember;
+                comboBox.ValueMember = valueMember;
+                comboBox.DataSource = dataTable;
+            }
+            else
+            {
+                MessageBox.Show($"No data found for {comboBox.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+        }
+
+        private void btnRemove_Click(object sender, EventArgs e)
+        {
+            // Check if a row is selected
+            if (dgvCart.SelectedRows.Count > 0)
+            {
+                // Remove the selected row
+                dgvCart.Rows.RemoveAt(dgvCart.SelectedRows[0].Index);
+            }
+            else
+            {
+                MessageBox.Show("Please select a row to remove.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
     }
 }
+
