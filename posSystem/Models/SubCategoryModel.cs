@@ -14,7 +14,7 @@ namespace posSystem.Models
         public string? subCatCode { get; set; }
         public int? catId { get; set; }
         public string? catCode { get; set; }
-        public string? catName { get; set; }
+        public string? catName { get; set;}
         public string? subCatCreateAt { get; set; }
         public string? subCatUpdateAt { get; set; }
         public int? subCatUpdateCount { get; set; }

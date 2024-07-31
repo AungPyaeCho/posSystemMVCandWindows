@@ -16,6 +16,12 @@
                     </div>
 
                     <div class="mb-3">
+                        <label for="disValue" class="form-label">Value (Only no like 1 or 2 or 3 or 10 or 20)</label>
+                        <input type="text" class="form-control" id="disValue" name="disValue" placeholder="Enter Value">
+                    </div>
+
+
+                    <div class="mb-3">
                         <label for="disDescription" class="form-label">Discount Description</label>
                         <textarea class="form-control" id="disDescription" name="disDescription" rows="3" placeholder="Enter discount description"></textarea>
                     </div>
@@ -34,10 +40,12 @@
     <script>
         $('#btnSave').click(function () {
             let disName = $('#disName').val();
+            let disValue = $('#disValue').val();
             let disDescription = $('#disDescription').val();
 
             let _reqModel = {
                 disName: disName,
+                disValue: disValue,
                 disDescription: disDescription
             };
 

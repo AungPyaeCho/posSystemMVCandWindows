@@ -49,11 +49,11 @@
             txtItemName = new TextBox();
             label7 = new Label();
             groupBox3 = new GroupBox();
+            txtRemainStock = new TextBox();
+            cboPromotion = new ComboBox();
             btnRemove = new Button();
-            label9 = new Label();
-            textBox1 = new TextBox();
+            lblStock = new Label();
             label16 = new Label();
-            textBox2 = new TextBox();
             btnCheckOut = new Button();
             btnAddCart = new Button();
             chbWholeSale = new CheckBox();
@@ -73,7 +73,7 @@
             txtItemPrice = new TextBox();
             groupBox1 = new GroupBox();
             dgvItems = new DataGridView();
-            Column1 = new DataGridViewTextBoxColumn();
+            itemCode = new DataGridViewTextBoxColumn();
             itemName = new DataGridViewTextBoxColumn();
             catName = new DataGridViewTextBoxColumn();
             brandName = new DataGridViewTextBoxColumn();
@@ -81,12 +81,17 @@
             subBrandName = new DataGridViewTextBoxColumn();
             itemPrice = new DataGridViewTextBoxColumn();
             itemWholeSalePrice = new DataGridViewTextBoxColumn();
+            Column1 = new DataGridViewTextBoxColumn();
+            Column3 = new DataGridViewTextBoxColumn();
+            Column4 = new DataGridViewTextBoxColumn();
             groupBox4 = new GroupBox();
             dgvCart = new DataGridView();
+            Column2 = new DataGridViewTextBoxColumn();
             colItemName = new DataGridViewTextBoxColumn();
             quantity = new DataGridViewTextBoxColumn();
             colItemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
+            itemRemainStock = new DataGridViewTextBoxColumn();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -295,11 +300,11 @@
             // 
             // groupBox3
             // 
+            groupBox3.Controls.Add(txtRemainStock);
+            groupBox3.Controls.Add(cboPromotion);
             groupBox3.Controls.Add(btnRemove);
-            groupBox3.Controls.Add(label9);
-            groupBox3.Controls.Add(textBox1);
+            groupBox3.Controls.Add(lblStock);
             groupBox3.Controls.Add(label16);
-            groupBox3.Controls.Add(textBox2);
             groupBox3.Controls.Add(btnCheckOut);
             groupBox3.Controls.Add(btnAddCart);
             groupBox3.Controls.Add(chbWholeSale);
@@ -326,6 +331,22 @@
             groupBox3.TabStop = false;
             groupBox3.Text = "Details";
             // 
+            // txtRemainStock
+            // 
+            txtRemainStock.Location = new Point(208, 145);
+            txtRemainStock.Name = "txtRemainStock";
+            txtRemainStock.ReadOnly = true;
+            txtRemainStock.Size = new Size(196, 38);
+            txtRemainStock.TabIndex = 45;
+            // 
+            // cboPromotion
+            // 
+            cboPromotion.FormattingEnabled = true;
+            cboPromotion.Location = new Point(6, 144);
+            cboPromotion.Name = "cboPromotion";
+            cboPromotion.Size = new Size(196, 39);
+            cboPromotion.TabIndex = 12;
+            // 
             // btnRemove
             // 
             btnRemove.FlatStyle = FlatStyle.Flat;
@@ -337,22 +358,14 @@
             btnRemove.UseVisualStyleBackColor = true;
             btnRemove.Click += btnRemove_Click;
             // 
-            // label9
+            // lblStock
             // 
-            label9.AutoSize = true;
-            label9.Location = new Point(208, 110);
-            label9.Name = "label9";
-            label9.Size = new Size(108, 32);
-            label9.TabIndex = 36;
-            label9.Text = "Discount";
-            // 
-            // textBox1
-            // 
-            textBox1.Location = new Point(208, 145);
-            textBox1.Name = "textBox1";
-            textBox1.ReadOnly = true;
-            textBox1.Size = new Size(196, 38);
-            textBox1.TabIndex = 37;
+            lblStock.AutoSize = true;
+            lblStock.Location = new Point(208, 110);
+            lblStock.Name = "lblStock";
+            lblStock.Size = new Size(71, 32);
+            lblStock.TabIndex = 36;
+            lblStock.Text = "Stock";
             // 
             // label16
             // 
@@ -362,14 +375,6 @@
             label16.Size = new Size(126, 32);
             label16.TabIndex = 34;
             label16.Text = "Promotion";
-            // 
-            // textBox2
-            // 
-            textBox2.Location = new Point(6, 145);
-            textBox2.Name = "textBox2";
-            textBox2.ReadOnly = true;
-            textBox2.Size = new Size(196, 38);
-            textBox2.TabIndex = 35;
             // 
             // btnCheckOut
             // 
@@ -543,7 +548,7 @@
             dgvItems.BackgroundColor = SystemColors.Window;
             dgvItems.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             dgvItems.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvItems.Columns.AddRange(new DataGridViewColumn[] { Column1, itemName, catName, brandName, subCatName, subBrandName, itemPrice, itemWholeSalePrice });
+            dgvItems.Columns.AddRange(new DataGridViewColumn[] { itemCode, itemName, catName, brandName, subCatName, subBrandName, itemPrice, itemWholeSalePrice, Column1, Column3, Column4 });
             dgvItems.Location = new Point(0, 37);
             dgvItems.Name = "dgvItems";
             dgvItems.ReadOnly = true;
@@ -552,14 +557,14 @@
             dgvItems.TabIndex = 42;
             dgvItems.CellContentClick += dgvItems_CellContentClick;
             // 
-            // Column1
+            // itemCode
             // 
-            Column1.DataPropertyName = "itemCode";
-            Column1.HeaderText = "Item Code";
-            Column1.MinimumWidth = 9;
-            Column1.Name = "Column1";
-            Column1.ReadOnly = true;
-            Column1.Width = 175;
+            itemCode.DataPropertyName = "itemCode";
+            itemCode.HeaderText = "Item Code";
+            itemCode.MinimumWidth = 9;
+            itemCode.Name = "itemCode";
+            itemCode.ReadOnly = true;
+            itemCode.Width = 175;
             // 
             // itemName
             // 
@@ -626,6 +631,33 @@
             itemWholeSalePrice.Visible = false;
             itemWholeSalePrice.Width = 175;
             // 
+            // Column1
+            // 
+            Column1.DataPropertyName = "itemStock";
+            Column1.HeaderText = "itemStock";
+            Column1.MinimumWidth = 9;
+            Column1.Name = "Column1";
+            Column1.ReadOnly = true;
+            Column1.Width = 175;
+            // 
+            // Column3
+            // 
+            Column3.DataPropertyName = "itemRemainStock";
+            Column3.HeaderText = "itemRemainStock";
+            Column3.MinimumWidth = 9;
+            Column3.Name = "Column3";
+            Column3.ReadOnly = true;
+            Column3.Width = 175;
+            // 
+            // Column4
+            // 
+            Column4.DataPropertyName = "itemSoldStock";
+            Column4.HeaderText = "itemSoldStock";
+            Column4.MinimumWidth = 9;
+            Column4.Name = "Column4";
+            Column4.ReadOnly = true;
+            Column4.Width = 175;
+            // 
             // groupBox4
             // 
             groupBox4.Controls.Add(dgvCart);
@@ -643,13 +675,22 @@
             dgvCart.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             dgvCart.ColumnHeadersHeight = 72;
             dgvCart.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.DisableResizing;
-            dgvCart.Columns.AddRange(new DataGridViewColumn[] { colItemName, quantity, colItemPrice, netAmount });
+            dgvCart.Columns.AddRange(new DataGridViewColumn[] { Column2, colItemName, quantity, colItemPrice, netAmount, itemRemainStock });
             dgvCart.Location = new Point(6, 37);
             dgvCart.Name = "dgvCart";
             dgvCart.RowHeadersWidth = 72;
             dgvCart.Size = new Size(730, 738);
             dgvCart.TabIndex = 44;
             dgvCart.CellEndEdit += dgvCart_CellEndEdit;
+            // 
+            // Column2
+            // 
+            Column2.DataPropertyName = "itemCode";
+            Column2.HeaderText = "Item Code";
+            Column2.MinimumWidth = 9;
+            Column2.Name = "Column2";
+            Column2.Visible = false;
+            Column2.Width = 175;
             // 
             // colItemName
             // 
@@ -682,6 +723,14 @@
             netAmount.MinimumWidth = 9;
             netAmount.Name = "netAmount";
             netAmount.Width = 160;
+            // 
+            // itemRemainStock
+            // 
+            itemRemainStock.DataPropertyName = "itemRemainStock";
+            itemRemainStock.HeaderText = "Item Remain Stock";
+            itemRemainStock.MinimumWidth = 9;
+            itemRemainStock.Name = "itemRemainStock";
+            itemRemainStock.Width = 175;
             // 
             // frmSale
             // 
@@ -752,13 +801,15 @@
         private Button btnSearchRange;
         private Button btnCheckOut;
         private Button btnAddCart;
-        private Label label9;
-        private TextBox textBox1;
+        private Label lblStock;
         private Label label16;
-        private TextBox textBox2;
         private GroupBox groupBox1;
         private DataGridView dgvItems;
-        private DataGridViewTextBoxColumn Column1;
+        private GroupBox groupBox4;
+        private DataGridView dgvCart;
+        private Button btnRemove;
+        private ComboBox cboPromotion;
+        private DataGridViewTextBoxColumn itemCode;
         private DataGridViewTextBoxColumn itemName;
         private DataGridViewTextBoxColumn catName;
         private DataGridViewTextBoxColumn brandName;
@@ -766,12 +817,15 @@
         private DataGridViewTextBoxColumn subBrandName;
         private DataGridViewTextBoxColumn itemPrice;
         private DataGridViewTextBoxColumn itemWholeSalePrice;
-        private GroupBox groupBox4;
-        private DataGridView dgvCart;
+        private DataGridViewTextBoxColumn Column1;
+        private DataGridViewTextBoxColumn Column3;
+        private DataGridViewTextBoxColumn Column4;
+        private TextBox txtRemainStock;
+        private DataGridViewTextBoxColumn Column2;
         private DataGridViewTextBoxColumn colItemName;
         private DataGridViewTextBoxColumn quantity;
         private DataGridViewTextBoxColumn colItemPrice;
         private DataGridViewTextBoxColumn netAmount;
-        private Button btnRemove;
+        private DataGridViewTextBoxColumn itemRemainStock;
     }
 }

@@ -115,6 +115,7 @@ namespace YourNamespace.Controllers
 
                 // Update discount details
                 item.disName = discountModel.disName;
+                item.disValue = discountModel.disValue;
                 item.disDescription = discountModel.disDescription;
                 item.disUpdateAt = DateTime.Now.ToString();
                 item.disUpdateCount ??= 0;

@@ -11,6 +11,7 @@ namespace posSystem.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int disId { get; set; }
         public string? disName { get; set; }
+        public int? disValue { get; set; }
         public string? disDescription { get; set; }
         public string? disCreateAt { get; set; }
         public string? disUpdateAt { get; set; }

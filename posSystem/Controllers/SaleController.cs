@@ -1,6 +1,11 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using posSystem.Models;
 using posSystem;
+using System.Drawing.Printing;
+using System.Runtime.InteropServices;
+using System.Xml;
+using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace posSystem.Controllers
 {
@@ -30,6 +35,62 @@ namespace posSystem.Controllers
                 };
 
                 return View("SaleIndex", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                return View("SaleIndex");
+            }
+        }
+
+        [ActionName("Detail")]
+        public IActionResult DetailIndex(string invoiceNo, int pageNo = 1, int pageSize = 10)
+        {
+            try
+            {
+                var query = _appDbContext.SaleDetails.Where(x => x.invoiceNo == invoiceNo);
+                int rowCount = query.Count();
+                if (rowCount == 0)
+                {
+                    ModelState.AddModelError("", "No records found for the given invoice number.");
+                    return View("DetailIndex", new SaleDetailResponseModel());
+                }
+
+                int pageCount = (int)Math.Ceiling((double)rowCount / pageSize);
+                if (pageNo > pageCount)
+                {
+                    pageNo = pageCount;
+                }
+
+                List<SaleDetailModel> list = query
+                .Include(s => s.Item)
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new SaleDetailModel
+                {
+                    invoiceNo = s.invoiceNo,
+                    itemCode = s.itemCode,
+                    saleQuantity = s.saleQuantity,
+                    itemPrice = s.itemPrice,
+                    totalAmount = s.totalAmount,
+                    saleDate = s.saleDate,
+                    itemName = _appDbContext.Items
+                        .Where(c => c.itemCode == s.itemCode)
+                        .Select(c => c.itemName)
+                        .FirstOrDefault(), // Retrieve catName based on catCod
+                })
+                .ToList();
+
+                SaleDetailResponseModel response = new()
+                {
+                    saleDetailData = list,
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo
+                };
+
+                return View("DetailIndex", response);
+                //return View("DetailIndex");
             }
             catch (Exception ex)
             {

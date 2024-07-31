@@ -1,4 +1,4 @@
-﻿@model posSystem.ViewModels.DashboardViewModel
+﻿
 
 @{
     ViewData["Title"] = "Admin Dashboard";
@@ -13,7 +13,7 @@
                 <div class="widget card bg-primary text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Sales</h5>
-                        <p class="card-text">@Model.TotalSales.ToString("N2")</p>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
@@ -22,7 +22,7 @@
                 <div class="widget card bg-success text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Items</h5>
-                        <p class="card-text">@Model.TotalItems</p>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
@@ -31,7 +31,7 @@
                 <div class="widget card bg-info text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Categories</h5>
-                        <p class="card-text">@Model.TotalCategories</p>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
@@ -40,7 +40,7 @@
                 <div class="widget card bg-warning text-white">
                     <div class="card-body">
                         <h5 class="card-title">Total Brands</h5>
-                        <p class="card-text">@Model.TotalBrands</p>
+                        <p class="card-text"></p>
                     </div>
                 </div>
             </div>
@@ -105,16 +105,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach (var sale in Model.RecentSales)
-                {
-                    <tr>
-                        <td>@sale.saleId</td>
-                        @* <td>@sale.itemName</td> *@
-                        <td>@sale.saleQty</td>
-                        <td>@sale.totalAmount?.ToString("C")</td>
-                        <td>@sale.saleDate</td>
-                    </tr>
-                }
+                
             </tbody>
         </table>
     </section>
@@ -123,10 +114,7 @@
     <section class="recent-activities mt-4">
         <h4 class="mb-3">Recent Activities</h4>
         <ul class="list-group">
-            @foreach (var activity in Model.RecentActivities)
-            {
-                <li class="list-group-item">@activity</li>
-            }
+            
         </ul>
     </section>
 </div>
@@ -173,115 +161,5 @@
 
 <!-- Add Chart.js script for rendering the chart -->
 <script>
-    var salesCtx = document.getElementById('salesChart').getContext('2d');
-    var salesChart = new Chart(salesCtx, {
-        type: 'line',
-        data: {
-            labels: @Html.Raw(Json.Serialize(Model.SalesData.Select(d => d.Date))),
-            datasets: [{
-                label: 'Total Sales Amount',
-                data: @Html.Raw(Json.Serialize(Model.SalesData.Select(d => d.TotalAmount))),
-                borderColor: 'rgba(75, 192, 192, 1)',
-                backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                fill: true
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    type: 'time',
-                    time: {
-                        unit: 'day',
-                        tooltipFormat: 'll'
-                    },
-                    title: {
-                        display: true,
-                        text: 'Date'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Sales Amount'
-                    }
-                }
-            }
-        }
-    });
-
-    var membersCtx = document.getElementById('membersChart').getContext('2d');
-    var membersChart = new Chart(membersCtx, {
-        type: 'bar',
-        data: {
-            labels: @Html.Raw(Json.Serialize(Model.MembersData.Select(m => m.Level))),
-            datasets: [{
-                label: 'Number of Members',
-                data: @Html.Raw(Json.Serialize(Model.MembersData.Select(m => m.Count))),
-                backgroundColor: 'rgba(255, 159, 64, 0.2)',
-                borderColor: 'rgba(255, 159, 64, 1)',
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            scales: {
-                x: {
-                    title: {
-                        display: true,
-                        text: 'Member Level'
-                    }
-                },
-                y: {
-                    beginAtZero: true,
-                    title: {
-                        display: true,
-                        text: 'Count'
-                    }
-                }
-            }
-        }
-    });
-
-    var staffCtx = document.getElementById('staffChart').getContext('2d');
-    var staffChart = new Chart(staffCtx, {
-        type: 'doughnut',
-        data: {
-            labels: @Html.Raw(Json.Serialize(Model.StaffData.Select(s => s.Role))),
-            datasets: [{
-                label: 'Number of Staff',
-                data: @Html.Raw(Json.Serialize(Model.StaffData.Select(s => s.Count))),
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            cutoutPercentage: 60,
-            plugins: {
-                legend: {
-                    position: 'right',
-                },
-            }
-        }
-    });
+    
 </script>

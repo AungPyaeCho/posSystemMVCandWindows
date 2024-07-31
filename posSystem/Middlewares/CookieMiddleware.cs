@@ -24,6 +24,7 @@ namespace posSystem.Middlewares
             var cookies = httpContext.Request.Cookies;
             if (cookies["AdminId"] is null || cookies["SessionId"] is null)
             {
+                Console.WriteLine("AdminId or SessionId cookie is null");
                 httpContext.Response.Redirect("/Login");
                 goto result;
             }
@@ -35,12 +36,14 @@ namespace posSystem.Middlewares
             var login = await appDbContext.LoginDetails.FirstOrDefaultAsync(x => x.sessionId == sessionId && x.adminId == adminId);
             if (login is null)
             {
+                Console.WriteLine("No login found for given sessionId and adminId");
                 httpContext.Response.Redirect("/Login");
                 goto result;
             }
 
             if (login.sessionExpired < DateTime.Now)
             {
+                Console.WriteLine("Session expired");
                 httpContext.Response.Redirect("/Login");
                 goto result;
             }

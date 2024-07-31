@@ -19,7 +19,7 @@
     <h1 class="h3 mb-4 mb-sm-0">Sale Management</h1>
     <div>
         <a href="/Sale/Create" class="btn btn-success mr-2">
-            <i class="fas fa-plus-circle"></i> Add Sale
+            <i class="fas fa-plus-circle"></i> Download Report
         </a>
     </div>
 </div>
@@ -30,18 +30,17 @@
             <th scope="col">#</th>
             <th scope="col">
                 <a href="@_pageURL(_pageNo, "saleDate", _sortOrder == "asc" ? "desc" : "asc")">
-                    Sale Date @(_sortField == "saleDate" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
+                    Invoice No @(_sortField == "saleDate" ? (_sortOrder == "asc" ? "▲" : "▼") : "")
                 </a>
             </th>
-            <th scope="col">Sale Quantity</th>
             <th scope="col">Total Amount</th>
+            <th scope="col">Quantity</th>
             <th scope="col">Payment</th>
-            <th scope="col">Promotion</th>
-            <th scope="col">Discount</th>
-            <th scope="col">Staff Code</th>
+            <th scope="col">Received Cash</th>
+            <th scope="col">Refund Cash</th>
             <th scope="col">Staff Name</th>
-            <th scope="col">Customer Code</th>
-            <th scope="col">Customer Name</th>
+            <th scope="col">Member Code</th>
+            <th scope="col">Member Name</th>
             <th scope="col">Sale Date</th>
 
         </tr>
@@ -52,16 +51,22 @@
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.saleQty</td>
+                <td>@item.invoiceNo</td>
                 <td>@item.totalAmount</td>
+                <td>@item.saleQty</td>
                 <td>@item.paymentMethod</td>
-                <td>@item.promotion</td>
-                <td>@item.discount</td>
-                <td>@item.staffCode</td>
+                <td>@item.receiveCash</td>
+                <td>@item.refundCash</td>
                 <td>@item.staffName</td>
                 <td>@item.memberCode</td>
                 <td>@item.memberName</td>
                 <td>@item.saleDate</td>
+                <td class="text-center">
+                    <!-- Edit Button -->
+                    <a href="/Sale/Detail?invoiceNo=@item.invoiceNo" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Detail
+                    </a>
+                </td>
             </tr>
         }
     </tbody>

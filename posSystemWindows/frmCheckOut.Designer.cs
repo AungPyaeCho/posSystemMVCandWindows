@@ -30,27 +30,31 @@
         {
             groupBox1 = new GroupBox();
             dgvCart = new DataGridView();
+            itemCode = new DataGridViewTextBoxColumn();
             colItemName = new DataGridViewTextBoxColumn();
             quantity = new DataGridViewTextBoxColumn();
-            colItemPrice = new DataGridViewTextBoxColumn();
+            itemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
+            itemRemainStock = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
             btnExit = new Button();
             btnPrint = new Button();
             label5 = new Label();
-            textBox3 = new TextBox();
+            txtRefundCash = new TextBox();
             label6 = new Label();
-            textBox4 = new TextBox();
+            txtReceiveCash = new TextBox();
             cboPayment = new ComboBox();
             label4 = new Label();
             label3 = new Label();
             cboMember = new ComboBox();
             label2 = new Label();
-            textBox2 = new TextBox();
+            txtMemberCode = new TextBox();
             label1 = new Label();
             txtTotalAmount = new TextBox();
             label7 = new Label();
             txtTotalQuantity = new TextBox();
+            cboDicount = new ComboBox();
+            label16 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCart).BeginInit();
             groupBox2.SuspendLayout();
@@ -76,12 +80,20 @@
             dgvCart.ClipboardCopyMode = DataGridViewClipboardCopyMode.Disable;
             dgvCart.ColumnHeadersBorderStyle = DataGridViewHeaderBorderStyle.Sunken;
             dgvCart.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dgvCart.Columns.AddRange(new DataGridViewColumn[] { colItemName, quantity, colItemPrice, netAmount });
+            dgvCart.Columns.AddRange(new DataGridViewColumn[] { itemCode, colItemName, quantity, itemPrice, netAmount, itemRemainStock });
             dgvCart.Location = new Point(12, 37);
             dgvCart.Name = "dgvCart";
             dgvCart.RowHeadersWidthSizeMode = DataGridViewRowHeadersWidthSizeMode.AutoSizeToAllHeaders;
             dgvCart.Size = new Size(770, 575);
             dgvCart.TabIndex = 45;
+            // 
+            // itemCode
+            // 
+            itemCode.DataPropertyName = "itemCode";
+            itemCode.HeaderText = "Item Code";
+            itemCode.MinimumWidth = 9;
+            itemCode.Name = "itemCode";
+            itemCode.ReadOnly = true;
             // 
             // colItemName
             // 
@@ -97,12 +109,12 @@
             quantity.MinimumWidth = 9;
             quantity.Name = "quantity";
             // 
-            // colItemPrice
+            // itemPrice
             // 
-            colItemPrice.DataPropertyName = "itemPrice";
-            colItemPrice.HeaderText = "Item Price";
-            colItemPrice.MinimumWidth = 9;
-            colItemPrice.Name = "colItemPrice";
+            itemPrice.DataPropertyName = "itemPrice";
+            itemPrice.HeaderText = "Item Price";
+            itemPrice.MinimumWidth = 9;
+            itemPrice.Name = "itemPrice";
             // 
             // netAmount
             // 
@@ -111,28 +123,37 @@
             netAmount.MinimumWidth = 9;
             netAmount.Name = "netAmount";
             // 
+            // itemRemainStock
+            // 
+            itemRemainStock.DataPropertyName = "itemRemainStock";
+            itemRemainStock.HeaderText = "itemRemainStock";
+            itemRemainStock.MinimumWidth = 9;
+            itemRemainStock.Name = "itemRemainStock";
+            // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(cboDicount);
+            groupBox2.Controls.Add(label16);
             groupBox2.Controls.Add(btnExit);
             groupBox2.Controls.Add(btnPrint);
             groupBox2.Controls.Add(label5);
-            groupBox2.Controls.Add(textBox3);
+            groupBox2.Controls.Add(txtRefundCash);
             groupBox2.Controls.Add(label6);
-            groupBox2.Controls.Add(textBox4);
+            groupBox2.Controls.Add(txtReceiveCash);
             groupBox2.Controls.Add(cboPayment);
             groupBox2.Controls.Add(label4);
             groupBox2.Controls.Add(label3);
             groupBox2.Controls.Add(cboMember);
             groupBox2.Controls.Add(label2);
-            groupBox2.Controls.Add(textBox2);
+            groupBox2.Controls.Add(txtMemberCode);
             groupBox2.Controls.Add(label1);
             groupBox2.Controls.Add(txtTotalAmount);
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(txtTotalQuantity);
             groupBox2.Dock = DockStyle.Bottom;
-            groupBox2.Location = new Point(0, 640);
+            groupBox2.Location = new Point(0, 649);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(799, 260);
+            groupBox2.Size = new Size(799, 306);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
             // 
@@ -160,38 +181,40 @@
             btnPrint.TabIndex = 46;
             btnPrint.Text = "&Print";
             btnPrint.UseVisualStyleBackColor = false;
+            btnPrint.Click += btnPrint_Click;
             // 
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 210);
+            label5.Location = new Point(12, 255);
             label5.Name = "label5";
             label5.Size = new Size(112, 32);
             label5.TabIndex = 26;
             label5.Text = "Refunds :";
             // 
-            // textBox3
+            // txtRefundCash
             // 
-            textBox3.Location = new Point(198, 207);
-            textBox3.Name = "textBox3";
-            textBox3.Size = new Size(196, 38);
-            textBox3.TabIndex = 27;
+            txtRefundCash.Location = new Point(198, 252);
+            txtRefundCash.Name = "txtRefundCash";
+            txtRefundCash.Size = new Size(196, 38);
+            txtRefundCash.TabIndex = 27;
             // 
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(12, 166);
+            label6.Location = new Point(12, 211);
             label6.Name = "label6";
             label6.Size = new Size(121, 32);
             label6.TabIndex = 24;
             label6.Text = "Received :";
             // 
-            // textBox4
+            // txtReceiveCash
             // 
-            textBox4.Location = new Point(198, 163);
-            textBox4.Name = "textBox4";
-            textBox4.Size = new Size(196, 38);
-            textBox4.TabIndex = 25;
+            txtReceiveCash.Location = new Point(198, 208);
+            txtReceiveCash.Name = "txtReceiveCash";
+            txtReceiveCash.Size = new Size(196, 38);
+            txtReceiveCash.TabIndex = 25;
+            txtReceiveCash.TextChanged += txtReceiveCash_TextChanged;
             // 
             // cboPayment
             // 
@@ -226,6 +249,7 @@
             cboMember.Name = "cboMember";
             cboMember.Size = new Size(196, 39);
             cboMember.TabIndex = 20;
+            cboMember.SelectedIndexChanged += cboMember_SelectedIndexChanged;
             // 
             // label2
             // 
@@ -236,13 +260,12 @@
             label2.TabIndex = 18;
             label2.Text = "Member :";
             // 
-            // textBox2
+            // txtMemberCode
             // 
-            textBox2.Enabled = false;
-            textBox2.Location = new Point(586, 76);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(196, 38);
-            textBox2.TabIndex = 19;
+            txtMemberCode.Location = new Point(586, 76);
+            txtMemberCode.Name = "txtMemberCode";
+            txtMemberCode.Size = new Size(196, 38);
+            txtMemberCode.TabIndex = 19;
             // 
             // label1
             // 
@@ -276,11 +299,28 @@
             txtTotalQuantity.Size = new Size(196, 38);
             txtTotalQuantity.TabIndex = 15;
             // 
+            // cboDicount
+            // 
+            cboDicount.FormattingEnabled = true;
+            cboDicount.Location = new Point(198, 163);
+            cboDicount.Name = "cboDicount";
+            cboDicount.Size = new Size(196, 39);
+            cboDicount.TabIndex = 48;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(12, 166);
+            label16.Name = "label16";
+            label16.Size = new Size(120, 32);
+            label16.TabIndex = 49;
+            label16.Text = "Discount :";
+            // 
             // frmCheckOut
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(799, 900);
+            ClientSize = new Size(799, 955);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -305,20 +345,24 @@
         private Label label1;
         private TextBox txtTotalAmount;
         private Label label2;
-        private TextBox textBox2;
+        private TextBox txtMemberCode;
         private ComboBox cboPayment;
         private Label label4;
         private Label label3;
         private ComboBox cboMember;
         private Label label5;
-        private TextBox textBox3;
+        private TextBox txtRefundCash;
         private Label label6;
-        private TextBox textBox4;
+        private TextBox txtReceiveCash;
         private Button btnPrint;
         private Button btnExit;
+        private DataGridViewTextBoxColumn itemCode;
         private DataGridViewTextBoxColumn colItemName;
         private DataGridViewTextBoxColumn quantity;
-        private DataGridViewTextBoxColumn colItemPrice;
+        private DataGridViewTextBoxColumn itemPrice;
         private DataGridViewTextBoxColumn netAmount;
+        private DataGridViewTextBoxColumn itemRemainStock;
+        private ComboBox cboDicount;
+        private Label label16;
     }
 }

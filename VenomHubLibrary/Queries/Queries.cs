@@ -8,17 +8,29 @@ namespace VenomHubLibrary.Queries
 {
     public class Queries
     {
-        public static string Create { get; set; } = @"
-            INSERT Into {Table}
-            Value
-            ";
+        public static string CreateSale { get; } = @"
+            INSERT INTO tblSale (invoiceNo, staffCode, staffName, memberCode, saleQty, totalAmount, receiveCash, refundCash, saleDate, paymentMethod)
+            VALUES (@invoiceNo, @staffCode, @staffName, @memberCode, @saleQty, @totalAmount, @receiveCash, @refundCash, @saleDate, @paymentMethod)";
+
+        public static string CreateSaleDetail { get; } = @"
+            INSERT INTO tblSaleDetail (invoiceNo, itemCode, saleQuantity, itemPrice, totalAmount, saleDate)
+            VALUES (@invoiceNo, @itemCode, @saleQuantity, @itemPrice, @totalAmount, @saleDate)";
+
+        public static string UpdateItem { get; } = @"
+            UPDATE tblItem
+            SET itemRemainStock = itemRemainStock - @itemRemainStock, 
+                itemSold = ISNULL(itemSold, 0) + @itemSold
+            WHERE itemCode = @itemCode";
 
         public static string GetItems { get; } = @"
-            SELECT DISTINCT
+            SELECT 
                 I.itemCode,
                 I.itemName,
                 I.itemSalePrice,
                 I.itemWholeSalePrice,
+                I.itemStock,
+                I.itemRemainStock,
+                I.itemSold,
                 C.catName,
                 B.brandName,
                 SB.subBrandName,
@@ -35,6 +47,9 @@ namespace VenomHubLibrary.Queries
                 I.itemName,
                 I.itemSalePrice,
                 I.itemWholeSalePrice,
+                I.itemStock,
+                I.itemRemainStock,
+                I.itemSold,
                 C.catName,
                 B.brandName,
                 SB.subBrandName,
@@ -58,6 +73,9 @@ namespace VenomHubLibrary.Queries
                 I.itemName,
                 I.itemSalePrice,
                 I.itemWholeSalePrice,
+                I.itemStock,
+                I.itemRemainStock,
+                I.itemSold,
                 C.catName,
                 B.brandName,
                 SB.subBrandName,
@@ -78,6 +96,9 @@ namespace VenomHubLibrary.Queries
                 I.itemName,
                 I.itemSalePrice,
                 I.itemWholeSalePrice,
+                I.itemStock,
+                I.itemRemainStock,
+                I.itemSold,
                 C.catName,
                 B.brandName,
                 SB.subBrandName,
@@ -107,5 +128,13 @@ namespace VenomHubLibrary.Queries
         public static string GetSubBrands { get; } = @"
             SELECT subBrandCode, subBrandName
             FROM tblSubBrand";
+
+        public static string GetPromotions { get; } = @"
+            SELECT proName, proCode
+            FROM tblPromotion";
+
+        public static string GetDiscounts { get; } = @"
+            SELECT disValue, disName
+            FROM tblDiscount";
     }
 }

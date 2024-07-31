@@ -13,7 +13,11 @@ namespace posSystemWindows
     public partial class frmSale : Form
     {
         private readonly DapperService _dapperService;
-        DataTable DataTable = new DataTable();
+        string _staffCode;
+        string _staffName;
+        string _itemCode;
+        frmCheckOut frmCheckOut = new frmCheckOut();
+        //DataTable DataTable = new DataTable();
 
         public frmSale()
         {
@@ -35,7 +39,7 @@ namespace posSystemWindows
             try
             {
                 // Fetch data using Dapper and bind it to the DataGridView
-                var dataTable = _dapperService.QueryDataTable(VenomHubLibrary.Queries.Queries.GetItems);
+                var dataTable = _dapperService.QueryDataTable(Queries.GetItems);
 
                 if (dataTable.Rows.Count == 0)
                 {
@@ -55,6 +59,7 @@ namespace posSystemWindows
 
         private void btnExit_Click(object sender, EventArgs e)
         {
+            frmCheckOut.Close();
             this.Close();
         }
 
@@ -70,6 +75,7 @@ namespace posSystemWindows
             txtQuantity.Text = "1";
             txtByName.Text = string.Empty;
             chbWholeSale.Checked = false;
+            _itemCode = "";
         }
 
         private void btnShowAll_Click(object sender, EventArgs e)
@@ -170,14 +176,16 @@ namespace posSystemWindows
 
                 // Retrieve itemName and itemPrice from the selected row
                 string itemName = selectedRow.Cells["itemName"].Value.ToString()!;
-                decimal itemPrice = Convert.ToDecimal(selectedRow.Cells["itemPrice"].Value);
-                decimal itemWholeSalePrice = Convert.ToDecimal(selectedRow.Cells["itemWholeSalePrice"].Value);
+                int itemPrice = Convert.ToInt32(selectedRow.Cells["itemPrice"].Value);
+                int itemWholeSalePrice = Convert.ToInt32(selectedRow.Cells["itemWholeSalePrice"].Value);
                 string catName = selectedRow.Cells["catName"].Value.ToString()!;
                 string subCatName = selectedRow.Cells["subCatName"].Value.ToString()!;
                 string brandName = selectedRow.Cells["brandName"].Value.ToString()!;
                 string subBrandName = selectedRow.Cells["subBrandName"].Value.ToString()!;
                 int quantity = Convert.ToInt32(txtQuantity.Text);
+                int itemRemainStock = Convert.ToInt32(selectedRow.Cells["Column3"].Value);
 
+                _itemCode = selectedRow.Cells["itemCode"].Value.ToString()!;
                 txtItemName.Text = itemName;
                 txtItemPrice.Text = itemPrice.ToString();
                 txtWholeSalePrice.Text = itemWholeSalePrice.ToString();
@@ -185,36 +193,56 @@ namespace posSystemWindows
                 txtSubCategory.Text = subCatName;
                 txtBrand.Text = brandName;
                 txtSubBrand.Text = subBrandName;
+                txtRemainStock.Text = itemRemainStock.ToString();
+                lblStock.ForeColor = itemRemainStock <= 100 ? Color.Red : DefaultForeColor;
+                lblStock.Text = itemRemainStock <= 100 ? "Stock (Low)" : "Stock";
+
+                //txtRemainStock.Text = itemRemainStock;
             }
         }
 
         private void btnAddCart_Click(object sender, EventArgs e)
         {
-            string itemName;
-            decimal itemPrice;
-            decimal itemWholeSalePrice;
-            string catName;
-            string subCatName;
-            string brandName;
-            string subBrandName;
-            int quantity;
-            decimal salePrice;
+            try
+            {
+                string itemName;
+                int itemPrice;
+                int itemWholeSalePrice;
+                string catName;
+                string subCatName;
+                string brandName;
+                string subBrandName;
+                int quantity;
+                int salePrice;
+                int itemRemainStock;
 
-            itemName = txtItemName.Text;
-            itemPrice = Convert.ToDecimal(txtItemPrice.Text);
-            itemWholeSalePrice = Convert.ToDecimal(txtWholeSalePrice.Text);
-            catName = txtCategory.Text;
-            subCatName = txtSubCategory.Text;
-            brandName = txtBrand.Text;
-            subBrandName = txtSubBrand.Text;
-            quantity = Convert.ToInt32(txtQuantity.Text);
+                itemName = txtItemName.Text;
+                itemPrice = Convert.ToInt32(txtItemPrice.Text);
+                itemWholeSalePrice = Convert.ToInt32(txtWholeSalePrice.Text);
+                catName = txtCategory.Text;
+                subCatName = txtSubCategory.Text;
+                brandName = txtBrand.Text;
+                subBrandName = txtSubBrand.Text;
+                quantity = Convert.ToInt32(txtQuantity.Text);
+                itemRemainStock = Convert.ToInt32(txtRemainStock.Text);
+                
 
-            salePrice = chbWholeSale.Checked ? itemWholeSalePrice : itemPrice;
+                salePrice = chbWholeSale.Checked ? itemWholeSalePrice : itemPrice;
 
-            decimal netAmount = salePrice * quantity;
-            dgvCart.Rows.Add(itemName, quantity, salePrice, netAmount);
-            clear();
+                int netAmount = salePrice * quantity;
+                dgvCart.Rows.Add(_itemCode, itemName, quantity, salePrice, netAmount,itemRemainStock);
+                clear();
+            }
+            catch (FormatException ex)
+            {
+                MessageBox.Show("Please enter valid numeric values for prices and quantity.", "Input Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
+
 
         private void dgvCart_CellEndEdit(object sender, DataGridViewCellEventArgs e)
         {
@@ -222,7 +250,7 @@ namespace posSystemWindows
             if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
             {
                 DataGridViewRow row = dgvCart.Rows[e.RowIndex];
-                decimal itemPrice = Convert.ToDecimal(row.Cells["colItemPrice"].Value);
+                int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
                 int quantity;
 
                 // Try to parse the quantity value
@@ -247,6 +275,8 @@ namespace posSystemWindows
                 LoadComboBox(cboSubCategories, Queries.GetSubCategories, "subCatCode", "subCatName", "All Sub-Categories");
                 LoadComboBox(cboBrands, Queries.GetBrands, "brandCode", "brandName", "All Brands");
                 LoadComboBox(cboSubBrands, Queries.GetSubBrands, "subBrandCode", "subBrandName", "All Sub-Brands");
+                //LoadComboBox(cboDiscount, Queries.GetDiscounts, "disId", "disName", "All Discounts");
+                LoadComboBox(cboPromotion, Queries.GetPromotions, "proCode", "proName", "All Promotions");
             }
             catch (Exception ex)
             {
@@ -323,11 +353,11 @@ namespace posSystemWindows
                 }
             }
 
-            frmCheckOut frmCheckOut = new frmCheckOut();
+            
             frmCheckOut.LoadData(cartData);
             frmCheckOut.Show();
             this.Hide();
-            
+
         }
     }
 }

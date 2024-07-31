@@ -29,8 +29,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 
 builder.Services.AddSession(options =>
 {
-    options.Cookie.Name = ".YourApp.Session";
-    options.IdleTimeout = TimeSpan.FromMinutes(30); // Adjust timeout as needed
+    options.Cookie.Name = ".posSystem.Session";
+    options.IdleTimeout = TimeSpan.FromHours(1);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
 });
@@ -61,7 +61,7 @@ app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
-    pattern: "{controller=Login}/{action=Index}/{id?}");
+    pattern: "{controller=Home}/{action=Index}/{id?}");
 
 // Ensure database is created and seeded
 using (var scope = app.Services.CreateScope())
