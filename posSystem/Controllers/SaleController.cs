@@ -140,6 +140,28 @@ namespace posSystem.Controllers
             var sales = query
                 .Skip((pageNo - 1) * pageSize)
                 .Take(pageSize)
+                .Select(s => new SaleModel
+                {
+                    invoiceNo = s.invoiceNo,
+                    staffCode = s.staffCode,
+                    memberCode = s.memberCode,
+                    saleQty = s.saleQty,
+                    totalAmount = s.totalAmount,
+                    receiveCash = s.receiveCash,
+                    refundCash = s.refundCash,
+                    paymentMethod = s.paymentMethod,
+                    promotion = s.promotion,
+                    discount = s.discount,
+                    saleDate = s.saleDate,
+                    memberName = _appDbContext.Members
+                        .Where(c => c.memberCode == s.memberCode)
+                        .Select(c => c.memberName)
+                        .FirstOrDefault(),
+                    staffName = _appDbContext.Staffs
+                        .Where(c => c.staffCode == s.staffCode)
+                        .Select(c => c.staffName)
+                        .FirstOrDefault(),
+                })
                 .ToList();
 
             return (sales, pageCount);

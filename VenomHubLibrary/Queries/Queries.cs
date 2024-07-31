@@ -9,8 +9,8 @@ namespace VenomHubLibrary.Queries
     public class Queries
     {
         public static string CreateSale { get; } = @"
-            INSERT INTO tblSale (invoiceNo, staffCode, staffName, memberCode, saleQty, totalAmount, receiveCash, refundCash, saleDate, paymentMethod)
-            VALUES (@invoiceNo, @staffCode, @staffName, @memberCode, @saleQty, @totalAmount, @receiveCash, @refundCash, @saleDate, @paymentMethod)";
+            INSERT INTO tblSale (invoiceNo, staffCode, staffName, memberCode, saleQty, totalAmount, receiveCash, refundCash, saleDate, paymentMethod, discount)
+            VALUES (@invoiceNo, @staffCode, @staffName, @memberCode, @saleQty, @totalAmount, @receiveCash, @refundCash, @saleDate, @paymentMethod, @discount)";
 
         public static string CreateSaleDetail { get; } = @"
             INSERT INTO tblSaleDetail (invoiceNo, itemCode, saleQuantity, itemPrice, totalAmount, saleDate)
@@ -21,6 +21,11 @@ namespace VenomHubLibrary.Queries
             SET itemRemainStock = itemRemainStock - @itemRemainStock, 
                 itemSold = ISNULL(itemSold, 0) + @itemSold
             WHERE itemCode = @itemCode";
+
+        public static string UpdateMember { get; } = @"
+            UPDATE tblMember
+            SET memberPoints = ISNULL(memberPoints, 0) + @memberPoints
+            WHERE memberCode = @memberCode";
 
         public static string GetItems { get; } = @"
             SELECT 

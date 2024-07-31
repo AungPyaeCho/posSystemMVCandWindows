@@ -37,6 +37,9 @@
             netAmount = new DataGridViewTextBoxColumn();
             itemRemainStock = new DataGridViewTextBoxColumn();
             groupBox2 = new GroupBox();
+            txtDiscountAmount = new TextBox();
+            cboDicount = new ComboBox();
+            label16 = new Label();
             btnExit = new Button();
             btnPrint = new Button();
             label5 = new Label();
@@ -53,8 +56,6 @@
             txtTotalAmount = new TextBox();
             label7 = new Label();
             txtTotalQuantity = new TextBox();
-            cboDicount = new ComboBox();
-            label16 = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCart).BeginInit();
             groupBox2.SuspendLayout();
@@ -132,6 +133,7 @@
             // 
             // groupBox2
             // 
+            groupBox2.Controls.Add(txtDiscountAmount);
             groupBox2.Controls.Add(cboDicount);
             groupBox2.Controls.Add(label16);
             groupBox2.Controls.Add(btnExit);
@@ -151,18 +153,44 @@
             groupBox2.Controls.Add(label7);
             groupBox2.Controls.Add(txtTotalQuantity);
             groupBox2.Dock = DockStyle.Bottom;
-            groupBox2.Location = new Point(0, 649);
+            groupBox2.Location = new Point(0, 643);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(799, 306);
+            groupBox2.Size = new Size(799, 317);
             groupBox2.TabIndex = 1;
             groupBox2.TabStop = false;
+            // 
+            // txtDiscountAmount
+            // 
+            txtDiscountAmount.Location = new Point(198, 208);
+            txtDiscountAmount.Name = "txtDiscountAmount";
+            txtDiscountAmount.ReadOnly = true;
+            txtDiscountAmount.Size = new Size(196, 38);
+            txtDiscountAmount.TabIndex = 51;
+            // 
+            // cboDicount
+            // 
+            cboDicount.FormattingEnabled = true;
+            cboDicount.Location = new Point(198, 163);
+            cboDicount.Name = "cboDicount";
+            cboDicount.Size = new Size(196, 39);
+            cboDicount.TabIndex = 48;
+            cboDicount.SelectedIndexChanged += cboDicount_SelectedIndexChanged;
+            // 
+            // label16
+            // 
+            label16.AutoSize = true;
+            label16.Location = new Point(12, 166);
+            label16.Name = "label16";
+            label16.Size = new Size(120, 32);
+            label16.TabIndex = 49;
+            label16.Text = "Discount :";
             // 
             // btnExit
             // 
             btnExit.BackColor = SystemColors.Control;
             btnExit.FlatStyle = FlatStyle.Flat;
             btnExit.ForeColor = Color.Black;
-            btnExit.Location = new Point(405, 192);
+            btnExit.Location = new Point(405, 252);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(382, 50);
             btnExit.TabIndex = 47;
@@ -175,7 +203,7 @@
             btnPrint.BackColor = SystemColors.Control;
             btnPrint.FlatStyle = FlatStyle.Flat;
             btnPrint.ForeColor = Color.Black;
-            btnPrint.Location = new Point(405, 120);
+            btnPrint.Location = new Point(12, 252);
             btnPrint.Name = "btnPrint";
             btnPrint.Size = new Size(382, 50);
             btnPrint.TabIndex = 46;
@@ -186,7 +214,7 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(12, 255);
+            label5.Location = new Point(405, 78);
             label5.Name = "label5";
             label5.Size = new Size(112, 32);
             label5.TabIndex = 26;
@@ -194,7 +222,7 @@
             // 
             // txtRefundCash
             // 
-            txtRefundCash.Location = new Point(198, 252);
+            txtRefundCash.Location = new Point(591, 75);
             txtRefundCash.Name = "txtRefundCash";
             txtRefundCash.Size = new Size(196, 38);
             txtRefundCash.TabIndex = 27;
@@ -202,7 +230,7 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(12, 211);
+            label6.Location = new Point(405, 34);
             label6.Name = "label6";
             label6.Size = new Size(121, 32);
             label6.TabIndex = 24;
@@ -210,7 +238,7 @@
             // 
             // txtReceiveCash
             // 
-            txtReceiveCash.Location = new Point(198, 208);
+            txtReceiveCash.Location = new Point(591, 31);
             txtReceiveCash.Name = "txtReceiveCash";
             txtReceiveCash.Size = new Size(196, 38);
             txtReceiveCash.TabIndex = 25;
@@ -236,7 +264,7 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(400, 79);
+            label3.Location = new Point(405, 167);
             label3.Name = "label3";
             label3.Size = new Size(180, 32);
             label3.TabIndex = 21;
@@ -245,7 +273,7 @@
             // cboMember
             // 
             cboMember.FormattingEnabled = true;
-            cboMember.Location = new Point(586, 31);
+            cboMember.Location = new Point(591, 119);
             cboMember.Name = "cboMember";
             cboMember.Size = new Size(196, 39);
             cboMember.TabIndex = 20;
@@ -254,7 +282,7 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(400, 34);
+            label2.Location = new Point(405, 122);
             label2.Name = "label2";
             label2.Size = new Size(117, 32);
             label2.TabIndex = 18;
@@ -262,7 +290,7 @@
             // 
             // txtMemberCode
             // 
-            txtMemberCode.Location = new Point(586, 76);
+            txtMemberCode.Location = new Point(591, 164);
             txtMemberCode.Name = "txtMemberCode";
             txtMemberCode.Size = new Size(196, 38);
             txtMemberCode.TabIndex = 19;
@@ -299,28 +327,11 @@
             txtTotalQuantity.Size = new Size(196, 38);
             txtTotalQuantity.TabIndex = 15;
             // 
-            // cboDicount
-            // 
-            cboDicount.FormattingEnabled = true;
-            cboDicount.Location = new Point(198, 163);
-            cboDicount.Name = "cboDicount";
-            cboDicount.Size = new Size(196, 39);
-            cboDicount.TabIndex = 48;
-            // 
-            // label16
-            // 
-            label16.AutoSize = true;
-            label16.Location = new Point(12, 166);
-            label16.Name = "label16";
-            label16.Size = new Size(120, 32);
-            label16.TabIndex = 49;
-            label16.Text = "Discount :";
-            // 
             // frmCheckOut
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(799, 955);
+            ClientSize = new Size(799, 960);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -364,5 +375,6 @@
         private DataGridViewTextBoxColumn itemRemainStock;
         private ComboBox cboDicount;
         private Label label16;
+        private TextBox txtDiscountAmount;
     }
 }

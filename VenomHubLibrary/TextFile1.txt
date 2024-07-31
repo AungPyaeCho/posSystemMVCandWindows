@@ -1,0 +1,341 @@
+﻿is this one follow oop?
+
+using posSystemWindows.Models;
+using System.Data;
+using VenomHubLibrary;
+using VenomHubLibrary.Queries;
+using NLog;
+using posSystem.Models;
+
+namespace posSystemWindows
+{
+    public partial class frmCheckOut : Form
+    {
+        private readonly DapperService _dapperService;
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        string _staffCode;
+        string _staffName;
+        public frmCheckOut()
+        {
+            InitializeComponent();
+            _dapperService = new DapperService(ConnectionStrings._sqlConnectionStringBuilder.ConnectionString);
+            LoadDataCbo();
+            txtTotalAmount.ReadOnly = true;
+            txtTotalQuantity.ReadOnly = true;
+        }
+
+        public void LoadData(List<DataGridViewRow> rows)
+        {
+            try
+            {
+                foreach (var row in rows)
+                {
+                    int rowIndex = dgvCart.Rows.Add();
+                    for (int i = 0; i < row.Cells.Count; i++)
+                    {
+                        dgvCart.Rows[rowIndex].Cells[i].Value = row.Cells[i].Value;
+                    }
+                }
+
+                int sumAmount = 0;
+                int sumTotalQty = 0;
+                for (int i = 0; i < dgvCart.Rows.Count; ++i)
+                {
+                    sumAmount += Convert.ToInt32(dgvCart.Rows[i].Cells[4].Value);
+                    sumTotalQty += Convert.ToInt32(dgvCart.Rows[i].Cells[2].Value);
+                }
+
+                txtTotalQuantity.Text = sumTotalQty.ToString();
+                txtTotalAmount.Text = sumAmount.ToString();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error loading data into DataGridView");
+                MessageBox.Show("An error occurred while loading data.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void LoadDataCbo()
+        {
+            try
+            {
+                var items = new Dictionary<int, string>
+                {
+                    { 1, "Yes" },
+                    { 2, "No" }
+                };
+
+                cboMember.DataSource = new BindingSource(items, null);
+                cboMember.DisplayMember = "Value";
+                cboMember.ValueMember = "Key";
+                cboMember.SelectedValue = 2;
+
+                var payment = new Dictionary<int, string>
+                {
+                    { 1, "Cash" },
+                    { 2, "Credit" },
+                    { 3, "Banking" },
+                    { 4, "Pay" }
+                };
+
+                cboPayment.DataSource = new BindingSource(payment, null);
+                cboPayment.DisplayMember = "Value";
+                cboPayment.ValueMember = "Key";
+                cboPayment.SelectedValue = 1;
+
+                var dataTable = _dapperService.QueryDataTable(Queries.GetDiscounts);
+
+                // Add a default "All" row to the DataTable
+                DataRow defaultRow = dataTable.NewRow();
+                defaultRow["disValue"] = 0; // or an appropriate value like -1 or "All"
+                defaultRow["disName"] = "No Discount";
+                dataTable.Rows.InsertAt(defaultRow, 0);
+
+                if (dataTable.Rows.Count > 0)
+                {
+                    cboDicount.DisplayMember = "disName";
+                    cboDicount.ValueMember = "disValue";
+                    cboDicount.DataSource = dataTable;
+                }
+                else
+                {
+                    MessageBox.Show($"No data found for {cboDicount.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error loading data into combo boxes");
+                MessageBox.Show("An error occurred while loading data into combo boxes.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                frmSale frmSale = new frmSale();
+                this.Close();
+                frmSale.ShowDialog();
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error exiting form");
+                MessageBox.Show("An error occurred while exiting.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void cboMember_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cboMember.SelectedValue is 2) txtMemberCode.ReadOnly = true; else txtMemberCode.ReadOnly = false;
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error in cboMember_SelectedIndexChanged");
+                MessageBox.Show("An error occurred while changing member selection.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void btnPrint_Click(object sender, EventArgs e)
+        {
+            try
+            {
+                // Determine member code
+                string memberCode = cboMember.SelectedValue is 2 ? "No Member" : txtMemberCode.Text;
+
+                // Determine amount and discount
+                int amount = string.IsNullOrEmpty(txtDiscountAmount.Text) ? Convert.ToInt32(txtTotalAmount.Text) : Convert.ToInt32(txtDiscountAmount.Text);
+                string discount = string.IsNullOrEmpty(txtDiscountAmount.Text) ? "" : cboDicount.Text;
+
+                // Determine receive cash and refund cash based on payment method
+                int receiveCash = cboPayment.SelectedValue is 1 ? Convert.ToInt32(txtReceiveCash.Text) : 0;
+                int refundCash = cboPayment.SelectedValue is 1 ? Convert.ToInt32(txtRefundCash.Text) : 0;
+
+                // Calculate member points
+                int memberPoint = amount > 50000 ? 5 : 0;
+
+                // Generate invoice number
+                string invoiceNo = "DL" + DateTime.Now.ToString("ddMMyyHHmm");
+
+                // Create SaleModel
+                var saleModel = new SaleModel
+                {
+                    invoiceNo = invoiceNo,
+                    staffCode = "Test",
+                    staffName = "Test",
+                    memberCode = memberCode,
+                    saleQty = Convert.ToInt32(txtTotalQuantity.Text),
+                    totalAmount = amount,
+                    saleDate = DateTime.Now,
+                    receiveCash = receiveCash,
+                    refundCash = refundCash,
+                    discount = discount,
+                    paymentMethod = cboPayment.Text
+                };
+
+                // Create MemberModel
+                var memberModel = new MemberModel
+                {
+                    memberCode = memberCode,
+                    memberPoints = memberPoint
+                };
+
+                // Process Sale Details
+                foreach (DataGridViewRow row in dgvCart.Rows)
+                {
+                    if (row.IsNewRow) continue;
+
+                    var saleDetailModel = new SaleDetailModel
+                    {
+                        invoiceNo = invoiceNo,
+                        itemCode = row.Cells["itemCode"].Value?.ToString() ?? string.Empty,
+                        itemPrice = string.IsNullOrEmpty(row.Cells["itemPrice"].Value?.ToString()) ? (int?)null : Convert.ToInt32(row.Cells["itemPrice"].Value),
+                        saleQuantity = string.IsNullOrEmpty(row.Cells["quantity"].Value?.ToString()) ? (int?)null : Convert.ToInt32(row.Cells["quantity"].Value),
+                        totalAmount = Convert.ToInt32(row.Cells["netAmount"].Value?.ToString()),
+                        saleDate = DateTime.Now
+                    };
+
+                    var itemModel = new ItemModel
+                    {
+                        itemCode = row.Cells["itemCode"].Value?.ToString() ?? string.Empty,
+                        itemSold = Convert.ToInt32(row.Cells["quantity"].Value),
+                        itemRemainStock = Convert.ToInt32(row.Cells["quantity"].Value)
+                    };
+
+                    _dapperService.Execute(Queries.UpdateItem, itemModel);
+                    _dapperService.Execute(Queries.CreateSaleDetail, saleDetailModel);
+                }
+
+                // Update Member if applicable
+                if (!string.IsNullOrEmpty(txtMemberCode.Text))
+                {
+                    _dapperService.Execute(Queries.UpdateMember, memberModel);
+                }
+
+                // Create Sale and display result message
+                int result = _dapperService.Execute(Queries.CreateSale, saleModel);
+                MessageBox.Show(result > 0 ? "Sale Complete" : "Sale Failed");
+
+                // Clear the form
+                Clear();
+            }
+            catch (Exception ex)
+            {
+                // Log error and show user-friendly message
+                Logger.Error(ex, "Error in btnPrint_Click method");
+                MessageBox.Show("An error occurred while processing the sale.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void txtReceiveCash_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(txtReceiveCash.Text) && !string.IsNullOrEmpty(txtTotalAmount.Text))
+                {
+                    int receive = Convert.ToInt32(txtReceiveCash.Text);
+                    int total = Convert.ToInt32(txtTotalAmount.Text);
+
+                    if (receive < 0 || total < 0)
+                    {
+                        throw new InvalidOperationException("Amounts cannot be negative.");
+                    }
+
+                    int refund = receive - total;
+                    txtRefundCash.Text = refund.ToString();
+                }
+                else
+                {
+                    txtRefundCash.Text = "0";
+                }
+            }
+            catch (FormatException)
+            {
+                MessageBox.Show("Please enter valid numbers for the amounts.", "Invalid Input", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (OverflowException)
+            {
+                MessageBox.Show("The amounts entered are too large.", "Overflow Error", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (InvalidOperationException ex)
+            {
+                MessageBox.Show(ex.Message, "Invalid Operation", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error in txtReceiveCash_TextChanged method");
+                MessageBox.Show("An unexpected error occurred.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void LogError(string message, Exception ex)
+        {
+            Logger.Error(ex, message);
+        }
+
+        private void cboDicount_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                if (cboDicount.SelectedValue is 0)
+                {
+
+                }
+                else
+                {
+                    int totalAmount = Convert.ToInt32(txtTotalAmount.Text);
+                    int discountPercentage = 0;
+                    if (cboDicount.SelectedValue != DBNull.Value && cboDicount.SelectedValue != null)
+                    {
+                        discountPercentage = Convert.ToInt32(cboDicount.SelectedValue);
+                    }
+
+                    // Calculate the discount amount
+                    int discountAmount = (totalAmount * discountPercentage) / 100;// Assuming cboDicount has the discount percentage value
+                    txtDiscountAmount.Text = (totalAmount - discountAmount).ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                Logger.Error(ex, "Error in cboDicount_SelectedIndexChanged method");
+                MessageBox.Show("An error occurred while applying the discount.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        public void Clear()
+        {
+            try
+            {
+                // Clear all TextBox controls
+                ClearTextBoxes(this.Controls);
+
+                // Clear DataGridView
+                dgvCart.Rows.Clear();
+                // dgvCart.Refresh(); // Removed unless needed for specific redraw behavior
+            }
+            catch (Exception ex)
+            {
+                // Log error and show a user-friendly message
+                Logger.Error(ex, "Error in Clear method");
+                MessageBox.Show("An error occurred while clearing the form.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+        }
+
+        private void ClearTextBoxes(Control.ControlCollection controls)
+        {
+            foreach (Control control in controls)
+            {
+                if (control is TextBox textBox)
+                {
+                    textBox.Clear();
+                }
+                else if (control.HasChildren)
+                {
+                    ClearTextBoxes(control.Controls); // Recursively clear TextBoxes in nested containers
+                }
+            }
+        }
+
+    }
+}

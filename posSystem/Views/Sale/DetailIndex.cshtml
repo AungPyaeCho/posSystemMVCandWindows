@@ -2,25 +2,31 @@
 
 @{
     ViewData["Title"] = "Sale Management";
-    int count = 0;
-    int _pageNo = Model.pageNo;
-    int _pageCount = Model.pageCount;
-    int _pageSize = Model.pageSize;
+    // int count = 0;
+    // int _pageNo = Model.pageNo;
+    // int _pageCount = Model.pageCount;
+    // int _pageSize = Model.pageSize;
 
-    string _pageURL(int _pageNo)
-    {
-        return $"/Sale/Detail?pageNo={_pageNo}&pageSize={_pageSize}";
-    }
+    // string _pageURL(int _pageNo)
+    // {
+    //     return $"/Sale/Detail?pageNo={_pageNo}&pageSize={_pageSize}";
+    // }
+    int count = 0;
 }
 
 <div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-4 mb-sm-0">Sale Management</h1>
+    <h1 class="h3 mb-3 mb-sm-0">Sale Management</h1>
     <div>
+        <!-- Buttons with proper spacing and icons -->
         <a href="/Sale/Create" class="btn btn-success mr-2">
-            <i class="fas fa-plus-circle"></i> Download Report
+            <i class="fas fa-download"></i> Download Report
+        </a>
+        <a href="/Sale/Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
         </a>
     </div>
 </div>
+
 
 <table class="table table-hover">
     <thead>
@@ -42,7 +48,8 @@
         @foreach (SaleDetailModel item in Model.saleDetailData)
         {
             <tr>
-                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                @* <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th> *@
+                <td scope="row">@(++count)</td>
                 <td>@item.invoiceNo</td>
                 <td>@item.itemCode</td>
                 <td>@item.itemName</td>
@@ -54,7 +61,7 @@
         }
     </tbody>
 
-    <tfoot>
+   @*  <tfoot>
         <tr>
             <td colspan="8">
                 <nav aria-label="Pagination">
@@ -154,5 +161,5 @@
                 </nav>
             </td>
         </tr>
-    </tfoot>
+    </tfoot> *@
 </table>
