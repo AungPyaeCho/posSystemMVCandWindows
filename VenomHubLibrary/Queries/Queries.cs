@@ -16,6 +16,19 @@ namespace VenomHubLibrary.Queries
             INSERT INTO tblSaleDetail (invoiceNo, itemCode, saleQuantity, itemPrice, totalAmount, saleDate)
             VALUES (@invoiceNo, @itemCode, @saleQuantity, @itemPrice, @totalAmount, @saleDate)";
 
+        public static string CreateLoginRecord { get; } = @"
+            INSERT INTO tblLoginStaffDetail 
+                (staffName, staffCode, staffRole, sessionId, sessionExpired, loginAt, logOutAt)
+                VALUES 
+                (@StaffName, @StaffCode, @StaffRole, @SessionId, @SessionExpired, @LoginAt, @LogOutAt)";
+
+        public static string UpdateLoginRecord { get; } = @"
+            UPDATE tblLoginStaffDetail
+            SET  
+                logOutAt = @LogOutAt
+            WHERE
+                staffCode = @staffCode";
+
         public static string UpdateItem { get; } = @"
             UPDATE tblItem
             SET itemRemainStock = itemRemainStock - @itemRemainStock, 
@@ -93,8 +106,6 @@ namespace VenomHubLibrary.Queries
             WHERE 
                 (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode)";
 
-
-
         public static string GetItemByNameOrBarcodeUnKown { get; } = @"
             SELECT 
                 I.itemCode,
@@ -116,6 +127,18 @@ namespace VenomHubLibrary.Queries
             WHERE 
                 (@itemName IS NULL OR I.itemName LIKE '%' + @itemName + '%') AND
                 (@itemBarcode IS NULL OR I.itemBarcode LIKE '%' + @itemBarcode + '%')";
+
+        public static string GetUser { get; } = @"
+            SELECT
+                staffCode,
+                staffName,
+                staffEmail,
+                staffPassword,
+                staffRole
+            FROM tblStaff
+            WHERE
+                staffName = @staffName AND
+                staffPassword = @staffPassword";
 
 
         public static string GetCategories { get; } = @"

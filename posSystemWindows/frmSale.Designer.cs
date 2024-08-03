@@ -92,6 +92,9 @@
             colItemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
             itemRemainStock = new DataGridViewTextBoxColumn();
+            lblUserName = new Label();
+            lblStaffCode = new Label();
+            lblStaffRole = new Label();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -259,6 +262,9 @@
             // 
             // panel1
             // 
+            panel1.Controls.Add(lblUserName);
+            panel1.Controls.Add(lblStaffCode);
+            panel1.Controls.Add(lblStaffRole);
             panel1.Controls.Add(btnSearchRange);
             panel1.Controls.Add(groupBox2);
             panel1.Controls.Add(btnExit);
@@ -732,6 +738,36 @@
             itemRemainStock.Name = "itemRemainStock";
             itemRemainStock.Width = 175;
             // 
+            // lblUserName
+            // 
+            lblUserName.AutoSize = true;
+            lblUserName.Font = new Font("Segoe UI", 9F);
+            lblUserName.Location = new Point(15, 688);
+            lblUserName.Name = "lblUserName";
+            lblUserName.Size = new Size(132, 30);
+            lblUserName.TabIndex = 8;
+            lblUserName.Text = "lblUserName";
+            // 
+            // lblStaffCode
+            // 
+            lblStaffCode.AutoSize = true;
+            lblStaffCode.Font = new Font("Segoe UI", 9F);
+            lblStaffCode.Location = new Point(15, 748);
+            lblStaffCode.Name = "lblStaffCode";
+            lblStaffCode.Size = new Size(125, 30);
+            lblStaffCode.TabIndex = 9;
+            lblStaffCode.Text = "lblStaffCode";
+            // 
+            // lblStaffRole
+            // 
+            lblStaffRole.AutoSize = true;
+            lblStaffRole.Font = new Font("Segoe UI", 9F);
+            lblStaffRole.Location = new Point(15, 718);
+            lblStaffRole.Name = "lblStaffRole";
+            lblStaffRole.Size = new Size(117, 30);
+            lblStaffRole.TabIndex = 10;
+            lblStaffRole.Text = "lblStaffRole";
+            // 
             // frmSale
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
@@ -753,6 +789,7 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             panel1.ResumeLayout(false);
+            panel1.PerformLayout();
             groupBox3.ResumeLayout(false);
             groupBox3.PerformLayout();
             groupBox1.ResumeLayout(false);
@@ -827,5 +864,8 @@
         private DataGridViewTextBoxColumn colItemPrice;
         private DataGridViewTextBoxColumn netAmount;
         private DataGridViewTextBoxColumn itemRemainStock;
+        private Label lblUserName;
+        private Label lblStaffCode;
+        private Label lblStaffRole;
     }
 }

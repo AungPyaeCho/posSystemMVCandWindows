@@ -21,6 +21,7 @@ namespace posSystem
         public DbSet<LoginDetailModel> LoginDetails { get; set; }
         public DbSet<BrandModel> Brands { get; set; }
         public DbSet<SubBrandModel> SubBrands { get; set; }
+        public DbSet<LoginStaffDetailModel> LoginStaffDetails { get; set; }
 
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
@@ -86,6 +87,15 @@ namespace posSystem
                 .WithMany()
                 .HasForeignKey(ld => ld.adminId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<LoginStaffDetailModel>()
+            .ToTable("tblLoginStaffDetail")
+            .HasKey(l => l.ldId);
+
+            modelBuilder.Entity<LoginStaffDetailModel>()
+                .HasOne(l => l.Staff)
+                .WithMany()
+                .HasForeignKey(l => l.staffId);
 
             // Seed default admin user
             string defaultAdminId = Guid.NewGuid().ToString();

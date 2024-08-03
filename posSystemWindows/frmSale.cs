@@ -13,16 +13,15 @@ namespace posSystemWindows
     public partial class frmSale : Form
     {
         private readonly DapperService _dapperService;
-        string _staffCode;
-        string _staffName;
+        private readonly StaffModel _staffModel;
         string _itemCode;
-        frmCheckOut frmCheckOut = new frmCheckOut();
-        //DataTable DataTable = new DataTable();
 
-        public frmSale()
+        public frmSale(StaffModel staffModel)
         {
             InitializeComponent();
             _dapperService = new DapperService(ConnectionStrings._sqlConnectionStringBuilder.ConnectionString);
+            _staffModel = staffModel;
+
             dgvItems.AutoGenerateColumns = false;
             dgvCart.AutoGenerateColumns = false;
             txtBarcode.Focus();
@@ -30,8 +29,10 @@ namespace posSystemWindows
 
         private void frmSale_Load(object sender, EventArgs e)
         {
-            //loadData();
             LoadCboData();
+            lblUserName.Text = _staffModel.staffName;
+            lblStaffCode.Text = _staffModel.staffCode;
+            lblStaffRole.Text = _staffModel.staffRole;
         }
 
         private void loadData()
@@ -49,6 +50,8 @@ namespace posSystemWindows
                 {
                     dgvItems.DataSource = dataTable;
                 }
+
+
             }
             catch (Exception ex)
             {
@@ -56,46 +59,52 @@ namespace posSystemWindows
                 MessageBox.Show($"An error occurred while loading data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
-
-        private void btnExit_Click(object sender, EventArgs e)
+        private void LoadCboData()
         {
-            frmCheckOut.Close();
-            this.Close();
+            try
+            {
+                LoadComboBox(cboCategories, Queries.GetCategories, "catCode", "catName", "All Categories");
+                LoadComboBox(cboSubCategories, Queries.GetSubCategories, "subCatCode", "subCatName", "All Sub-Categories");
+                LoadComboBox(cboBrands, Queries.GetBrands, "brandCode", "brandName", "All Brands");
+                LoadComboBox(cboSubBrands, Queries.GetSubBrands, "subBrandCode", "subBrandName", "All Sub-Brands");
+                LoadComboBox(cboPromotion, Queries.GetPromotions, "proCode", "proName", "All Promotions");
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred while loading combo box data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
         }
 
-        public void clear()
+        private void LoadComboBox(ComboBox comboBox, string query, string valueMember, string displayMember, string defaultDisplayText)
         {
-            txtItemName.Text = string.Empty;
-            txtItemPrice.Text = string.Empty;
-            txtWholeSalePrice.Text = string.Empty;
-            txtCategory.Text = string.Empty;
-            txtSubCategory.Text = string.Empty;
-            txtBrand.Text = string.Empty;
-            txtSubBrand.Text = string.Empty;
-            txtQuantity.Text = "1";
-            txtByName.Text = string.Empty;
-            chbWholeSale.Checked = false;
-            _itemCode = "";
-        }
+            var dataTable = _dapperService.QueryDataTable(query);
 
-        private void btnShowAll_Click(object sender, EventArgs e)
-        {
-            loadData();
-        }
+            // Add a default "All" row to the DataTable
+            DataRow defaultRow = dataTable.NewRow();
+            defaultRow[valueMember] = DBNull.Value; // or an appropriate value like -1 or "All"
+            defaultRow[displayMember] = defaultDisplayText;
+            dataTable.Rows.InsertAt(defaultRow, 0);
 
-        private void btnSearch_Click(object sender, EventArgs e)
-        {
-            SearchItem();
+            if (dataTable.Rows.Count > 0)
+            {
+                comboBox.DisplayMember = displayMember;
+                comboBox.ValueMember = valueMember;
+                comboBox.DataSource = dataTable;
+            }
+            else
+            {
+                MessageBox.Show($"No data found for {comboBox.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
         }
 
         private void SearchItem()
         {
             string itemName = txtByName.Text;
             string itemBarcode = txtBarcode.Text;
-            string categoryCode = cboCategories.SelectedValue?.ToString();
-            string subCatCode = cboSubCategories.SelectedValue?.ToString();
-            string brandCode = cboBrands.SelectedValue?.ToString();
-            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
+            string categoryCode = cboCategories.SelectedValue?.ToString()!;
+            string subCatCode = cboSubCategories.SelectedValue?.ToString()!;
+            string brandCode = cboBrands.SelectedValue?.ToString()!;
+            string subBrandCode = cboSubBrands.SelectedValue?.ToString()!;
 
             var parameters = new
             {
@@ -138,7 +147,6 @@ namespace posSystemWindows
             }
         }
 
-
         private void SearchUnkownValue()
         {
             string itemName = txtByName.Text;
@@ -162,46 +170,23 @@ namespace posSystemWindows
             }
         }
 
-        private void btnSearchRange_Click(object sender, EventArgs e)
-        {
-            SearchUnkownValue();
-        }
 
-        private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        private void LoadItemsByBarcode(string itemBarcode)
         {
-            if (e.RowIndex >= 0)
+            var parameters = new
             {
-                // Get the selected row
-                DataGridViewRow selectedRow = dgvItems.Rows[e.RowIndex];
+                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode
+            };
 
-                // Retrieve itemName and itemPrice from the selected row
-                string itemName = selectedRow.Cells["itemName"].Value.ToString()!;
-                int itemPrice = Convert.ToInt32(selectedRow.Cells["itemPrice"].Value);
-                int itemWholeSalePrice = Convert.ToInt32(selectedRow.Cells["itemWholeSalePrice"].Value);
-                string catName = selectedRow.Cells["catName"].Value.ToString()!;
-                string subCatName = selectedRow.Cells["subCatName"].Value.ToString()!;
-                string brandName = selectedRow.Cells["brandName"].Value.ToString()!;
-                string subBrandName = selectedRow.Cells["subBrandName"].Value.ToString()!;
-                int quantity = Convert.ToInt32(txtQuantity.Text);
-                int itemRemainStock = Convert.ToInt32(selectedRow.Cells["Column3"].Value);
+            var dataTable = _dapperService.QueryDataTable(Queries.GetItemsByBarcode, parameters);
 
-                _itemCode = selectedRow.Cells["itemCode"].Value.ToString()!;
-                txtItemName.Text = itemName;
-                txtItemPrice.Text = itemPrice.ToString();
-                txtWholeSalePrice.Text = itemWholeSalePrice.ToString();
-                txtCategory.Text = catName;
-                txtSubCategory.Text = subCatName;
-                txtBrand.Text = brandName;
-                txtSubBrand.Text = subBrandName;
-                txtRemainStock.Text = itemRemainStock.ToString();
-                lblStock.ForeColor = itemRemainStock <= 100 ? Color.Red : DefaultForeColor;
-                lblStock.Text = itemRemainStock <= 100 ? "Stock (Low)" : "Stock";
-
-                //txtRemainStock.Text = itemRemainStock;
+            if (dataTable.Rows.Count > 0)
+            {
+                dgvItems.DataSource = dataTable;
             }
         }
 
-        private void btnAddCart_Click(object sender, EventArgs e)
+        private void addToCart()
         {
             try
             {
@@ -225,13 +210,13 @@ namespace posSystemWindows
                 subBrandName = txtSubBrand.Text;
                 quantity = Convert.ToInt32(txtQuantity.Text);
                 itemRemainStock = Convert.ToInt32(txtRemainStock.Text);
-                
+
 
                 salePrice = chbWholeSale.Checked ? itemWholeSalePrice : itemPrice;
 
                 int netAmount = salePrice * quantity;
-                dgvCart.Rows.Add(_itemCode, itemName, quantity, salePrice, netAmount,itemRemainStock);
-                clear();
+                dgvCart.Rows.Add(_itemCode, itemName, quantity, salePrice, netAmount, itemRemainStock);
+                Clear();
             }
             catch (FormatException ex)
             {
@@ -243,8 +228,30 @@ namespace posSystemWindows
             }
         }
 
+        private void getFromItem(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow selectedRow = dgvItems.Rows[e.RowIndex];
 
-        private void dgvCart_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+                int quantity = Convert.ToInt32(txtQuantity.Text);
+                int itemRemainStock = Convert.ToInt32(selectedRow.Cells["Column3"].Value);
+
+                _itemCode = selectedRow.Cells["itemCode"].Value.ToString()!;
+                txtItemName.Text = selectedRow.Cells["itemName"].Value.ToString()!;
+                txtItemPrice.Text = selectedRow.Cells["itemPrice"].Value.ToString()!;
+                txtWholeSalePrice.Text = selectedRow.Cells["itemWholeSalePrice"].Value.ToString()!;
+                txtCategory.Text = selectedRow.Cells["catName"].Value.ToString()!;
+                txtSubCategory.Text = selectedRow.Cells["subCatName"].Value.ToString()!;
+                txtBrand.Text = selectedRow.Cells["brandName"].Value.ToString()!;
+                txtSubBrand.Text = selectedRow.Cells["subBrandName"].Value.ToString()!;
+                txtRemainStock.Text = itemRemainStock.ToString();
+                lblStock.ForeColor = itemRemainStock <= 100 ? Color.Red : DefaultForeColor;
+                lblStock.Text = itemRemainStock <= 100 ? "Stock (Low)" : "Stock";
+            }
+        }
+
+        private void cellQtyEdit(object sender, DataGridViewCellEventArgs e)
         {
             // Ensure the edited cell is in the quantity column
             if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
@@ -267,45 +274,42 @@ namespace posSystemWindows
                 }
             }
         }
-        private void LoadCboData()
+
+        private void btnShowAll_Click(object sender, EventArgs e)
         {
-            try
-            {
-                LoadComboBox(cboCategories, Queries.GetCategories, "catCode", "catName", "All Categories");
-                LoadComboBox(cboSubCategories, Queries.GetSubCategories, "subCatCode", "subCatName", "All Sub-Categories");
-                LoadComboBox(cboBrands, Queries.GetBrands, "brandCode", "brandName", "All Brands");
-                LoadComboBox(cboSubBrands, Queries.GetSubBrands, "subBrandCode", "subBrandName", "All Sub-Brands");
-                //LoadComboBox(cboDiscount, Queries.GetDiscounts, "disId", "disName", "All Discounts");
-                LoadComboBox(cboPromotion, Queries.GetPromotions, "proCode", "proName", "All Promotions");
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show($"An error occurred while loading combo box data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            loadData();
         }
 
-        private void LoadComboBox(ComboBox comboBox, string query, string valueMember, string displayMember, string defaultDisplayText)
+        private void btnSearch_Click(object sender, EventArgs e)
         {
-            var dataTable = _dapperService.QueryDataTable(query);
-
-            // Add a default "All" row to the DataTable
-            DataRow defaultRow = dataTable.NewRow();
-            defaultRow[valueMember] = DBNull.Value; // or an appropriate value like -1 or "All"
-            defaultRow[displayMember] = defaultDisplayText;
-            dataTable.Rows.InsertAt(defaultRow, 0);
-
-            if (dataTable.Rows.Count > 0)
-            {
-                comboBox.DisplayMember = displayMember;
-                comboBox.ValueMember = valueMember;
-                comboBox.DataSource = dataTable;
-            }
-            else
-            {
-                MessageBox.Show($"No data found for {comboBox.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+            SearchItem();
+        }
+        private void txtBarcode_TextChanged(object sender, EventArgs e)
+        {
+            string itemBarcode = txtBarcode.Text;
+            LoadItemsByBarcode(itemBarcode);
         }
 
+        private void btnSearchRange_Click(object sender, EventArgs e)
+        {
+            SearchUnkownValue();
+        }
+
+        private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)
+        {
+            getFromItem(sender, e);
+        }
+
+        private void btnAddCart_Click(object sender, EventArgs e)
+        {
+            addToCart();
+        }
+
+        private void dgvCart_CellEndEdit(object sender, DataGridViewCellEventArgs e)
+        {
+            cellQtyEdit(sender, e);
+        }
+        
         private void btnRemove_Click(object sender, EventArgs e)
         {
             // Check if a row is selected
@@ -317,27 +321,6 @@ namespace posSystemWindows
             else
             {
                 MessageBox.Show("Please select a row to remove.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
-        }
-
-        private void txtBarcode_TextChanged(object sender, EventArgs e)
-        {
-            string itemBarcode = txtBarcode.Text;
-            LoadItemsByBarcode(itemBarcode);
-        }
-
-        private void LoadItemsByBarcode(string itemBarcode)
-        {
-            var parameters = new
-            {
-                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode
-            };
-
-            var dataTable = _dapperService.QueryDataTable(Queries.GetItemsByBarcode, parameters);
-
-            if (dataTable.Rows.Count > 0)
-            {
-                dgvItems.DataSource = dataTable;
             }
         }
 
@@ -353,11 +336,34 @@ namespace posSystemWindows
                 }
             }
 
-            
+            frmCheckOut frmCheckOut = new frmCheckOut(_staffModel);
             frmCheckOut.LoadData(cartData);
             frmCheckOut.Show();
             this.Hide();
+        }
 
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            //frmCheckOut.Close();
+            frmMain frmMain = new frmMain(_staffModel);
+            frmMain.Show();
+            this.Close();
+        }
+
+        public void Clear()
+        {
+            txtItemName.Text = string.Empty;
+            txtItemPrice.Text = string.Empty;
+            txtWholeSalePrice.Text = string.Empty;
+            txtCategory.Text = string.Empty;
+            txtSubCategory.Text = string.Empty;
+            txtBrand.Text = string.Empty;
+            txtSubBrand.Text = string.Empty;
+            txtQuantity.Text = "1";
+            txtByName.Text = string.Empty;
+            chbWholeSale.Checked = false;
+            txtRemainStock.Text = string.Empty;
+            _itemCode = "";
         }
     }
 }

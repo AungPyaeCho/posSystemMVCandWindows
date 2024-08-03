@@ -56,6 +56,9 @@
             txtTotalAmount = new TextBox();
             label7 = new Label();
             txtTotalQuantity = new TextBox();
+            lblUserName = new Label();
+            lblStaffCode = new Label();
+            lblStaffRole = new Label();
             groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)dgvCart).BeginInit();
             groupBox2.SuspendLayout();
@@ -327,11 +330,44 @@
             txtTotalQuantity.Size = new Size(196, 38);
             txtTotalQuantity.TabIndex = 15;
             // 
+            // lblUserName
+            // 
+            lblUserName.AutoSize = true;
+            lblUserName.Font = new Font("Segoe UI", 9F);
+            lblUserName.Location = new Point(333, 435);
+            lblUserName.Name = "lblUserName";
+            lblUserName.Size = new Size(132, 30);
+            lblUserName.TabIndex = 11;
+            lblUserName.Text = "lblUserName";
+            // 
+            // lblStaffCode
+            // 
+            lblStaffCode.AutoSize = true;
+            lblStaffCode.Font = new Font("Segoe UI", 9F);
+            lblStaffCode.Location = new Point(333, 495);
+            lblStaffCode.Name = "lblStaffCode";
+            lblStaffCode.Size = new Size(125, 30);
+            lblStaffCode.TabIndex = 12;
+            lblStaffCode.Text = "lblStaffCode";
+            // 
+            // lblStaffRole
+            // 
+            lblStaffRole.AutoSize = true;
+            lblStaffRole.Font = new Font("Segoe UI", 9F);
+            lblStaffRole.Location = new Point(333, 465);
+            lblStaffRole.Name = "lblStaffRole";
+            lblStaffRole.Size = new Size(117, 30);
+            lblStaffRole.TabIndex = 13;
+            lblStaffRole.Text = "lblStaffRole";
+            // 
             // frmCheckOut
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(799, 960);
+            Controls.Add(lblUserName);
+            Controls.Add(lblStaffCode);
+            Controls.Add(lblStaffRole);
             Controls.Add(groupBox2);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
@@ -344,6 +380,7 @@
             groupBox2.ResumeLayout(false);
             groupBox2.PerformLayout();
             ResumeLayout(false);
+            PerformLayout();
         }
 
         #endregion
@@ -376,5 +413,8 @@
         private ComboBox cboDicount;
         private Label label16;
         private TextBox txtDiscountAmount;
+        private Label lblUserName;
+        private Label lblStaffCode;
+        private Label lblStaffRole;
     }
 }

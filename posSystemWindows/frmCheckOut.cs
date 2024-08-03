@@ -10,13 +10,15 @@ namespace posSystemWindows
     public partial class frmCheckOut : Form
     {
         private readonly DapperService _dapperService;
-        private static readonly Logger Logger = LogManager.GetCurrentClassLogger();
+        private static readonly Logger Logger = LogManager.GetCurrentClassLogger(); 
+        private readonly StaffModel _staffModel;
 
         // Constructor initializes the form and its controls
-        public frmCheckOut()
+        public frmCheckOut(StaffModel staffModel)
         {
             InitializeComponent();
             _dapperService = new DapperService(ConnectionStrings._sqlConnectionStringBuilder.ConnectionString);
+            _staffModel = staffModel;
             InitializeControls();
         }
 
@@ -26,6 +28,10 @@ namespace posSystemWindows
             LoadComboBoxData();
             txtTotalAmount.ReadOnly = true;
             txtTotalQuantity.ReadOnly = true;
+
+            lblUserName.Text = _staffModel.staffName;
+            lblStaffCode.Text = _staffModel.staffCode;
+            lblStaffRole.Text = _staffModel.staffRole;
         }
 
         // Load data into DataGridView and update summary
@@ -145,21 +151,17 @@ namespace posSystemWindows
         {
             try
             {
-                OpenNewForm<frmSale>();
+
+                frmSale frmSale = new frmSale(_staffModel);
+                frmSale.ShowDialog();
+                this.Close();
+
             }
             catch (Exception ex)
             {
                 LogError("Error exiting form", ex);
                 ShowErrorMessage("An error occurred while exiting.");
             }
-        }
-
-        // Open a new form of type T
-        private void OpenNewForm<T>() where T : Form, new()
-        {
-            var form = new T();
-            Close();
-            form.ShowDialog();
         }
 
         // Handle member combo box selection change
@@ -205,8 +207,8 @@ namespace posSystemWindows
             var saleModel = new SaleModel
             {
                 invoiceNo = invoiceNo,
-                staffCode = "Test",
-                staffName = "Test",
+                staffCode = _staffModel.staffCode!,
+                staffName = _staffModel.staffName,
                 memberCode = memberCode,
                 saleQty = Convert.ToInt32(txtTotalQuantity.Text),
                 totalAmount = amount,

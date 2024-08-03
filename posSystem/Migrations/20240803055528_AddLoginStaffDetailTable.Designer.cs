@@ -12,8 +12,8 @@ using posSystem;
 namespace posSystem.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240725073958_posdb")]
-    partial class posdb
+    [Migration("20240803055528_AddLoginStaffDetailTable")]
+    partial class AddLoginStaffDetailTable
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -49,8 +49,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "6a81707a-5a1b-48a2-b077-96ecbcd2ed09",
-                            adminCreateAt = "7/25/2024 2:09:58 PM",
+                            id = "cf87c3d7-f73b-4e3b-9672-e1df7427a0e9",
+                            adminCreateAt = "8/3/2024 12:25:28 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -146,6 +146,9 @@ namespace posSystem.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("disUpdateCount")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("disValue")
                         .HasColumnType("int");
 
                     b.HasKey("disId");
@@ -289,6 +292,42 @@ namespace posSystem.Migrations
                     b.ToTable("tblLoginDetail");
                 });
 
+            modelBuilder.Entity("posSystem.Models.LoginStaffDetailModel", b =>
+                {
+                    b.Property<string>("ldId")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("logOutAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("loginAt")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime?>("sessionExpired")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("sessionId")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("staffCode")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int?>("staffId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("staffName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("staffRole")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ldId");
+
+                    b.HasIndex("staffId");
+
+                    b.ToTable("tblLoginStaffDetail", (string)null);
+                });
+
             modelBuilder.Entity("posSystem.Models.MemberModel", b =>
                 {
                     b.Property<int>("memberId")
@@ -382,14 +421,24 @@ namespace posSystem.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("sdId"));
 
+                    b.Property<string>("invoiceNo")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("itemCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int?>("itemId")
                         .HasColumnType("int");
+
+                    b.Property<string>("itemName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int?>("itemPrice")
                         .HasColumnType("int");
 
-                    b.Property<string>("saleDate")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime>("saleDate")
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("saleId")
                         .HasColumnType("int");
@@ -441,6 +490,12 @@ namespace posSystem.Migrations
                     b.Property<string>("promotion")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int?>("receiveCash")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("refundCash")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("saleDate")
                         .HasColumnType("datetime2");
 
@@ -448,10 +503,9 @@ namespace posSystem.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("staffCode")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("staffId")
+                    b.Property<int?>("staffId")
                         .HasColumnType("int");
 
                     b.Property<string>("staffName")
@@ -633,6 +687,15 @@ namespace posSystem.Migrations
                     b.Navigation("Admin");
                 });
 
+            modelBuilder.Entity("posSystem.Models.LoginStaffDetailModel", b =>
+                {
+                    b.HasOne("posSystem.Models.StaffModel", "Staff")
+                        .WithMany()
+                        .HasForeignKey("staffId");
+
+                    b.Navigation("Staff");
+                });
+
             modelBuilder.Entity("posSystem.Models.SaleDetailModel", b =>
                 {
                     b.HasOne("posSystem.Models.ItemModel", "Item")
@@ -656,9 +719,7 @@ namespace posSystem.Migrations
 
                     b.HasOne("posSystem.Models.StaffModel", "Staff")
                         .WithMany()
-                        .HasForeignKey("staffId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("staffId");
 
                     b.Navigation("Member");
 
