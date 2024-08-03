@@ -101,40 +101,24 @@ namespace posSystemWindows
         {
             string itemName = txtByName.Text;
             string itemBarcode = txtBarcode.Text;
-            string categoryCode = cboCategories.SelectedValue?.ToString()!;
-            string subCatCode = cboSubCategories.SelectedValue?.ToString()!;
-            string brandCode = cboBrands.SelectedValue?.ToString()!;
-            string subBrandCode = cboSubBrands.SelectedValue?.ToString()!;
+            string categoryCode = cboCategories.SelectedValue?.ToString();
+            string subCatCode = cboSubCategories.SelectedValue?.ToString();
+            string brandCode = cboBrands.SelectedValue?.ToString();
+            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
 
             var parameters = new
             {
                 itemName = string.IsNullOrEmpty(itemName) ? (string?)null : itemName,
                 itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode,
-                catCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode,
+                categoryCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode,
                 subCatCode = string.IsNullOrEmpty(subCatCode) ? (string?)null : subCatCode,
                 brandCode = string.IsNullOrEmpty(brandCode) ? (string?)null : brandCode,
                 subBrandCode = string.IsNullOrEmpty(subBrandCode) ? (string?)null : subBrandCode
             };
 
-            DataTable dataTable = null;
+            string query = GetQuery(parameters);
 
-            if (!string.IsNullOrEmpty(itemName) || !string.IsNullOrEmpty(itemBarcode))
-            {
-                // Fetch only one row for item name or barcode search
-                var dataRow = _dapperService.QueryDataRow(Queries.GetItemBy, parameters);
-
-                if (dataRow != null)
-                {
-                    // Convert DataRow to a DataTable with a single row to bind to DataGridView
-                    dataTable = dataRow.Table.Clone(); // Create an empty DataTable with the same schema
-                    dataTable.ImportRow(dataRow); // Import the DataRow
-                }
-            }
-            else
-            {
-                // Fetch all rows for category, subcategory, brand, or subbrand search
-                dataTable = _dapperService.QueryDataTable(Queries.GetItemBy, parameters);
-            }
+            DataTable dataTable = _dapperService.QueryDataTable(query, parameters);
 
             if (dataTable != null && dataTable.Rows.Count > 0)
             {
@@ -142,25 +126,63 @@ namespace posSystemWindows
             }
             else
             {
-                // Handle case when no item is found
                 MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
+        }
+
+        private string GetQuery(dynamic parameters)
+        {
+            bool hasItemName = !string.IsNullOrEmpty(parameters.itemName);
+            bool hasItemBarcode = !string.IsNullOrEmpty(parameters.itemBarcode);
+            bool hasCategory = !string.IsNullOrEmpty(parameters.categoryCode);
+            bool hasSubCategory = !string.IsNullOrEmpty(parameters.subCatCode);
+            bool hasBrand = !string.IsNullOrEmpty(parameters.brandCode);
+            bool hasSubBrand = !string.IsNullOrEmpty(parameters.subBrandCode);
+
+            if (hasItemName || hasItemBarcode)
+            {
+                if (hasCategory || hasSubCategory || hasBrand || hasSubBrand)
+                {
+                    return Queries.GetItemByNameOrBarcodeWithFilter;
+                }
+                else
+                {
+                    return Queries.GetItemByNameOrBarcode;
+                }
+            }
+
+            if (hasCategory || hasSubCategory || hasBrand || hasSubBrand)
+            {
+                return Queries.GetItemByFilters;
+            }
+
+            return Queries.GetItemByAllSearch;
         }
 
         private void SearchUnkownValue()
         {
             string itemName = txtByName.Text;
             string itemBarcode = txtBarcode.Text;
+            string catCode = cboCategories.SelectedValue?.ToString();
+            string subCatCode = cboSubCategories.SelectedValue?.ToString();
+            string brandCode = cboBrands.SelectedValue?.ToString();
+            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
 
-            var parameters = new
+            var parameters = new ItemModel
             {
-                itemName = string.IsNullOrEmpty(itemName) ? (string?)null : itemName,
-                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode
+                itemName = string.IsNullOrEmpty(itemName) ? null : itemName,
+                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? null : itemBarcode,
+                catCode = string.IsNullOrEmpty(catCode) ? null : catCode,
+                subCatCode = string.IsNullOrEmpty(subCatCode) ? null : subCatCode,
+                brandCode = string.IsNullOrEmpty(brandCode) ? null : brandCode,
+                subBrandCode = string.IsNullOrEmpty(subBrandCode) ? null : subBrandCode
             };
 
-            var dataTable = _dapperService.QueryDataTable(Queries.GetItemByNameOrBarcodeUnKown, parameters);
+            string query = Queries.BuildDynamicLikeQuery(parameters);
 
-            if (dataTable.Rows.Count > 0)
+            var dataTable = _dapperService.QueryDataTable(query, parameters);
+
+            if (dataTable != null && dataTable.Rows.Count > 0)
             {
                 dgvItems.DataSource = dataTable;
             }
@@ -169,7 +191,6 @@ namespace posSystemWindows
                 MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
             }
         }
-
 
         private void LoadItemsByBarcode(string itemBarcode)
         {
@@ -246,8 +267,8 @@ namespace posSystemWindows
                 txtBrand.Text = selectedRow.Cells["brandName"].Value.ToString()!;
                 txtSubBrand.Text = selectedRow.Cells["subBrandName"].Value.ToString()!;
                 txtRemainStock.Text = itemRemainStock.ToString();
-                lblStock.ForeColor = itemRemainStock <= 100 ? Color.Red : DefaultForeColor;
-                lblStock.Text = itemRemainStock <= 100 ? "Stock (Low)" : "Stock";
+                lblStock.ForeColor = itemRemainStock <= 20 ? Color.Red : DefaultForeColor;
+                lblStock.Text = itemRemainStock <= 20 ? "Stock (Low)" : "Stock";
             }
         }
 

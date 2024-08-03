@@ -46,8 +46,8 @@ namespace posSystem.Migrations
                     b.HasData(
                         new
                         {
-                            id = "cf87c3d7-f73b-4e3b-9672-e1df7427a0e9",
-                            adminCreateAt = "8/3/2024 12:25:28 PM",
+                            id = "ad24e88d-7daa-4289-b0bd-caaaec048e05",
+                            adminCreateAt = "8/3/2024 2:37:58 PM",
                             adminEmail = "admin@pos.com",
                             adminName = "Default Admin",
                             adminPassword = "QWRtaW5AMTIz"
@@ -291,14 +291,17 @@ namespace posSystem.Migrations
 
             modelBuilder.Entity("posSystem.Models.LoginStaffDetailModel", b =>
                 {
-                    b.Property<string>("ldId")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("ldId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
 
-                    b.Property<string>("logOutAt")
-                        .HasColumnType("nvarchar(max)");
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ldId"));
 
-                    b.Property<string>("loginAt")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<DateTime?>("logOutAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("loginAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<DateTime?>("sessionExpired")
                         .HasColumnType("datetime2");

@@ -59,31 +59,103 @@ namespace VenomHubLibrary.Queries
                 INNER JOIN tblCategory C ON I.catCode = C.catCode
                 INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode";
 
-        public static string GetItemBy { get; } = @"
-            SELECT DISTINCT
-                I.itemCode,
-                I.itemName,
-                I.itemSalePrice,
-                I.itemWholeSalePrice,
-                I.itemStock,
-                I.itemRemainStock,
-                I.itemSold,
-                C.catName,
-                B.brandName,
-                SB.subBrandName,
-                SC.subCatName
-            FROM tblItem I
-                INNER JOIN tblBrand B ON I.brandCode = B.brandCode
-                INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
-                INNER JOIN tblCategory C ON I.catCode = C.catCode
-                INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
-            WHERE 
-                (@itemName IS NULL OR I.itemName = @itemName) AND
-                (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode) AND
-                (@catCode IS NULL OR I.catCode = @catCode) AND
-                (@subCatCode IS NULL OR I.subCatCode = @subCatCode) AND
-                (@brandCode IS NULL OR I.brandCode = @brandCode) AND 
-                (@brandCode IS NULL OR I.brandCode = @brandCode)";
+        public static string GetItemByNameOrBarcode { get; } = @"
+        SELECT DISTINCT
+            I.itemCode,
+            I.itemName,
+            I.itemSalePrice,
+            I.itemWholeSalePrice,
+            I.itemStock,
+            I.itemRemainStock,
+            I.itemSold,
+            C.catName,
+            B.brandName,
+            SB.subBrandName,
+            SC.subCatName
+        FROM tblItem I
+        INNER JOIN tblBrand B ON I.brandCode = B.brandCode
+        INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
+        INNER JOIN tblCategory C ON I.catCode = C.catCode
+        INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
+        WHERE 
+            (@itemName IS NULL OR I.itemName = @itemName) AND
+            (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode)";
+
+        public static string GetItemByNameOrBarcodeWithFilter { get; } = @"
+        SELECT DISTINCT
+            I.itemCode,
+            I.itemName,
+            I.itemSalePrice,
+            I.itemWholeSalePrice,
+            I.itemStock,
+            I.itemRemainStock,
+            I.itemSold,
+            C.catName,
+            B.brandName,
+            SB.subBrandName,
+            SC.subCatName
+        FROM tblItem I
+        INNER JOIN tblBrand B ON I.brandCode = B.brandCode
+        INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
+        INNER JOIN tblCategory C ON I.catCode = C.catCode
+        INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
+        WHERE 
+            (@itemName IS NULL OR I.itemName = @itemName) AND
+            (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode) AND
+            (@categoryCode IS NULL OR I.catCode = @categoryCode) AND
+            (@subCatCode IS NULL OR I.subCatCode = @subCatCode) AND
+            (@brandCode IS NULL OR I.brandCode = @brandCode) AND
+            (@subBrandCode IS NULL OR I.subBrandCode = @subBrandCode)";
+
+        public static string GetItemByFilters { get; } = @"
+        SELECT DISTINCT
+            I.itemCode,
+            I.itemName,
+            I.itemSalePrice,
+            I.itemWholeSalePrice,
+            I.itemStock,
+            I.itemRemainStock,
+            I.itemSold,
+            C.catName,
+            B.brandName,
+            SB.subBrandName,
+            SC.subCatName
+        FROM tblItem I
+        INNER JOIN tblBrand B ON I.brandCode = B.brandCode
+        INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
+        INNER JOIN tblCategory C ON I.catCode = C.catCode
+        INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
+        WHERE 
+            (@categoryCode IS NULL OR I.catCode = @categoryCode) AND
+            (@subCatCode IS NULL OR I.subCatCode = @subCatCode) AND
+            (@brandCode IS NULL OR I.brandCode = @brandCode) AND
+            (@subBrandCode IS NULL OR I.subBrandCode = @subBrandCode)";
+
+        public static string GetItemByAllSearch { get; } = @"
+        SELECT DISTINCT
+            I.itemCode,
+            I.itemName,
+            I.itemSalePrice,
+            I.itemWholeSalePrice,
+            I.itemStock,
+            I.itemRemainStock,
+            I.itemSold,
+            C.catName,
+            B.brandName,
+            SB.subBrandName,
+            SC.subCatName
+        FROM tblItem I
+        INNER JOIN tblBrand B ON I.brandCode = B.brandCode
+        INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
+        INNER JOIN tblCategory C ON I.catCode = C.catCode
+        INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
+        WHERE 
+            (@itemName IS NULL OR I.itemName = @itemName) AND
+            (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode) AND
+            (@categoryCode IS NULL OR I.catCode = @categoryCode) AND
+            (@subCatCode IS NULL OR I.subCatCode = @subCatCode) AND
+            (@brandCode IS NULL OR I.brandCode = @brandCode) AND
+            (@subBrandCode IS NULL OR I.subBrandCode = @subBrandCode)";
 
         public static string GetItemsByBarcode { get; } = @"
             SELECT DISTINCT
@@ -106,8 +178,8 @@ namespace VenomHubLibrary.Queries
             WHERE 
                 (@itemBarcode IS NULL OR I.itemBarcode = @itemBarcode)";
 
-        public static string GetItemByNameOrBarcodeUnKown { get; } = @"
-            SELECT 
+        public static string GetItemByLike { get; } = @"
+            SELECT DISTINCT
                 I.itemCode,
                 I.itemName,
                 I.itemSalePrice,
@@ -126,7 +198,68 @@ namespace VenomHubLibrary.Queries
                 INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
             WHERE 
                 (@itemName IS NULL OR I.itemName LIKE '%' + @itemName + '%') AND
-                (@itemBarcode IS NULL OR I.itemBarcode LIKE '%' + @itemBarcode + '%')";
+                (@itemBarcode IS NULL OR I.itemBarcode LIKE '%' + @itemBarcode + '%') AND
+                (@categoryCode IS NULL OR I.catCode = @categoryCode) AND
+                (@subCatCode IS NULL OR I.subCatCode = @subCatCode) AND
+                (@brandCode IS NULL OR I.brandCode = @brandCode) AND
+                (@subBrandCode IS NULL OR I.subBrandCode = @subBrandCode)";
+
+        public static string BuildDynamicLikeQuery(dynamic parameters)
+        {
+            var baseQuery = @"
+                SELECT 
+                    I.itemCode,
+                    I.itemName,
+                    I.itemSalePrice,
+                    I.itemWholeSalePrice,
+                    I.itemStock,
+                    I.itemRemainStock,
+                    I.itemSold,
+                    C.catName,
+                    B.brandName,
+                    SB.subBrandName,
+                    SC.subCatName
+                FROM tblItem I
+                    INNER JOIN tblBrand B ON I.brandCode = B.brandCode
+                    INNER JOIN tblSubBrand SB ON I.subBrandCode = SB.subBrandCode
+                    INNER JOIN tblCategory C ON I.catCode = C.catCode
+                    INNER JOIN tblSubCategory SC ON I.subCatCode = SC.subCatCode
+                WHERE 1=1";
+
+            var conditions = new List<string>();
+
+            if (parameters.itemName != null)
+            {
+                conditions.Add("I.itemName LIKE '%' + @itemName + '%'");
+            }
+            if (parameters.itemBarcode != null)
+            {
+                conditions.Add("I.itemBarcode LIKE '%' + @itemBarcode + '%'");
+            }
+            if (parameters.catCode != null)
+            {
+                conditions.Add("I.catCode = @catCode");
+            }
+            if (parameters.subCatCode != null)
+            {
+                conditions.Add("I.subCatCode = @subCatCode");
+            }
+            if (parameters.brandCode != null)
+            {
+                conditions.Add("I.brandCode = @brandCode");
+            }
+            if (parameters.subBrandCode != null)
+            {
+                conditions.Add("I.subBrandCode = @subBrandCode");
+            }
+
+            if (conditions.Count > 0)
+            {
+                baseQuery += " AND " + string.Join(" AND ", conditions);
+            }
+
+            return baseQuery;
+        }
 
         public static string GetUser { get; } = @"
             SELECT
@@ -164,5 +297,19 @@ namespace VenomHubLibrary.Queries
         public static string GetDiscounts { get; } = @"
             SELECT disValue, disName
             FROM tblDiscount";
+
+
+
+
     }
+
+    //public class SearchParameters
+    //{
+    //    public string itemName { get; set; }
+    //    public string itemBarcode { get; set; }
+    //    public string categoryCode { get; set; }
+    //    public string subCatCode { get; set; }
+    //    public string brandCode { get; set; }
+    //    public string subBrandCode { get; set; }
+    //}
 }

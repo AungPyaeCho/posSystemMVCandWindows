@@ -8,7 +8,7 @@ namespace posSystemWindows
         public static SqlConnectionStringBuilder _sqlConnectionStringBuilder = new SqlConnectionStringBuilder()
         {
             //"Data Source=SQL8006.site4now.net;Initial Catalog=db_aaaeb1_posdb;User Id=db_aaaeb1_posdb_admin;Password=admin@123;TrustServerCertificate=True"
-            //DataSource = "SQL8006.site4now.net",
+            //DataSource = "SQL8005.site4now.net",
             //InitialCatalog = "db_aaaeb1_posdb",
             //UserID = "db_aaaeb1_posdb_admin",
             //Password = "admin@123",
