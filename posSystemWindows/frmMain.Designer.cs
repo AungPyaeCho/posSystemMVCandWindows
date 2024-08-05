@@ -31,7 +31,6 @@
             lblUserName = new Label();
             lblStaffCode = new Label();
             lblStaffRole = new Label();
-            panel1 = new Panel();
             panel2 = new Panel();
             btnSetting = new Button();
             btnAbout = new Button();
@@ -72,15 +71,6 @@
             lblStaffRole.TabIndex = 3;
             lblStaffRole.Text = "lblStaffRole";
             // 
-            // panel1
-            // 
-            panel1.BorderStyle = BorderStyle.Fixed3D;
-            panel1.Dock = DockStyle.Top;
-            panel1.Location = new Point(0, 0);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(876, 63);
-            panel1.TabIndex = 4;
-            // 
             // panel2
             // 
             panel2.BorderStyle = BorderStyle.Fixed3D;
@@ -89,15 +79,15 @@
             panel2.Controls.Add(btnExit);
             panel2.Controls.Add(btnSale);
             panel2.Dock = DockStyle.Left;
-            panel2.Location = new Point(0, 63);
+            panel2.Location = new Point(0, 0);
             panel2.Name = "panel2";
-            panel2.Size = new Size(233, 473);
+            panel2.Size = new Size(233, 536);
             panel2.TabIndex = 5;
             // 
             // btnSetting
             // 
             btnSetting.FlatStyle = FlatStyle.Flat;
-            btnSetting.Location = new Point(10, 297);
+            btnSetting.Location = new Point(10, 360);
             btnSetting.Name = "btnSetting";
             btnSetting.Size = new Size(200, 50);
             btnSetting.TabIndex = 3;
@@ -107,7 +97,7 @@
             // btnAbout
             // 
             btnAbout.FlatStyle = FlatStyle.Flat;
-            btnAbout.Location = new Point(10, 353);
+            btnAbout.Location = new Point(10, 416);
             btnAbout.Name = "btnAbout";
             btnAbout.Size = new Size(200, 50);
             btnAbout.TabIndex = 2;
@@ -118,7 +108,7 @@
             // btnExit
             // 
             btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Location = new Point(10, 409);
+            btnExit.Location = new Point(10, 472);
             btnExit.Name = "btnExit";
             btnExit.Size = new Size(200, 50);
             btnExit.TabIndex = 1;
@@ -129,7 +119,7 @@
             // btnSale
             // 
             btnSale.FlatStyle = FlatStyle.Flat;
-            btnSale.Location = new Point(10, 4);
+            btnSale.Location = new Point(10, 10);
             btnSale.Name = "btnSale";
             btnSale.Size = new Size(200, 50);
             btnSale.TabIndex = 0;
@@ -143,9 +133,9 @@
             groupBox1.Controls.Add(lblStaffCode);
             groupBox1.Controls.Add(lblStaffRole);
             groupBox1.Dock = DockStyle.Right;
-            groupBox1.Location = new Point(677, 63);
+            groupBox1.Location = new Point(677, 0);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(199, 473);
+            groupBox1.Size = new Size(199, 536);
             groupBox1.TabIndex = 6;
             groupBox1.TabStop = false;
             groupBox1.Text = "Login User";
@@ -157,7 +147,6 @@
             ClientSize = new Size(876, 536);
             Controls.Add(groupBox1);
             Controls.Add(panel2);
-            Controls.Add(panel1);
             Font = new Font("Segoe UI", 11.1428576F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.None;
             Margin = new Padding(4);
@@ -175,7 +164,6 @@
         private Label lblUserName;
         private Label lblStaffCode;
         private Label lblStaffRole;
-        private Panel panel1;
         private Panel panel2;
         private Button btnSale;
         private Button btnExit;

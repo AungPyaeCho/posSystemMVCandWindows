@@ -303,7 +303,8 @@ namespace posSystemWindows
 
         private void btnSearch_Click(object sender, EventArgs e)
         {
-            SearchItem();
+            //SearchItem();
+            SearchUnkownValue();
         }
         private void txtBarcode_TextChanged(object sender, EventArgs e)
         {
@@ -313,7 +314,7 @@ namespace posSystemWindows
 
         private void btnSearchRange_Click(object sender, EventArgs e)
         {
-            SearchUnkownValue();
+            
         }
 
         private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)

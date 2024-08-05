@@ -31,6 +31,6 @@ namespace posSystem.Models
         public int pageCount { get; set; }
 
         public bool isEndofpage => pageNo >= pageCount;
-        public List<SaleDetailModel> saleDetailData { get; set; }
+        public List<LoginStaffDetailModel> loginStaffData { get; set; }
     }
 }

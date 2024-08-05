@@ -45,6 +45,9 @@
             btnSearch = new Button();
             btnShowAll = new Button();
             panel1 = new Panel();
+            lblUserName = new Label();
+            lblStaffCode = new Label();
+            lblStaffRole = new Label();
             btnSearchRange = new Button();
             txtItemName = new TextBox();
             label7 = new Label();
@@ -92,9 +95,6 @@
             colItemPrice = new DataGridViewTextBoxColumn();
             netAmount = new DataGridViewTextBoxColumn();
             itemRemainStock = new DataGridViewTextBoxColumn();
-            lblUserName = new Label();
-            lblStaffCode = new Label();
-            lblStaffRole = new Label();
             groupBox2.SuspendLayout();
             panel1.SuspendLayout();
             groupBox3.SuspendLayout();
@@ -276,15 +276,49 @@
             panel1.Size = new Size(232, 1016);
             panel1.TabIndex = 0;
             // 
+            // lblUserName
+            // 
+            lblUserName.AutoSize = true;
+            lblUserName.Font = new Font("Segoe UI", 9F);
+            lblUserName.Location = new Point(15, 688);
+            lblUserName.Name = "lblUserName";
+            lblUserName.Size = new Size(132, 30);
+            lblUserName.TabIndex = 8;
+            lblUserName.Text = "lblUserName";
+            lblUserName.Visible = false;
+            // 
+            // lblStaffCode
+            // 
+            lblStaffCode.AutoSize = true;
+            lblStaffCode.Font = new Font("Segoe UI", 9F);
+            lblStaffCode.Location = new Point(15, 748);
+            lblStaffCode.Name = "lblStaffCode";
+            lblStaffCode.Size = new Size(125, 30);
+            lblStaffCode.TabIndex = 9;
+            lblStaffCode.Text = "lblStaffCode";
+            lblStaffCode.Visible = false;
+            // 
+            // lblStaffRole
+            // 
+            lblStaffRole.AutoSize = true;
+            lblStaffRole.Font = new Font("Segoe UI", 9F);
+            lblStaffRole.Location = new Point(15, 718);
+            lblStaffRole.Name = "lblStaffRole";
+            lblStaffRole.Size = new Size(117, 30);
+            lblStaffRole.TabIndex = 10;
+            lblStaffRole.Text = "lblStaffRole";
+            lblStaffRole.Visible = false;
+            // 
             // btnSearchRange
             // 
             btnSearchRange.FlatStyle = FlatStyle.Flat;
-            btnSearchRange.Location = new Point(12, 565);
+            btnSearchRange.Location = new Point(12, 894);
             btnSearchRange.Name = "btnSearchRange";
             btnSearchRange.Size = new Size(208, 50);
             btnSearchRange.TabIndex = 7;
             btnSearchRange.Text = "Search &Range";
             btnSearchRange.UseVisualStyleBackColor = true;
+            btnSearchRange.Visible = false;
             btnSearchRange.Click += btnSearchRange_Click;
             // 
             // txtItemName
@@ -737,36 +771,6 @@
             itemRemainStock.MinimumWidth = 9;
             itemRemainStock.Name = "itemRemainStock";
             itemRemainStock.Width = 175;
-            // 
-            // lblUserName
-            // 
-            lblUserName.AutoSize = true;
-            lblUserName.Font = new Font("Segoe UI", 9F);
-            lblUserName.Location = new Point(15, 688);
-            lblUserName.Name = "lblUserName";
-            lblUserName.Size = new Size(132, 30);
-            lblUserName.TabIndex = 8;
-            lblUserName.Text = "lblUserName";
-            // 
-            // lblStaffCode
-            // 
-            lblStaffCode.AutoSize = true;
-            lblStaffCode.Font = new Font("Segoe UI", 9F);
-            lblStaffCode.Location = new Point(15, 748);
-            lblStaffCode.Name = "lblStaffCode";
-            lblStaffCode.Size = new Size(125, 30);
-            lblStaffCode.TabIndex = 9;
-            lblStaffCode.Text = "lblStaffCode";
-            // 
-            // lblStaffRole
-            // 
-            lblStaffRole.AutoSize = true;
-            lblStaffRole.Font = new Font("Segoe UI", 9F);
-            lblStaffRole.Location = new Point(15, 718);
-            lblStaffRole.Name = "lblStaffRole";
-            lblStaffRole.Size = new Size(117, 30);
-            lblStaffRole.TabIndex = 10;
-            lblStaffRole.Text = "lblStaffRole";
             // 
             // frmSale
             // 

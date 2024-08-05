@@ -49,6 +49,9 @@
                 let formData = new FormData();
                 formData.append('file', file);
 
+                // Block the element with Notiflix
+                Notiflix.Block.dots('body');
+
                 // Perform AJAX file upload
                 $.ajax({
                     url: url,
@@ -57,6 +60,7 @@
                     contentType: false,
                     processData: false,
                     success: function (result) {
+                        Notiflix.Block.remove('.container'); // Remove block on success
                         if (result.IsSuccess) {
                             Swal.fire({
                                 title: "Success!",
@@ -77,6 +81,7 @@
                     },
                     error: function (xhr, status, error) {
                         Swal.fire({
+                            Notiflix.Block.remove('.container'); // Remove block on error
                             title: "Error!",
                             text: "An error occurred while processing the file.",
                             icon: "error"

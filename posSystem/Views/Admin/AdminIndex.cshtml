@@ -37,8 +37,12 @@
                 <td>@item.adminPassword</td>
                 <td>@item.adminCreateAt</td>
                 <td>
-                    <a href="/Admin/Edit/@item.id" class="btn btn-warning">Edit</a>
-                    <button type="button" class="btn btn-danger btn-delete" data-id="@item.id">Delete</button>
+                    <a href="/Admin/Edit/@item.id" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i>Edit
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.id">
+                        <i class="fas fa-trash-alt"></i>Delete
+                    </button>
                 </td>
             </tr>
         }

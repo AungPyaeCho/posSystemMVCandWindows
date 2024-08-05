@@ -1,6 +1,6 @@
-﻿@model StaffResponseModel
+﻿@model LoginStaffDetailResponseModel
 @{
-    ViewData["Title"] = "Staff";
+    ViewData["Title"] = "Login Records";
     int count = 0;
     int _pageNo = Model.pageNo;
     int _pageCount = Model.pageCount;
@@ -8,70 +8,42 @@
 
     string _pageURL(int _pageNo)
     {
-        return $"/Staff/Index?pageNo={_pageNo}&pageSize={_pageSize}";
+        return $"/Record/Index?pageNo={_pageNo}&pageSize={_pageSize}";
     }
 }
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Staff</h1>
-    <a href="/Staff/Create" class="btn btn-success">Add Staff</a>
+    <h1 class="h3 mb-0 text-gray-800">Login Record</h1>
+
 </div>
 
 <table class="table table-hover">
     <thead>
         <tr>
             <th scope="col">#</th>
-            <th scope="col">Staff Code</th>
             <th scope="col">Staff Name</th>
-            <th scope="col">Role</th>
-            <th scope="col">Phone</th>
-            <th scope="col">Address</th>
-            <th scope="col">Joined Date</th>
-            <th scope="col">Email</th>
-            <th scope="col">Password</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Photo</th>
-            <th scope="col">Actions</th>
+            <th scope="col">Staff Code</th>
+            <th scope="col">Staff Role</th>
+            <th scope="col">Login At</th>
+            <th scope="col">Logout At</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (StaffModel item in Model.staffData)
+        @foreach (LoginStaffDetailModel item in Model.loginStaffData)
         {
             <tr>
                 <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
-                <td>@item.staffCode</td>
                 <td>@item.staffName</td>
-                <td>@item.staffRole</td>
-                <td>@item.staffPhone</td>
-                <td>@item.staffAddress</td>
-                <td>@item.staffJoinedDate</td>
-                <td>@item.staffEmail</td>
-                <td>@item.staffPassword</td>
-                <td>@item.staffCreateAt</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.staffPhoto))
-                    {
-                        <img src="@item.staffPhoto" class="img-thumbnail" style="max-width: 100px;" />
-                    }
-                    else
-                    {
-                        <span>No Photo</span>
-                    }
-                </td>
-                <td class="text-center">
-                    <a href="/Staff/Edit?staffId=@item.staffId" class="btn btn-warning btn-sm">
-                        <i class="fas fa-edit"></i>Edit
-                    </a>
-                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.staffId">
-                        <i class="fas fa-trash-alt"></i>Delete
-                    </button>
-                </td>
+                <td>@item.staffCode</td>
+                <td>@item.staffCode</td>
+                <td>@item.loginAt</td>
+                <td>@item.logOutAt</td>
             </tr>
         }
     </tbody>
 
     <tfoot>
         <tr>
-            <td colspan="12" class="text-center">
+            <td colspan="8">
                 <nav aria-label="Pagination">
                     <ul class="pagination justify-content-center">
                         @if (_pageNo == 1)
@@ -173,63 +145,6 @@
 </table>
 
 @section scripts {
-    <script>
-        // Function to handle delete operation
-        $(document).on('click', '.btn-delete', function () {
-            let id = $(this).data('id');
-            Swal.fire({
-                title: "Confirm?",
-                text: "You won't be able to revert this!",
-                icon: "question",
-                showCancelButton: true,
-                confirmButtonColor: "#3085d6",
-                cancelButtonColor: "#d33",
-                confirmButtonText: "Yes, delete it!"
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    deleteData(id);
-                }
-            });
-        });
-
-        // AJAX function to delete data
-        function deleteData(staffId) {
-            let _reqModel = {
-                staffId: staffId
-            };
-
-            $.ajax({
-                url: "/Staff/Delete",
-                data: _reqModel,
-                type: "POST",
-                dataType: "json",
-                success: function (result) {
-                    console.log(result);
-                    if (result.IsSuccess) {
-                        Swal.fire({
-                            title: "Deleted!",
-                            text: result.responeMessage,
-                            icon: "success"
-                        }).then(() => {
-                            location.reload(); // Refresh page after deletion
-                        });
-                    } else {
-                        Swal.fire({
-                            title: "Error!",
-                            text: result.responeMessage,
-                            icon: "error"
-                        });
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    Swal.fire({
-                        title: "Error!",
-                        text: "An error occurred while deleting.",
-                        icon: "error"
-                    });
-                }
-            });
-        }
-    </script>
+    
 }
+
