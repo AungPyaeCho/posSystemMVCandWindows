@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     ViewData["Title"] = "Create Staff";
 }
 
@@ -73,115 +72,117 @@
 
                 </div>
             </div>
-            </div>
-            </div>
-            </div>
-            
-            @section scripts {
-                <script>
-                    document.getElementById('staffPassword').addEventListener('input', validatePassword);
-                    document.getElementById('confirmPassword').addEventListener('input', validatePassword);
+        </div>
+    </div>
+</div>
 
-                    function validatePassword() {
-                        const staffPassword = document.getElementById('staffPassword').value;
-                        const confirmPassword = document.getElementById('confirmPassword').value;
-                        const errorMessage = document.getElementById('error-message');
+@section scripts {
+    <script>
+        document.getElementById('staffPassword').addEventListener('input', validatePassword);
+        document.getElementById('confirmPassword').addEventListener('input', validatePassword);
 
-                        if (staffPassword !== confirmPassword) {
-                            errorMessage.textContent = 'Passwords do not match';
-                            return false; // Prevent form submission
-                        }
+        function validatePassword() {
+            const staffPassword = document.getElementById('staffPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const errorMessage = document.getElementById('error-message');
 
-                        errorMessage.textContent = ''; // Clear any previous error message
-                        return true; // Allow form submission
-                    }
+            if (staffPassword !== confirmPassword) {
+                errorMessage.textContent = 'Passwords do not match';
+                return false; // Prevent form submission
+            }
 
-                    $(document).ready(function () {
-                        $('#staffEmail').on('input', function () {
-                            let staffEmail = $('#staffEmail').val();
+            errorMessage.textContent = ''; // Clear any previous error message
+            return true; // Allow form submission
+        }
 
-                            if (staffEmail) {
-                                $.ajax({
-                                    url: "/Staff/Check",
-                                    data: { email: staffEmail },
-                                    type: "POST",
-                                    dataType: "json",
-                                    success: function (response) {
-                                        if (response.isEmailRegistered) {
-                                            $('#emailFeedback').text("This email is already registered").css("color", "red");
-                                        } else {
-                                            $('#emailFeedback').text("This email is available").css("color", "green");
-                                        }
-                                    },
-                                    error: function (errormessage) {
-                                        console.log(errormessage.responseText);
-                                    }
-                                });
+        $(document).ready(function () {
+            $('#staffEmail').on('input', function () {
+                let staffEmail = $('#staffEmail').val();
+
+                if (staffEmail) {
+                    $.ajax({
+                        url: "/Staff/Check",
+                        data: { email: staffEmail },
+                        type: "POST",
+                        dataType: "json",
+                        success: function (response) {
+                            if (response.isEmailRegistered) {
+                                $('#emailFeedback').text("This email is already registered").css("color", "red");
+                                $('#btnSave').prop('disabled', true);
                             } else {
-                                $('#emailFeedback').text("");
+                                $('#emailFeedback').text("This email is available").css("color", "green");
+                                $('#btnSave').prop('disabled', false);
                             }
-                        });
+                        },
+                        error: function (errormessage) {
+                            console.log(errormessage.responseText);
+                        }
+                    });
+                } else {
+                    $('#emailFeedback').text("");
+                }
+            });
 
-                        $('#btnSave').click(function () {
-                            let staffCode = $('#staffCode').val();
-                            let staffName = $('#staffName').val();
-                            let staffRole = $('#staffRole').val();
-                            let staffPhone = $('#staffPhone').val();
-                            let staffAddress = $('#staffAddress').val();
-                            let staffJoinedDate = $('#staffJoinedDate').val();
-                            let staffEmail = $('#staffEmail').val();
-                            let staffPassword = $('#staffPassword').val();
-                            let staffPhoto = $('#staffPhoto')[0].files[0]; // Get the selected file
+            $('#btnSave').click(function () {
+                let staffCode = $('#staffCode').val();
+                let staffName = $('#staffName').val();
+                let staffRole = $('#staffRole').val();
+                let staffPhone = $('#staffPhone').val();
+                let staffAddress = $('#staffAddress').val();
+                let staffJoinedDate = $('#staffJoinedDate').val();
+                let staffEmail = $('#staffEmail').val();
+                let staffPassword = $('#staffPassword').val();
+                let staffPhoto = $('#staffPhoto')[0].files[0]; // Get the selected file
 
-                            // Validate other fields (omitted for brevity)
+                // Validate other fields (omitted for brevity)
 
-                            let formData = new FormData();
-                            formData.append('staffCode', staffCode);
-                            formData.append('staffName', staffName);
-                            formData.append('staffRole', staffRole);
-                            formData.append('staffPhone', staffPhone);
-                            formData.append('staffAddress', staffAddress);
-                            formData.append('staffJoinedDate', staffJoinedDate);
-                            formData.append('staffEmail', staffEmail);
-                            formData.append('staffPassword', staffPassword);
-                            formData.append('staffPhoto', staffPhoto); // Append the file
+                let formData = new FormData();
+                formData.append('staffCode', staffCode);
+                formData.append('staffName', staffName);
+                formData.append('staffRole', staffRole);
+                formData.append('staffPhone', staffPhone);
+                formData.append('staffAddress', staffAddress);
+                formData.append('staffJoinedDate', staffJoinedDate);
+                formData.append('staffEmail', staffEmail);
+                formData.append('staffPassword', staffPassword);
+                formData.append('staffPhoto', staffPhoto); // Append the file
 
-                            $.ajax({
-                                url: "/Staff/Save",
-                                data: formData,
-                                type: "POST",
-                                processData: false,
-                                contentType: false,
-                                success: function (result) {
-                                    console.log(result);
-                                    if (result.IsSuccess) {
-                                        Swal.fire({
-                                            title: "Success!",
-                                            text: result.responseMessage,
-                                            icon: "success",
-                                        }).then((result) => {
-                                            if (result.isConfirmed) {
-                                                location.href = "/Staff";
-                                            }
-                                        });
-                                    } else {
-                                        Swal.fire({
-                                            title: "Error!",
-                                            text: result.responseMessage,
-                                            icon: "error"
-                                        });
-                                    }
-                                },
-                                error: function (errormessage) {
-                                    console.log(errormessage.responseText);
-                                    Swal.fire({
-                                        title: "Error!",
-                                        text: "An error occurred while saving.",
-                                        icon: "error"
-                                    });
+                $.ajax({
+                    url: "/Staff/Save",
+                    data: formData,
+                    type: "POST",
+                    processData: false,
+                    contentType: false,
+                    success: function (result) {
+                        console.log(result);
+                        if (result.IsSuccess) {
+                            Swal.fire({
+                                title: "Success!",
+                                text: result.responseMessage,
+                                icon: "success",
+                            }).then((result) => {
+                                if (result.isConfirmed) {
+                                    location.href = "/Staff";
                                 }
                             });
+                        } else {
+                            Swal.fire({
+                                title: "Error!",
+                                text: result.responseMessage,
+                                icon: "error"
+                            });
+                        }
+                    },
+                    error: function (errormessage) {
+                        console.log(errormessage.responseText);
+                        Swal.fire({
+                            title: "Error!",
+                            text: "An error occurred while saving.",
+                            icon: "error"
                         });
-                    });
-                </script>
-            }
+                    }
+                });
+            });
+        });
+    </script>
+}

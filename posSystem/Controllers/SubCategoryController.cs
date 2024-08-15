@@ -4,6 +4,7 @@ using System.Text;
 using System.Security.Cryptography;
 using Microsoft.VisualBasic;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
 
 namespace posSystem.Controllers
 {
@@ -11,10 +12,13 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IExcelService _fileUploadService;
-        public SubCategoryController(AppDbContext appDbContext, IExcelService fileUploadService)
+        private readonly ILogger<SubCategoryController> _logger;
+
+        public SubCategoryController(AppDbContext appDbContext, IExcelService fileUploadService, ILogger<SubCategoryController> logger)
         {
             _appDbContext = appDbContext;
             _fileUploadService = fileUploadService;
+            _logger = logger;
         }
 
         [HttpGet]
@@ -64,6 +68,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while uploading and saving sub-categories.");
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -112,19 +117,14 @@ namespace posSystem.Controllers
                     var existingCategory = _appDbContext.SubCategories
                         .FirstOrDefault(c => c.subCatCode == items.subCatCode);
 
-                    if (existingCategory is not null)
+                    if (existingCategory != null)
                     {
                         var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catCode == items.catCode)!;
 
                         // Update properties
                         existingCategory.subCatName = items.subCatName;
-
-
                         existingCategory.catId = catItem.catId;
-
-            
                         existingCategory.subCatCode = items.subCatCode;
-                       
                         existingCategory.catCode = items.catCode;
                         existingCategory.subCatUpdateAt = DateTime.Now.ToString();
                         existingCategory.subCatUpdateCount ??= 0;
@@ -134,7 +134,7 @@ namespace posSystem.Controllers
 
                 // Save changes to the database
                 int result = await _appDbContext.SaveChangesAsync();
-                string message = result > 0 ? "Sub-Categories update successfully!" : "Failed to update sub-categories.";
+                string message = result > 0 ? "Sub-Categories updated successfully!" : "Failed to update sub-categories.";
 
                 rspModel = new MsgResopnseModel()
                 {
@@ -144,6 +144,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while updating sub-categories.");
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -201,7 +202,6 @@ namespace posSystem.Controllers
             return (list, pageCount);
         }
 
-
         [ActionName("Index")]
         public IActionResult SubCategoryIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
         {
@@ -223,6 +223,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "An error occurred while fetching sub-categories for the index view.");
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("SubCategoryIndex");
             }
@@ -231,144 +232,132 @@ namespace posSystem.Controllers
         [ActionName("Create")]
         public IActionResult SubCategoryCreate()
         {
-            var categories = _appDbContext.Categories.ToList();
-            ViewBag.Categories = categories;
-            return View("SubCategoryCreate");
+            try
+            {
+                var categories = _appDbContext.Categories.ToList();
+                ViewBag.Categories = categories;
+                return View("SubCategoryCreate");
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while accessing the SubCategoryCreate view.");
+                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, ErrorMessage = "An error occurred while accessing the SubCategory Create view." });
+            }
         }
 
         [HttpPost]
         [ActionName("Save")]
         public IActionResult SubCategorySave(SubCategoryModel subCategoryModel)
         {
-            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == subCategoryModel.catId)!;
-            subCategoryModel.catCode = catItem.catCode;
-            subCategoryModel.subCatCreateAt = DateTime.Now.ToString();
-            _appDbContext.SubCategories.Add(subCategoryModel);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Save Success" : "Save Fail";
-            MsgResopnseModel rspModel = new MsgResopnseModel()
+            try
             {
-                IsSuccess = result > 0,
-                responeMessage = message
-            }!;
-            return Json(rspModel);
-        }
-
-        [ActionName("Edit")]
-        public IActionResult SubCategoryEdit(int subCId)
-        {
-            var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
-            if (item is null)
-            {
-                return Redirect("/SubCategory");
-            }
-
-            // Get the corresponding category for the subcategory
-            var category = _appDbContext.Categories
-                .FirstOrDefault(c => c.catId == item.catId && c.catCode == item.catCode);
-
-            // If the category is found, add its name to the ViewBag
-            if (category != null)
-            {
-                ViewBag.CategoryName = category.catName;
-                ViewBag.CategoryId = category.catId;
-            }
-
-            var categories = _appDbContext.Categories.ToList();
-            ViewBag.Categories = categories;
-
-            return View("SubCategoryEdit", item);
-        }
-
-
-        [HttpPost]
-        [ActionName("Update")]
-        public IActionResult SubCategoryUpdate(int subCId, SubCategoryModel subCategoryModel)
-        {
-            MsgResopnseModel rspModel = new MsgResopnseModel()!;
-            var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
-            if (item is null)
-            {
-                rspModel = new MsgResopnseModel()
+                var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == subCategoryModel.catId)!;
+                subCategoryModel.catCode = catItem.catCode;
+                subCategoryModel.subCatCreateAt = DateTime.Now.ToString();
+                _appDbContext.SubCategories.Add(subCategoryModel);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Save Success" : "Save Fail";
+                MsgResopnseModel rspModel = new MsgResopnseModel()
                 {
-                    IsSuccess = false,
-                    responeMessage = "No data found"
+                    IsSuccess = result > 0,
+                    responeMessage = message
                 };
                 return Json(rspModel);
             }
-
-            var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == subCategoryModel.catId)!;
-            item.subCatName = subCategoryModel.subCatName;
-            item.subCatCode = subCategoryModel.subCatCode;
-            item.catId = subCategoryModel.catId;
-            item.catCode = catItem.catCode;
-            item.subCatUpdateAt = DateTime.Now.ToString();
-            item.subCatUpdateCount ??= 0;
-            item.subCatUpdateCount++;
-
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Update Success" : "Update Fail";
-            rspModel = new MsgResopnseModel()
+            catch (Exception ex)
             {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
-            return Json(rspModel);
+                _logger.LogError(ex, "An error occurred while saving sub-category.");
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        [ActionName("Update")]
+        public IActionResult SubCategoryUpdate(SubCategoryModel subCategoryModel)
+        {
+            try
+            {
+                var existingCategory = _appDbContext.SubCategories
+                    .FirstOrDefault(c => c.subCId == subCategoryModel.subCId);
+
+                if (existingCategory != null)
+                {
+                    existingCategory.subCatName = subCategoryModel.subCatName;
+                    existingCategory.subCatCode = subCategoryModel.subCatCode;
+                    existingCategory.catId = subCategoryModel.catId;
+                    existingCategory.subCatUpdateAt = DateTime.Now.ToString();
+                    _appDbContext.SubCategories.Update(existingCategory);
+                    int result = _appDbContext.SaveChanges();
+                    string message = result > 0 ? "Update Success" : "Update Fail";
+                    MsgResopnseModel rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = result > 0,
+                        responeMessage = message
+                    };
+                    return Json(rspModel);
+                }
+                else
+                {
+                    return Json(new MsgResopnseModel
+                    {
+                        IsSuccess = false,
+                        responeMessage = "SubCategory not found."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while updating sub-category.");
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                });
+            }
         }
 
         [HttpPost]
         [ActionName("Delete")]
-        public IActionResult SubCategoryDelete(int subCId)
+        public IActionResult SubCategoryDelete(int id)
         {
-            MsgResopnseModel rspModel = new MsgResopnseModel();
-            var item = _appDbContext.SubCategories.FirstOrDefault(x => x.subCId == subCId);
-            if (item is null)
+            try
             {
-                rspModel = new MsgResopnseModel()
+                var subCategory = _appDbContext.SubCategories.FirstOrDefault(s => s.subCId == id);
+
+                if (subCategory != null)
+                {
+                    _appDbContext.SubCategories.Remove(subCategory);
+                    int result = _appDbContext.SaveChanges();
+                    string message = result > 0 ? "Delete Success" : "Delete Fail";
+                    MsgResopnseModel rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = result > 0,
+                        responeMessage = message
+                    };
+                    return Json(rspModel);
+                }
+                else
+                {
+                    return Json(new MsgResopnseModel
+                    {
+                        IsSuccess = false,
+                        responeMessage = "SubCategory not found."
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An error occurred while deleting sub-category.");
+                return Json(new MsgResopnseModel
                 {
                     IsSuccess = false,
-                    responeMessage = "No data found"
-                };
-                return Json(rspModel);
+                    responeMessage = $"An error occurred: {ex.Message}"
+                });
             }
-
-            _appDbContext.SubCategories.Remove(item);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Delete Success" : "Delete Fail";
-            rspModel = new MsgResopnseModel()
-            {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
-            return Json(rspModel);
-        }
-
-        [HttpPost]
-        [ActionName("DeleteAll")]
-        public IActionResult DeleteAllSubCategories()
-        {
-            MsgResopnseModel rspModel = new MsgResopnseModel();
-
-            var items = _appDbContext.SubCategories.ToList();
-            if (items.Count is 0)
-            {
-                rspModel = new MsgResopnseModel()
-                {
-                    IsSuccess = false,
-                    responeMessage = "No sub-categories found to delete."
-                };
-                return Json(rspModel);
-            }
-
-            _appDbContext.SubCategories.RemoveRange(items);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "All sub-categories deleted successfully." : "Failed to delete sub-categories.";
-            rspModel = new MsgResopnseModel()
-            {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
-            return Json(rspModel);
         }
     }
 }

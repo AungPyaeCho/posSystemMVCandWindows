@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using posSystem.Models;
-using System.Drawing.Printing;
-
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace posSystem.Controllers
 {
@@ -9,18 +10,20 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IExcelService _fileUploadService;
+        private readonly ILogger<CategoryController> _logger;
 
-        public CategoryController(AppDbContext appDbContext, IExcelService fileUploadService)
+        public CategoryController(AppDbContext appDbContext, IExcelService fileUploadService, ILogger<CategoryController> logger)
         {
             _appDbContext = appDbContext;
             _fileUploadService = fileUploadService;
+            _logger = logger;
         }
 
         [HttpGet]
         [ActionName("MassUpload")]
         public IActionResult MassUpload()
         {
-            bool hasData = _appDbContext.Categories.Any(); // Replace with your actual data check
+            bool hasData = _appDbContext.Categories.Any();
             ViewBag.HasData = hasData;
             return View();
         }
@@ -51,7 +54,7 @@ namespace posSystem.Controllers
                     _appDbContext.Categories.Add(category);
                 }
 
-                int result = _appDbContext.SaveChanges(); // Synchronous save
+                int result = _appDbContext.SaveChanges();
 
                 rspModel = new MsgResopnseModel
                 {
@@ -61,6 +64,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while processing mass upload.");
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -75,11 +79,11 @@ namespace posSystem.Controllers
         [ActionName("MassUpdate")]
         public async Task<IActionResult> MassUpdate(IFormFile file)
         {
-            MsgResopnseModel rspModel = new MsgResopnseModel();
+            var rspModel = new MsgResopnseModel();
 
             if (file == null || file.Length == 0)
             {
-                rspModel = new MsgResopnseModel()
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
                     responeMessage = "No file uploaded. Please select an Excel file to update categories."
@@ -89,7 +93,7 @@ namespace posSystem.Controllers
 
             if (!file.FileName.EndsWith(".xlsx") && !file.FileName.EndsWith(".xls"))
             {
-                rspModel = new MsgResopnseModel()
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
                     responeMessage = "Invalid file format. Please upload a valid Excel file."
@@ -99,19 +103,15 @@ namespace posSystem.Controllers
 
             try
             {
-                // Read categories from the Excel file
                 var updatedCategories = _fileUploadService.ReadFromExcel<CategoryModel>(file);
 
-                // Iterate over each category from the file
                 foreach (var updatedCategory in updatedCategories)
                 {
-                    // Find existing category by catCode
                     var existingCategory = _appDbContext.Categories
                         .FirstOrDefault(c => c.catCode == updatedCategory.catCode);
 
                     if (existingCategory != null)
                     {
-                        // Update properties
                         existingCategory.catName = updatedCategory.catName;
                         existingCategory.catDescription = updatedCategory.catDescription;
                         existingCategory.catUpdatedAt = DateTime.Now.ToString();
@@ -120,11 +120,10 @@ namespace posSystem.Controllers
                     }
                 }
 
-                // Save changes to the database
                 int result = await _appDbContext.SaveChangesAsync();
-                string message = result > 0 ? "Categories update successfully!" : "Failed to update categories.";
+                string message = result > 0 ? "Categories updated successfully!" : "Failed to update categories.";
 
-                rspModel = new MsgResopnseModel()
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = result > 0,
                     responeMessage = message
@@ -132,10 +131,8 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                // Log the exception (if logging is set up)
-                // _logger.LogError(ex, "Error occurred while updating categories.");
-
-                rspModel = new MsgResopnseModel()
+                _logger.LogError(ex, "Error occurred while processing mass update.");
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
@@ -144,8 +141,6 @@ namespace posSystem.Controllers
 
             return Json(rspModel);
         }
-
-
 
         private (List<CategoryModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
@@ -201,6 +196,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while fetching category index.");
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("CategoryIndex");
             }
@@ -216,16 +212,30 @@ namespace posSystem.Controllers
         [ActionName("Save")]
         public IActionResult CategorySave(CategoryModel categoryModel)
         {
+            MsgResopnseModel rspModel;
 
-            categoryModel.catCreatedAt = DateTime.Now.ToString();
-            _appDbContext.Categories.Add(categoryModel);
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Save Success" : "Save Fail";
-            MsgResopnseModel rspModel = new MsgResopnseModel()
+            try
             {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
+                categoryModel.catCreatedAt = DateTime.Now.ToString();
+                _appDbContext.Categories.Add(categoryModel);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Save Success" : "Save Fail";
+                rspModel = new MsgResopnseModel
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while saving the category.");
+                rspModel = new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                };
+            }
+
             return Json(rspModel);
         }
 
@@ -233,8 +243,9 @@ namespace posSystem.Controllers
         public IActionResult CategoryEdit(int id)
         {
             var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == id);
-            if (item is null)
+            if (item == null)
             {
+                _logger.LogWarning("Category with ID {CategoryId} not found for editing.", id);
                 return Redirect("/Category");
             }
             return View("CategoryEdit", item);
@@ -244,33 +255,46 @@ namespace posSystem.Controllers
         [ActionName("Update")]
         public IActionResult CategoryUpdate(int catId, CategoryModel categoryModel)
         {
-            Console.WriteLine($"Received catId: {catId}");
-            MsgResopnseModel rspModel = new MsgResopnseModel();
-            var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == catId);
-            if (item is null)
+            MsgResopnseModel rspModel;
+
+            try
             {
-                rspModel = new MsgResopnseModel()
+                var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == catId);
+                if (item == null)
+                {
+                    rspModel = new MsgResopnseModel
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No data found"
+                    };
+                    return Json(rspModel);
+                }
+
+                item.catName = categoryModel.catName;
+                item.catCode = categoryModel.catCode;
+                item.catDescription = categoryModel.catDescription;
+                item.catUpdatedAt = DateTime.Now.ToString();
+                item.catUpdateCount ??= 0;
+                item.catUpdateCount++;
+
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Update Success" : "Update Fail";
+                rspModel = new MsgResopnseModel
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while updating the category.");
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
-                    responeMessage = "No data found"
+                    responeMessage = $"An error occurred: {ex.Message}"
                 };
-                return Json(rspModel);
             }
 
-            item.catName = categoryModel.catName;
-            item.catCode = categoryModel.catCode;
-            item.catDescription = categoryModel.catDescription;
-            item.catUpdatedAt = DateTime.Now.ToString();
-            item.catUpdateCount ??= 0;
-            item.catUpdateCount++;
-
-            int result = _appDbContext.SaveChanges();
-            string message = result > 0 ? "Update Success" : "Update Fail";
-            rspModel = new MsgResopnseModel()
-            {
-                IsSuccess = result > 0,
-                responeMessage = message
-            };
             return Json(rspModel);
         }
 
@@ -278,14 +302,14 @@ namespace posSystem.Controllers
         [ActionName("Delete")]
         public IActionResult CategoryDelete(int catId)
         {
-            MsgResopnseModel rspModel = new MsgResopnseModel();
+            MsgResopnseModel rspModel;
 
             try
             {
                 var item = _appDbContext.Categories.FirstOrDefault(x => x.catId == catId);
-                if (item is null)
+                if (item == null)
                 {
-                    rspModel = new MsgResopnseModel()
+                    rspModel = new MsgResopnseModel
                     {
                         IsSuccess = false,
                         responeMessage = "No data found"
@@ -296,7 +320,7 @@ namespace posSystem.Controllers
                 _appDbContext.Categories.Remove(item);
                 int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "Delete Success" : "Delete Fail";
-                rspModel = new MsgResopnseModel()
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = result > 0,
                     responeMessage = message
@@ -304,58 +328,15 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                rspModel = new MsgResopnseModel()
+                _logger.LogError(ex, "Error occurred while deleting the category.");
+                rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
-                    //responeMessage = $"An error occurred: {ex.Message}"
-                    responeMessage = "You have to delete subcategories first!"
+                    responeMessage = $"An error occurred: {ex.Message}"
                 };
             }
 
             return Json(rspModel);
         }
-
-
-        [HttpPost]
-        [ActionName("DeleteAll")]
-        public IActionResult DeleteAllCategories()
-        {
-            MsgResopnseModel rspModel = new MsgResopnseModel();
-
-            try
-            {
-                var items = _appDbContext.Categories.ToList();
-                if (items.Count == 0)
-                {
-                    rspModel = new MsgResopnseModel()
-                    {
-                        IsSuccess = false,
-                        responeMessage = "No categories found to delete."
-                    };
-                    return Json(rspModel);
-                }
-
-                _appDbContext.Categories.RemoveRange(items);
-                int result = _appDbContext.SaveChanges();
-                string message = result > 0 ? "All categories deleted successfully." : "Failed to delete categories.";
-                rspModel = new MsgResopnseModel()
-                {
-                    IsSuccess = result > 0,
-                    responeMessage = message
-                };
-            }
-            catch (Exception ex)
-            {
-                rspModel = new MsgResopnseModel()
-                {
-                    IsSuccess = false,
-                    //responeMessage = $"An error occurred: {ex.Message}"
-                    responeMessage = "You have to delete subcategories first!"
-                };
-            }
-
-            return Json(rspModel);
-        }
-
     }
 }

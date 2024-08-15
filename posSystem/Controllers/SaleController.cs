@@ -1,21 +1,22 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using posSystem.Models;
-using posSystem;
-using System.Drawing.Printing;
-using System.Runtime.InteropServices;
-using System.Xml;
 using Microsoft.EntityFrameworkCore;
-using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
+using Microsoft.Extensions.Logging;
+using posSystem.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace posSystem.Controllers
 {
     public class SaleController : Controller
     {
         private readonly AppDbContext _appDbContext;
+        private readonly ILogger<SaleController> _logger;
 
-        public SaleController(AppDbContext appDbContext)
+        public SaleController(AppDbContext appDbContext, ILogger<SaleController> logger)
         {
             _appDbContext = appDbContext;
+            _logger = logger;
         }
 
         // GET action to display the list of sales with sorting and pagination
@@ -24,6 +25,8 @@ namespace posSystem.Controllers
         {
             try
             {
+                _logger.LogInformation("Fetching sales data for page {PageNo}, page size {PageSize}, sort field {SortField}, sort order {SortOrder}.", pageNo, pageSize, sortField, sortOrder);
+
                 var (list, pageCount) = GetSortedSales(pageNo, pageSize, sortField, sortOrder);
 
                 var response = new SaleResponseModel
@@ -34,10 +37,12 @@ namespace posSystem.Controllers
                     pageNo = pageNo
                 };
 
+                _logger.LogInformation("Successfully fetched {RecordCount} sales records.", list.Count);
                 return View("SaleIndex", response);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while fetching sales data for page {PageNo}.", pageNo);
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("SaleIndex");
             }
@@ -48,10 +53,13 @@ namespace posSystem.Controllers
         {
             try
             {
+                _logger.LogInformation("Fetching sale details for invoice number {InvoiceNo}, page {PageNo}, page size {PageSize}.", invoiceNo, pageNo, pageSize);
+
                 var query = _appDbContext.SaleDetails.Where(x => x.invoiceNo == invoiceNo);
                 int rowCount = query.Count();
                 if (rowCount == 0)
                 {
+                    _logger.LogWarning("No records found for invoice number {InvoiceNo}.", invoiceNo);
                     ModelState.AddModelError("", "No records found for the given invoice number.");
                     return View("DetailIndex", new SaleDetailResponseModel());
                 }
@@ -62,26 +70,26 @@ namespace posSystem.Controllers
                     pageNo = pageCount;
                 }
 
-                List<SaleDetailModel> list = query
-                .Include(s => s.Item)
-                .Skip((pageNo - 1) * pageSize)
-                .Take(pageSize)
-                .Select(s => new SaleDetailModel
-                {
-                    invoiceNo = s.invoiceNo,
-                    itemCode = s.itemCode,
-                    saleQuantity = s.saleQuantity,
-                    itemPrice = s.itemPrice,
-                    totalAmount = s.totalAmount,
-                    saleDate = s.saleDate,
-                    itemName = _appDbContext.Items
-                        .Where(c => c.itemCode == s.itemCode)
-                        .Select(c => c.itemName)
-                        .FirstOrDefault(), // Retrieve catName based on catCod
-                })
-                .ToList();
+                var list = query
+                    .Include(s => s.Item)
+                    .Skip((pageNo - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(s => new SaleDetailModel
+                    {
+                        invoiceNo = s.invoiceNo,
+                        itemCode = s.itemCode,
+                        saleQuantity = s.saleQuantity,
+                        itemPrice = s.itemPrice,
+                        totalAmount = s.totalAmount,
+                        saleDate = s.saleDate,
+                        itemName = _appDbContext.Items
+                            .Where(c => c.itemCode == s.itemCode)
+                            .Select(c => c.itemName)
+                            .FirstOrDefault(),
+                    })
+                    .ToList();
 
-                SaleDetailResponseModel response = new()
+                var response = new SaleDetailResponseModel
                 {
                     saleDetailData = list,
                     pageSize = pageSize,
@@ -89,82 +97,93 @@ namespace posSystem.Controllers
                     pageNo = pageNo
                 };
 
+                _logger.LogInformation("Successfully fetched {RecordCount} sale details for invoice number {InvoiceNo}.", list.Count, invoiceNo);
                 return View("DetailIndex", response);
-                //return View("DetailIndex");
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while fetching sale details for invoice number {InvoiceNo}.", invoiceNo);
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
-                return View("SaleIndex");
+                return View("DetailIndex");
             }
         }
 
         private (List<SaleModel> sales, int pageCount) GetSortedSales(int pageNo, int pageSize, string sortField, string sortOrder)
         {
-            var query = _appDbContext.Sales.AsQueryable();
-
-            // Sorting
-            if (!string.IsNullOrEmpty(sortField))
+            try
             {
-                switch (sortField.ToLower())
+                _logger.LogInformation("Sorting sales data by {SortField} in {SortOrder} order.", sortField, sortOrder);
+
+                var query = _appDbContext.Sales.AsQueryable();
+
+                // Sorting
+                if (!string.IsNullOrEmpty(sortField))
                 {
-                    case "saleid":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.saleId) : query.OrderBy(x => x.saleId);
-                        break;
-                    case "staffid":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.staffId) : query.OrderBy(x => x.staffId);
-                        break;
-                    case "memberid":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.memberId) : query.OrderBy(x => x.memberId);
-                        break;
-                    case "totalamount":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.totalAmount) : query.OrderBy(x => x.totalAmount);
-                        break;
-                    case "saledate":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.saleDate) : query.OrderBy(x => x.saleDate);
-                        break;
-                    // Add other cases if needed
-                    default:
-                        query = query.OrderBy(x => x.saleId);
-                        break;
+                    switch (sortField.ToLower())
+                    {
+                        case "saleid":
+                            query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.saleId) : query.OrderBy(x => x.saleId);
+                            break;
+                        case "staffid":
+                            query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.staffId) : query.OrderBy(x => x.staffId);
+                            break;
+                        case "memberid":
+                            query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.memberId) : query.OrderBy(x => x.memberId);
+                            break;
+                        case "totalamount":
+                            query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.totalAmount) : query.OrderBy(x => x.totalAmount);
+                            break;
+                        case "saledate":
+                            query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.saleDate) : query.OrderBy(x => x.saleDate);
+                            break;
+                        default:
+                            query = query.OrderBy(x => x.saleId);
+                            break;
+                    }
                 }
-            }
-            else
-            {
-                query = query.OrderBy(x => x.saleId);
-            }
-
-            var pageCount = (int)Math.Ceiling((double)query.Count() / pageSize);
-
-            // Pagination
-            var sales = query
-                .Skip((pageNo - 1) * pageSize)
-                .Take(pageSize)
-                .Select(s => new SaleModel
+                else
                 {
-                    invoiceNo = s.invoiceNo,
-                    staffCode = s.staffCode,
-                    memberCode = s.memberCode,
-                    saleQty = s.saleQty,
-                    totalAmount = s.totalAmount,
-                    receiveCash = s.receiveCash,
-                    refundCash = s.refundCash,
-                    paymentMethod = s.paymentMethod,
-                    promotion = s.promotion,
-                    discount = s.discount,
-                    saleDate = s.saleDate,
-                    memberName = _appDbContext.Members
-                        .Where(c => c.memberCode == s.memberCode)
-                        .Select(c => c.memberName)
-                        .FirstOrDefault(),
-                    staffName = _appDbContext.Staffs
-                        .Where(c => c.staffCode == s.staffCode)
-                        .Select(c => c.staffName)
-                        .FirstOrDefault(),
-                })
-                .ToList();
+                    query = query.OrderBy(x => x.saleId);
+                }
 
-            return (sales, pageCount);
+                var pageCount = (int)Math.Ceiling((double)query.Count() / pageSize);
+
+                // Pagination
+                var sales = query
+                    .Skip((pageNo - 1) * pageSize)
+                    .Take(pageSize)
+                    .Select(s => new SaleModel
+                    {
+                        invoiceNo = s.invoiceNo,
+                        staffCode = s.staffCode,
+                        memberCode = s.memberCode,
+                        saleQty = s.saleQty,
+                        totalAmount = s.totalAmount,
+                        receiveCash = s.receiveCash,
+                        refundCash = s.refundCash,
+                        paymentMethod = s.paymentMethod,
+                        promotion = s.promotion,
+                        discount = s.discount,
+                        saleDate = s.saleDate,
+                        memberName = _appDbContext.Members
+                            .Where(c => c.memberCode == s.memberCode)
+                            .Select(c => c.memberName)
+                            .FirstOrDefault(),
+                        staffName = _appDbContext.Staffs
+                            .Where(c => c.staffCode == s.staffCode)
+                            .Select(c => c.staffName)
+                            .FirstOrDefault(),
+                    })
+                    .ToList();
+
+                _logger.LogInformation("Successfully fetched {RecordCount} sales records for page {PageNo}.", sales.Count, pageNo);
+                return (sales, pageCount);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while sorting and paginating sales data.");
+                throw; // Rethrow the exception to be handled by the caller
+            }
         }
     }
 }

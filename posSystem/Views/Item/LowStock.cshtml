@@ -1,0 +1,179 @@
+﻿@model ItemResponseModel
+
+@{
+    ViewData["Title"] = "Stock Management";
+    int count = 0;
+    int _pageNo = Model.pageNo;
+    int _pageCount = Model.pageCount;
+    int _pageSize = Model.pageSize;
+
+    string _pageURL(int _pageNo)
+    {
+        return $"/Item/LowStock?pageNo={_pageNo}&pageSize={_pageSize}";
+    }
+}
+
+<div class="d-flex flex-column flex-sm-row align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-3 mb-sm-0">Low Stock Items</h1>
+    <div>
+        <a href="/Item/Index" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Back
+        </a>
+    </div>
+</div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">Item Code</th>
+            <th scope="col">Item Name</th>
+            <th scope="col">Buy Price</th>
+            <th scope="col">Sale Price</th>
+            <th scope="col">Wholesale Price</th>
+            <th scope="col">Stock</th>
+            <th scope="col">Sold</th>
+            <th scope="col">Remain Stock</th>
+            <th scope="col">Category</th>
+            <th scope="col">Sub Category</th>
+            <th scope="col">Brand</th>
+            <th scope="col">Sub Brand</th>
+            <th scope="col">Barcode</th>
+            <th scope="col">Create Date</th>
+            <th scope="col">Update Date</th>
+            @* <th scope="col">Action</th> *@
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.itemData)
+        {
+            <tr>
+                <th scope="row">@(++count + (_pageNo - 1) * _pageSize)</th>
+                <td>@item.itemCode</td>
+                <td>@item.itemName</td>
+                <td>@item.itemBuyPrice</td>
+                <td>@item.itemSalePrice</td>
+                <td>@item.itemWholeSalePrice</td>
+                <td>@item.itemStock</td>
+                <td>@item.itemSold</td>
+                <td>@item.itemRemainStock</td>
+                <td>@item.itemCategory</td>
+                <td>@item.itemSubCategory</td>
+                <td>@item.itemBrand</td>
+                <td>@item.itemSubBrand</td>
+                <td>@item.itemBarcode</td>
+                <td>@item.itemCreateAt</td>
+                <td>@item.itemUpdateAt</td>
+                @* <td class="text-center">
+                    <a href="/Item/Edit?itemId=@item.itemId" class="btn btn-warning btn-sm">
+                        <i class="fas fa-edit"></i> Edit
+                    </a>
+                    <button type="button" class="btn btn-danger btn-sm btn-delete" data-id="@item.itemId">
+                        <i class="fas fa-trash-alt"></i> Delete
+                    </button>
+                </td> *@
+            </tr>
+        }
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="16">
+                <nav aria-label="Pagination">
+                    <ul class="pagination justify-content-center">
+                        @if (_pageNo == 1)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Previous</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo - 1)">Previous</a></li>
+                        }
+
+                        @if (_pageCount <= 9)
+                        {
+                            for (int i = 1; i <= _pageCount; i++)
+                            {
+                                if (_pageNo == i)
+                                {
+                                    <li class="page-item active" aria-current="page">
+                                        <a class="page-link" href="@_pageURL(i)">@i</a>
+                                    </li>
+                                }
+                                else
+                                {
+                                    <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (_pageNo <= 3 || _pageCount - 2 <= _pageNo)
+                            {
+                                for (int i = 1; i <= 4; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                for (int i = _pageCount - 3; i <= _pageCount; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                <li class="page-item"><a class="page-link" href="@_pageURL(1)">1</a></li>
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                for (int i = _pageNo - 2; i <= _pageNo + 2; i++)
+                                {
+                                    if (_pageNo == i)
+                                    {
+                                        <li class="page-item active" aria-current="page">
+                                            <a class="page-link" href="@_pageURL(i)">@i</a>
+                                        </li>
+                                    }
+                                    else
+                                    {
+                                        <li class="page-item"><a class="page-link" href="@_pageURL(i)">@i</a></li>
+                                    }
+                                }
+                                <li class="page-item"><a class="page-link" href="#">...</a></li>
+                                <li class="page-item"><a class="page-link" href="@_pageURL(_pageCount)">@_pageCount</a></li>
+                            }
+                        }
+
+                        @if (_pageNo == _pageCount)
+                        {
+                            <li class="page-item disabled">
+                                <a class="page-link">Next</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="page-item"><a class="page-link" href="@_pageURL(_pageNo + 1)">Next</a></li>
+                        }
+                    </ul>
+                </nav>
+            </td>
+        </tr>
+    </tfoot>
+</table>

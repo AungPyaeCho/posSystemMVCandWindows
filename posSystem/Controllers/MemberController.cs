@@ -1,6 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using posSystem.Models;
 using posSystem;
+using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Linq;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 namespace posSystem.Controllers
 {
@@ -8,11 +16,13 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IWebHostEnvironment _webHostEnvironment;
+        private readonly ILogger<MemberController> _logger;
 
-        public MemberController(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment)
+        public MemberController(AppDbContext appDbContext, IWebHostEnvironment webHostEnvironment, ILogger<MemberController> logger)
         {
             _appDbContext = appDbContext;
             _webHostEnvironment = webHostEnvironment;
+            _logger = logger;
         }
 
         // GET action to display the list of members with sorting and pagination
@@ -37,7 +47,8 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                _logger.LogError(ex, "Error occurred while retrieving members.");
+                ModelState.AddModelError("", "An error occurred while retrieving members.");
                 return View("MemberIndex");
             }
         }
@@ -54,6 +65,7 @@ namespace posSystem.Controllers
         [ActionName("Save")]
         public async Task<IActionResult> MemberSave(MemberModel memberModel, IFormFile memberPhoto)
         {
+            var rspModel = new MsgResopnseModel();
             try
             {
                 if (ModelState.IsValid)
@@ -83,20 +95,24 @@ namespace posSystem.Controllers
                     int result = await _appDbContext.SaveChangesAsync(); // Save changes to the database
                     string message = result > 0 ? "Save Success" : "Save Fail";
 
-                    var rspModel = new MsgResopnseModel()
+                    rspModel = new MsgResopnseModel()
                     {
                         IsSuccess = result > 0,
                         responeMessage = message
                     };
+
+                    _logger.LogInformation("Member {MemberName} saved successfully.", memberModel.memberName);
                     return Json(rspModel);
                 }
 
                 var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+                _logger.LogWarning("Member save failed. Validation errors: {Errors}", string.Join(", ", errors));
                 return BadRequest(errors);
             }
             catch (Exception ex)
             {
-                var rspModel = new MsgResopnseModel()
+                _logger.LogError(ex, "Error occurred while saving member.");
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
@@ -112,6 +128,7 @@ namespace posSystem.Controllers
             var item = _appDbContext.Members.FirstOrDefault(x => x.memberId == id);
             if (item == null)
             {
+                _logger.LogWarning("Edit attempt failed. Member with ID {Id} not found.", id);
                 return RedirectToAction("MemberIndex");
             }
             return View("MemberEdit", item);
@@ -128,6 +145,7 @@ namespace posSystem.Controllers
                 var item = _appDbContext.Members.FirstOrDefault(x => x.memberId == id);
                 if (item == null)
                 {
+                    _logger.LogWarning("Update attempt failed. Member with ID {Id} not found.", id);
                     rspModel = new MsgResopnseModel
                     {
                         IsSuccess = false,
@@ -183,9 +201,12 @@ namespace posSystem.Controllers
                     IsSuccess = result > 0,
                     responeMessage = message
                 };
+
+                _logger.LogInformation("Member {MemberName} updated successfully.", memberModel.memberName);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while updating member with ID {Id}.", id);
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -206,6 +227,7 @@ namespace posSystem.Controllers
                 var item = _appDbContext.Members.FirstOrDefault(x => x.memberId == id);
                 if (item == null)
                 {
+                    _logger.LogWarning("Delete attempt failed. Member with ID {Id} not found.", id);
                     rspModel = new MsgResopnseModel
                     {
                         IsSuccess = false,
@@ -233,9 +255,12 @@ namespace posSystem.Controllers
                     IsSuccess = result > 0,
                     responeMessage = message
                 };
+
+                _logger.LogInformation("Member with ID {Id} deleted successfully.", id);
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, "Error occurred while deleting member with ID {Id}.", id);
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -245,98 +270,23 @@ namespace posSystem.Controllers
             return Json(rspModel);
         }
 
-        // POST action to delete all members
-        [HttpPost]
-        [ActionName("DeleteAll")]
-        public async Task<IActionResult> DeleteAllMembers()
+        // Helper method to get sorted members
+        private (List<MemberModel> list, int pageCount) GetSortedMembers(int pageNo, int pageSize, string sortField, string sortOrder)
         {
-            var rspModel = new MsgResopnseModel();
-
-            try
-            {
-                var items = _appDbContext.Members.ToList();
-                if (items.Count == 0)
-                {
-                    rspModel = new MsgResopnseModel
-                    {
-                        IsSuccess = false,
-                        responeMessage = "No members found to delete."
-                    };
-                    return Json(rspModel);
-                }
-
-                // Delete photos of all members
-                foreach (var item in items)
-                {
-                    if (!string.IsNullOrEmpty(item.memberPhoto))
-                    {
-                        var filePath = Path.Combine(_webHostEnvironment.WebRootPath, item.memberPhoto.TrimStart('/'));
-                        if (System.IO.File.Exists(filePath))
-                        {
-                            System.IO.File.Delete(filePath);
-                        }
-                    }
-                }
-
-                _appDbContext.Members.RemoveRange(items);
-                int result = await _appDbContext.SaveChangesAsync();
-                string message = result > 0 ? "All members deleted successfully." : "Failed to delete members.";
-
-                rspModel = new MsgResopnseModel
-                {
-                    IsSuccess = result > 0,
-                    responeMessage = message
-                };
-            }
-            catch (Exception ex)
-            {
-                rspModel = new MsgResopnseModel
-                {
-                    IsSuccess = false,
-                    responeMessage = $"An error occurred: {ex.Message}"
-                };
-            }
-            return Json(rspModel);
-        }
-
-        private (List<MemberModel> members, int pageCount) GetSortedMembers(int pageNo, int pageSize, string sortField, string sortOrder)
-        {
-            var query = _appDbContext.Members.AsQueryable();
+            var members = _appDbContext.Members.AsQueryable();
 
             // Sorting
-            if (!string.IsNullOrEmpty(sortField))
-            {
-                switch (sortField.ToLower())
-                {
-                    case "name":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.memberName) : query.OrderBy(x => x.memberName);
-                        break;
-                    case "email":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.memberEmail) : query.OrderBy(x => x.memberEmail);
-                        break;
-                    case "phone":
-                        query = sortOrder.ToLower() == "desc" ? query.OrderByDescending(x => x.memberPhone) : query.OrderBy(x => x.memberPhone);
-                        break;
-                    // Add other cases if needed
-                    default:
-                        query = query.OrderBy(x => x.memberName);
-                        break;
-                }
-            }
-            else
-            {
-                query = query.OrderBy(x => x.memberName);
-            }
-
-            var pageCount = (int)Math.Ceiling((double)query.Count() / pageSize);
+            if (sortField == "memberName" && sortOrder == "asc")
+                members = members.OrderBy(m => m.memberName);
+            else if (sortField == "memberName" && sortOrder == "desc")
+                members = members.OrderByDescending(m => m.memberName);
 
             // Pagination
-            var members = query
-                .Skip((pageNo - 1) * pageSize)
-                .Take(pageSize)
-                .ToList();
+            var totalRecords = members.Count();
+            var pageCount = (int)Math.Ceiling((double)totalRecords / pageSize);
+            var list = members.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
 
-            return (members, pageCount);
+            return (list, pageCount);
         }
     }
 }

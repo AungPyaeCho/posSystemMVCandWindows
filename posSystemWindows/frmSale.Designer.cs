@@ -120,7 +120,7 @@
             groupBox2.Controls.Add(label1);
             groupBox2.Location = new Point(9, 12);
             groupBox2.Name = "groupBox2";
-            groupBox2.Size = new Size(220, 491);
+            groupBox2.Size = new Size(220, 530);
             groupBox2.TabIndex = 6;
             groupBox2.TabStop = false;
             groupBox2.Text = "Search";
@@ -128,7 +128,7 @@
             // cboSubCategories
             // 
             cboSubCategories.FormattingEnabled = true;
-            cboSubCategories.Location = new Point(6, 438);
+            cboSubCategories.Location = new Point(6, 469);
             cboSubCategories.Name = "cboSubCategories";
             cboSubCategories.Size = new Size(208, 39);
             cboSubCategories.TabIndex = 11;
@@ -136,7 +136,8 @@
             // label5
             // 
             label5.AutoSize = true;
-            label5.Location = new Point(6, 404);
+            label5.BackColor = Color.Transparent;
+            label5.Location = new Point(6, 434);
             label5.Name = "label5";
             label5.Size = new Size(194, 32);
             label5.TabIndex = 10;
@@ -145,7 +146,7 @@
             // cboCategories
             // 
             cboCategories.FormattingEnabled = true;
-            cboCategories.Location = new Point(6, 363);
+            cboCategories.Location = new Point(6, 391);
             cboCategories.Name = "cboCategories";
             cboCategories.Size = new Size(208, 39);
             cboCategories.TabIndex = 9;
@@ -153,7 +154,8 @@
             // label6
             // 
             label6.AutoSize = true;
-            label6.Location = new Point(6, 329);
+            label6.BackColor = Color.Transparent;
+            label6.Location = new Point(6, 355);
             label6.Name = "label6";
             label6.Size = new Size(143, 32);
             label6.TabIndex = 8;
@@ -162,7 +164,7 @@
             // cboSubBrands
             // 
             cboSubBrands.FormattingEnabled = true;
-            cboSubBrands.Location = new Point(6, 288);
+            cboSubBrands.Location = new Point(6, 313);
             cboSubBrands.Name = "cboSubBrands";
             cboSubBrands.Size = new Size(208, 39);
             cboSubBrands.TabIndex = 7;
@@ -170,7 +172,8 @@
             // label4
             // 
             label4.AutoSize = true;
-            label4.Location = new Point(6, 254);
+            label4.BackColor = Color.Transparent;
+            label4.Location = new Point(6, 277);
             label4.Name = "label4";
             label4.Size = new Size(160, 32);
             label4.TabIndex = 6;
@@ -179,7 +182,7 @@
             // cboBrands
             // 
             cboBrands.FormattingEnabled = true;
-            cboBrands.Location = new Point(6, 214);
+            cboBrands.Location = new Point(6, 235);
             cboBrands.Name = "cboBrands";
             cboBrands.Size = new Size(208, 39);
             cboBrands.TabIndex = 5;
@@ -187,7 +190,8 @@
             // label3
             // 
             label3.AutoSize = true;
-            label3.Location = new Point(6, 179);
+            label3.BackColor = Color.Transparent;
+            label3.Location = new Point(3, 200);
             label3.Name = "label3";
             label3.Size = new Size(109, 32);
             label3.TabIndex = 4;
@@ -195,7 +199,7 @@
             // 
             // txtBarcode
             // 
-            txtBarcode.Location = new Point(6, 140);
+            txtBarcode.Location = new Point(6, 156);
             txtBarcode.Name = "txtBarcode";
             txtBarcode.Size = new Size(208, 38);
             txtBarcode.TabIndex = 3;
@@ -204,7 +208,8 @@
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(6, 106);
+            label2.BackColor = Color.Transparent;
+            label2.Location = new Point(3, 121);
             label2.Name = "label2";
             label2.Size = new Size(133, 32);
             label2.TabIndex = 2;
@@ -212,7 +217,7 @@
             // 
             // txtByName
             // 
-            txtByName.Location = new Point(6, 68);
+            txtByName.Location = new Point(6, 80);
             txtByName.Name = "txtByName";
             txtByName.Size = new Size(208, 38);
             txtByName.TabIndex = 1;
@@ -220,7 +225,8 @@
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, 33);
+            label1.BackColor = Color.Transparent;
+            label1.Location = new Point(6, 45);
             label1.Name = "label1";
             label1.Size = new Size(111, 32);
             label1.TabIndex = 0;
@@ -230,9 +236,9 @@
             // 
             btnExit.Anchor = AnchorStyles.Bottom;
             btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Location = new Point(12, 950);
+            btnExit.Location = new Point(15, 950);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(207, 50);
+            btnExit.Size = new Size(208, 50);
             btnExit.TabIndex = 5;
             btnExit.Text = "E&xit";
             btnExit.UseVisualStyleBackColor = true;
@@ -241,7 +247,7 @@
             // btnSearch
             // 
             btnSearch.FlatStyle = FlatStyle.Flat;
-            btnSearch.Location = new Point(12, 509);
+            btnSearch.Location = new Point(15, 548);
             btnSearch.Name = "btnSearch";
             btnSearch.Size = new Size(208, 50);
             btnSearch.TabIndex = 1;
@@ -252,7 +258,7 @@
             // btnShowAll
             // 
             btnShowAll.FlatStyle = FlatStyle.Flat;
-            btnShowAll.Location = new Point(12, 621);
+            btnShowAll.Location = new Point(15, 622);
             btnShowAll.Name = "btnShowAll";
             btnShowAll.Size = new Size(208, 50);
             btnShowAll.TabIndex = 0;
@@ -312,7 +318,7 @@
             // btnSearchRange
             // 
             btnSearchRange.FlatStyle = FlatStyle.Flat;
-            btnSearchRange.Location = new Point(12, 894);
+            btnSearchRange.Location = new Point(15, 865);
             btnSearchRange.Name = "btnSearchRange";
             btnSearchRange.Size = new Size(208, 50);
             btnSearchRange.TabIndex = 7;

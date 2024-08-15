@@ -80,8 +80,10 @@
                         success: function (response) {
                             if (response.isEmailRegistered) {
                                 $('#emailFeedback').text("This email is already registered").css("color", "red");
+                                $('#btnSave').prop('disabled', true);
                             } else {
                                 $('#emailFeedback').text("This email is available").css("color", "green");
+                                $('#btnSave').prop('disabled', false);
                             }
                         },
                         error: function (errormessage) {

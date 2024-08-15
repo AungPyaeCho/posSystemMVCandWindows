@@ -59,6 +59,7 @@ namespace posSystemWindows
                 MessageBox.Show($"An error occurred while loading data: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
+
         private void LoadCboData()
         {
             try
@@ -267,8 +268,8 @@ namespace posSystemWindows
                 txtBrand.Text = selectedRow.Cells["brandName"].Value.ToString()!;
                 txtSubBrand.Text = selectedRow.Cells["subBrandName"].Value.ToString()!;
                 txtRemainStock.Text = itemRemainStock.ToString();
-                lblStock.ForeColor = itemRemainStock <= 20 ? Color.Red : DefaultForeColor;
-                lblStock.Text = itemRemainStock <= 20 ? "Stock (Low)" : "Stock";
+                lblStock.ForeColor = itemRemainStock <= 2 ? Color.Red : DefaultForeColor;
+                lblStock.Text = itemRemainStock <= 2 ? "Stock (Low)" : "Stock";
             }
         }
 

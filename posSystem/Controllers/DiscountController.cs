@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using posSystem.Models;
+using Microsoft.Extensions.Logging;
 using posSystem;
+using posSystem.Models;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace YourNamespace.Controllers
@@ -10,10 +12,12 @@ namespace YourNamespace.Controllers
     public class DiscountController : Controller
     {
         private readonly AppDbContext _appDbContext;
+        private readonly ILogger<DiscountController> _logger;
 
-        public DiscountController(AppDbContext appDbContext)
+        public DiscountController(AppDbContext appDbContext, ILogger<DiscountController> logger)
         {
             _appDbContext = appDbContext;
+            _logger = logger;
         }
 
         // GET action to display the list of discounts with sorting and pagination
@@ -38,8 +42,9 @@ namespace YourNamespace.Controllers
             }
             catch (Exception ex)
             {
-                // Handle errors during data retrieval and sorting
-                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while retrieving the discount list.");
+                ModelState.AddModelError("", "An error occurred while retrieving the discounts. Please try again later.");
                 return View("DiscountIndex");
             }
         }
@@ -60,7 +65,7 @@ namespace YourNamespace.Controllers
             {
                 discountModel.disCreateAt = DateTime.Now.ToString();
                 _appDbContext.Discounts.Add(discountModel);
-                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "Save Success" : "Save Fail";
 
                 MsgResopnseModel rspModel = new MsgResopnseModel()
@@ -68,11 +73,13 @@ namespace YourNamespace.Controllers
                     IsSuccess = result > 0,
                     responeMessage = message
                 };
+
                 return Json(rspModel);
             }
             catch (Exception ex)
             {
-                // Handle errors during the save operation
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while saving the discount.");
                 MsgResopnseModel rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -86,12 +93,22 @@ namespace YourNamespace.Controllers
         [ActionName("Edit")]
         public IActionResult DiscountEdit(int id)
         {
-            var item = _appDbContext.Discounts.FirstOrDefault(x => x.disId == id);
-            if (item is null)
+            try
             {
-                return Redirect("/Discount");
+                var item = _appDbContext.Discounts.FirstOrDefault(x => x.disId == id);
+                if (item == null)
+                {
+                    _logger.LogWarning("No discount found with ID {DiscountId}", id);
+                    return RedirectToAction("Index");
+                }
+                return View("DiscountEdit", item);
             }
-            return View("DiscountEdit", item);
+            catch (Exception ex)
+            {
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while retrieving the discount for editing.");
+                return RedirectToAction("Index");
+            }
         }
 
         // POST action to update an existing discount
@@ -103,7 +120,7 @@ namespace YourNamespace.Controllers
             try
             {
                 var item = _appDbContext.Discounts.FirstOrDefault(x => x.disId == id);
-                if (item is null)
+                if (item == null)
                 {
                     rspModel = new MsgResopnseModel()
                     {
@@ -121,7 +138,7 @@ namespace YourNamespace.Controllers
                 item.disUpdateCount ??= 0;
                 item.disUpdateCount++;
 
-                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "Update Success" : "Update Fail";
 
                 rspModel = new MsgResopnseModel()
@@ -132,7 +149,8 @@ namespace YourNamespace.Controllers
             }
             catch (Exception ex)
             {
-                // Handle errors during the update operation
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while updating the discount.");
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -151,7 +169,7 @@ namespace YourNamespace.Controllers
             try
             {
                 var item = _appDbContext.Discounts.FirstOrDefault(x => x.disId == id);
-                if (item is null)
+                if (item == null)
                 {
                     rspModel = new MsgResopnseModel()
                     {
@@ -162,7 +180,7 @@ namespace YourNamespace.Controllers
                 }
 
                 _appDbContext.Discounts.Remove(item);
-                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "Delete Success" : "Delete Fail";
 
                 rspModel = new MsgResopnseModel()
@@ -173,7 +191,8 @@ namespace YourNamespace.Controllers
             }
             catch (Exception ex)
             {
-                // Handle errors during the delete operation
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while deleting the discount.");
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -183,6 +202,7 @@ namespace YourNamespace.Controllers
             return Json(rspModel);
         }
 
+        // POST action to delete all discounts
         [HttpPost]
         [ActionName("DeleteAll")]
         public IActionResult DeleteAllDiscount()
@@ -197,13 +217,13 @@ namespace YourNamespace.Controllers
                     rspModel = new MsgResopnseModel()
                     {
                         IsSuccess = false,
-                        responeMessage = "No brands found to delete."
+                        responeMessage = "No discounts found to delete."
                     };
                     return Json(rspModel);
                 }
 
                 _appDbContext.Discounts.RemoveRange(items);
-                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "All discounts deleted successfully." : "Failed to delete discounts.";
 
                 rspModel = new MsgResopnseModel()
@@ -214,7 +234,8 @@ namespace YourNamespace.Controllers
             }
             catch (Exception ex)
             {
-                // Handle errors during the delete all operation
+                // Log the error and handle it
+                _logger.LogError(ex, "Error occurred while deleting all discounts.");
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -225,24 +246,30 @@ namespace YourNamespace.Controllers
             return Json(rspModel);
         }
 
-        // Helper method for sorting and pagination (implement according to your needs)
+        // Helper method for sorting and pagination
         private (List<DiscountModel> list, int pageCount) GetSortedDiscounts(int pageNo, int pageSize, string sortField, string sortOrder)
         {
-            // Implement your sorting and pagination logic here
-            // This is a placeholder implementation
-            var query = _appDbContext.Discounts.AsQueryable();
-
-            if (!string.IsNullOrEmpty(sortField))
+            try
             {
-                // Implement sorting logic here
-                query = sortOrder == "asc" ? query.OrderBy(x => EF.Property<object>(x, sortField)) : query.OrderByDescending(x => EF.Property<object>(x, sortField));
+                var query = _appDbContext.Discounts.AsQueryable();
+
+                if (!string.IsNullOrEmpty(sortField))
+                {
+                    // Implement sorting logic
+                    query = sortOrder == "asc" ? query.OrderBy(x => EF.Property<object>(x, sortField)) : query.OrderByDescending(x => EF.Property<object>(x, sortField));
+                }
+
+                int totalCount = query.Count();
+                int pageCount = (int)Math.Ceiling(totalCount / (double)pageSize);
+                var list = query.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+
+                return (list, pageCount);
             }
-
-            int totalCount = query.Count();
-            int pageCount = (int)Math.Ceiling(totalCount / (double)pageSize);
-            var list = query.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
-
-            return (list, pageCount);
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error occurred while sorting and paginating discounts.");
+                throw; // Rethrow the exception to be handled by the calling method
+            }
         }
     }
 }
