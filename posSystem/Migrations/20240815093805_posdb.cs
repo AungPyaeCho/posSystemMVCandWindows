@@ -379,7 +379,7 @@ namespace posSystem.Migrations
             migrationBuilder.InsertData(
                 table: "tblAdmin",
                 columns: new[] { "id", "adminCreateAt", "adminEmail", "adminName", "adminPassword" },
-                values: new object[] { "ad24e88d-7daa-4289-b0bd-caaaec048e05", "8/3/2024 2:37:58 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
+                values: new object[] { "7aec7fec-b126-4f49-a539-382f6a3346f8", "8/15/2024 4:08:05 PM", "admin@pos.com", "Default Admin", "QWRtaW5AMTIz" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_tblItem_brandId",

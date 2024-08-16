@@ -13,20 +13,18 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IExcelService _fileUploadService;
-        private readonly ILogger<ItemController> _logger;
 
-        public ItemController(AppDbContext appDbContext, IExcelService fileUploadService, ILogger<ItemController> logger)
+        public ItemController(AppDbContext appDbContext, IExcelService fileUploadService)
         {
             _appDbContext = appDbContext;
             _fileUploadService = fileUploadService;
-            _logger = logger;
         }
 
         [HttpGet]
         [ActionName("MassUpload")]
         public IActionResult MassUpload()
         {
-            bool hasData = _appDbContext.Items.Any();
+            bool hasData = _appDbContext.Items.Any(); // Replace with your actual data check
             ViewBag.HasData = hasData;
             return View();
         }
@@ -53,25 +51,24 @@ namespace posSystem.Controllers
 
                 foreach (var item in items)
                 {
-                    var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catCode == item.catCode);
-                    var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandCode == item.brandCode);
-                    var catSubItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCatCode == item.subCatCode);
-                    var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBrandCode == item.subBrandCode);
+                    var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catCode == item.catCode)!;
 
-                    if (catItem != null)
-                        item.catId = catItem.catId;
-                    if (catSubItem != null)
-                        item.subCId = catSubItem.subCId;
-                    if (subBrandItem != null)
-                        item.subBId = subBrandItem.subBId;
-                    if (brandItem != null)
-                        item.brandId = brandItem.brandId;
+                    var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandCode == item.brandCode)!;
 
+                    var catSubItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCatCode == item.subCatCode)!;
+
+                    var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBrandCode == item.subBrandCode)!;
+
+
+                    item.catId = catItem.catId;
+                    item.subCId = catSubItem.subCId;
+                    item.subBId = subBrandItem.subBId;
+                    item.brandId = brandItem.brandId;
                     item.itemCreateAt = DateTime.Now.ToString();
                     _appDbContext.Items.Add(item);
                 }
 
-                int result = _appDbContext.SaveChanges();
+                int result = _appDbContext.SaveChanges(); // Synchronous save
 
                 rspModel = new MsgResopnseModel
                 {
@@ -81,7 +78,6 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred during mass upload.");
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -100,7 +96,7 @@ namespace posSystem.Controllers
 
             if (file == null || file.Length == 0)
             {
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = "No file uploaded. Please select an Excel file to update categories."
@@ -110,7 +106,7 @@ namespace posSystem.Controllers
 
             if (!file.FileName.EndsWith(".xlsx") && !file.FileName.EndsWith(".xls"))
             {
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = "Invalid file format. Please upload a valid Excel file."
@@ -120,8 +116,10 @@ namespace posSystem.Controllers
 
             try
             {
+                // Read categories from the Excel file
                 var updateItems = _fileUploadService.ReadFromExcel<ItemModel>(file);
 
+                // Fetch all necessary data in one go to minimize database calls
                 var itemCodes = updateItems.Select(i => i.itemCode).ToList();
                 var existingItems = _appDbContext.Items.Where(c => itemCodes.Contains(c.itemCode)).ToList();
 
@@ -172,18 +170,18 @@ namespace posSystem.Controllers
                         existingItem.itemBuyPrice = item.itemBuyPrice;
                         existingItem.itemSalePrice = item.itemSalePrice;
                         existingItem.itemWholeSalePrice = item.itemWholeSalePrice;
-                        existingItem.itemStock += item.itemStock;
-                        existingItem.itemSold += item.itemSold;
-                        existingItem.itemRemainStock += item.itemStock;
+                        existingItem.itemStock = item.itemStock;
+                        existingItem.itemSold = item.itemSold;
+                        existingItem.itemRemainStock = item.itemRemainStock;
                         existingItem.itemUpdateAt = DateTime.Now.ToString();
                         existingItem.itemUpdateCount = (existingItem.itemUpdateCount ?? 0) + 1;
                     }
                 }
 
                 int result = await _appDbContext.SaveChangesAsync();
-                string message = result > 0 ? "Items updated successfully!" : "Failed to update items.";
+                string message = result > 0 ? "Items update successfully!" : "Failed to update items.";
 
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = result > 0,
                     responeMessage = message
@@ -191,8 +189,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred during mass update.");
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
@@ -201,6 +198,8 @@ namespace posSystem.Controllers
 
             return Json(rspModel);
         }
+
+
 
         private (List<ItemModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
@@ -241,26 +240,449 @@ namespace posSystem.Controllers
                     case "itemremainstock":
                         query = ascending ? query.OrderBy(p => p.itemRemainStock) : query.OrderByDescending(p => p.itemRemainStock);
                         break;
-                    case "itemcreateat":
-                        query = ascending ? query.OrderBy(p => p.itemCreateAt) : query.OrderByDescending(p => p.itemCreateAt);
+                    case "itemcategory":
+                        query = ascending ? query.OrderBy(p => p.itemCategory) : query.OrderByDescending(p => p.itemCategory);
                         break;
-                    case "itemupdateat":
-                        query = ascending ? query.OrderBy(p => p.itemUpdateAt) : query.OrderByDescending(p => p.itemUpdateAt);
+                    case "itemsubcategory":
+                        query = ascending ? query.OrderBy(p => p.itemSubCategory) : query.OrderByDescending(p => p.itemSubCategory);
+                        break;
+                    case "itembrand":
+                        query = ascending ? query.OrderBy(p => p.itemBrand) : query.OrderByDescending(p => p.itemBrand);
+                        break;
+                    case "itemsubbrand":
+                        query = ascending ? query.OrderBy(p => p.itemSubBrand) : query.OrderByDescending(p => p.itemSubBrand);
                         break;
                     default:
-                        query = query.OrderBy(p => p.itemCode);
+                        query = ascending ? query.OrderBy(p => p.itemId) : query.OrderByDescending(p => p.itemId);
                         break;
                 }
 
-                var items = query.Skip((pageNo - 1) * pageSize).Take(pageSize).ToList();
+                List<ItemModel> list = query
+                    .Skip((pageNo - 1) * pageSize)
+                    .Take(pageSize)
+                    .Include(s => s.Category)
+                    .Include(s => s.SubCategory) // Assuming you have a navigation property for SubCategory
+                    .Include(s => s.Brand)
+                    .Include(s => s.SubBrand)
+                    .Select(s => new ItemModel
+                    {
+                        itemId = s.itemId,
+                        itemCode = s.itemCode,
+                        itemName = s.itemName,
+                        itemBuyPrice = s.itemBuyPrice,
+                        itemSalePrice = s.itemSalePrice,
+                        itemWholeSalePrice = s.itemWholeSalePrice,
+                        catCode = s.catCode,
+                        subCatCode = s.subCatCode,
+                        itemDescription = s.itemDescription,
+                        itemBarcode = s.itemBarcode,
+                        itemStock = s.itemStock,
+                        itemSold = s.itemSold,
+                        itemRemainStock = s.itemRemainStock,
+                        itemCreateAt = s.itemCreateAt,
+                        itemUpdateAt = s.itemUpdateAt,
+                        itemUpdateCount = s.itemUpdateCount,
+                        creatorName = s.creatorName,
+                        catId = s.catId,
+                        subCId = s.subCId,
 
-                return (items, pageCount);
+                        itemCategory = _appDbContext.Categories
+                            .Where(c => c.catCode == s.catCode || c.catId == s.catId)
+                            .Select(c => c.catName)
+                            .FirstOrDefault(), // Retrieve catName based on catId
+
+                        itemSubCategory = _appDbContext.SubCategories
+                            .Where(sc => sc.subCatCode == s.subCatCode || sc.subCId == s.subCId)
+                            .Select(sc => sc.subCatName)
+                            .FirstOrDefault(), // Retrieve subCatName based on subCId
+
+                        itemBrand = _appDbContext.Brands
+                            .Where(c => c.brandCode == s.brandCode || c.brandId == s.brandId)
+                            .Select(c => c.brandName)
+                            .FirstOrDefault(), // Retrieve brandName based on brandId
+
+                        itemSubBrand = _appDbContext.SubBrands
+                            .Where(sc => sc.subBrandCode == s.subBrandCode || sc.subBId == s.subBId)
+                            .Select(sc => sc.subBrandName)
+                            .FirstOrDefault(), // Retrieve subBrandName based on subBId
+                    })
+                    .ToList()!;
+                return (list, pageCount);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred during sorting and pagination.");
-                throw;
+                // Handle or log the exception as needed
+                Console.WriteLine($"An error occurred while sorting: {ex.Message}");
+                throw; // Re-throw the exception to be caught in the calling method
             }
+        }
+
+        [ActionName("Index")]
+        public IActionResult ItemIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
+        {
+            try
+            {
+                var (list, pageCount) = GetSorted(pageNo, pageSize, sortField, sortOrder);
+
+                ItemResponseModel response = new()
+                {
+                    itemData = list,
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo,
+                    sortField = sortField,
+                    sortOrder = sortOrder
+                };
+                return View("ItemIndex", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while loading items: {ex.Message}");
+                return View("ItemIndex");
+            }
+        }
+
+        [ActionName("Create")]
+        public IActionResult ItemCreate()
+        {
+            try
+            {
+                var categories = _appDbContext.Categories.ToList();
+                var subCategories = _appDbContext.SubCategories.ToList();
+                var brands = _appDbContext.Brands.ToList();
+                var subBrands = _appDbContext.SubBrands.ToList();
+                ViewBag.Categories = categories;
+                ViewBag.SubCategories = subCategories;
+                ViewBag.Brands = brands;
+                ViewBag.SubBrands = subBrands;
+
+                return View("ItemCreate");
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while loading create item page: {ex.Message}");
+                return View("ItemCreate");
+            }
+        }
+
+        [HttpPost]
+        [ActionName("Save")]
+        public IActionResult ItemSave(ItemModel itemModel)
+        {
+            try
+            {
+                var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == itemModel.catId);
+                if (catItem == null) throw new Exception("Category not found");
+
+                itemModel.catCode = catItem.catCode;
+
+                var subCatItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == itemModel.subCId);
+                if (subCatItem == null) throw new Exception("SubCategory not found");
+
+                itemModel.subCatCode = subCatItem.subCatCode;
+
+                var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == itemModel.brandId);
+                if (brandItem == null) throw new Exception("Brand not found");
+
+                itemModel.brandCode = brandItem.brandCode;
+
+                var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == itemModel.subBId);
+                if (subBrandItem == null) throw new Exception("SubBrand not found");
+
+                itemModel.subBrandCode = subBrandItem.subBrandCode;
+
+                itemModel.itemCreateAt = DateTime.Now.ToString();
+                _appDbContext.Items.Add(itemModel);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Save Success" : "Save Fail";
+                MsgResopnseModel rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+                return Json(rspModel);
+            }
+            catch (Exception ex)
+            {
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred while saving item: {ex.Message}"
+                });
+            }
+        }
+
+        //[ActionName("Edit")]
+        //public IActionResult ItemEdit(int itemId)
+        //{
+        //    try
+        //    {
+        //        var item = _appDbContext.Items.FirstOrDefault(x => x.itemId == itemId);
+        //        if (item is null)
+        //        {
+        //            return Redirect("/Item");
+        //        }
+
+        //        // Get the corresponding category for the subcategory
+        //        var brand = _appDbContext.Brands.FirstOrDefault(c => c.brandId == item.brandId && c.brandCode == item.brandCode);
+
+        //        // If the category is found, add its name to the ViewBag
+        //        if (brand != null)
+        //        {
+        //            ViewBag.BrandName = brand.brandName;
+        //            ViewBag.BrandId = brand.brandId;
+        //        }
+
+        //        var subBrand = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == item.subBId && c.subBrandCode == item.subBrandCode);
+
+        //        // If the category is found, add its name to the ViewBag
+        //        if (subBrand != null)
+        //        {
+        //            ViewBag.SubBrandName = subBrand.subBrandName;
+        //            ViewBag.SubBId = subBrand.subBId;
+        //        }
+
+        //        var category = _appDbContext.Categories.FirstOrDefault(c => c.catId == item.catId && c.catCode == item.catCode);
+
+        //        // If the category is found, add its name to the ViewBag
+        //        if (category != null)
+        //        {
+        //            ViewBag.CategoryName = category.catName;
+        //            ViewBag.CatId = category.catId;
+        //        }
+
+        //        var subCategory = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == item.subCId && c.subCatCode == item.subCatCode);
+
+        //        // If the category is found, add its name to the ViewBag
+        //        if (subCategory != null)
+        //        {
+        //            ViewBag.SubCatName = subCategory.subCatName;
+        //            ViewBag.SubCId = subCategory.subCId;
+        //        }
+
+        //        var categories = _appDbContext.Categories.ToList();
+        //        var subCategories = _appDbContext.SubCategories.ToList();
+        //        var brands = _appDbContext.Brands.ToList();
+        //        var subBrands = _appDbContext.SubBrands.ToList();
+
+        //        ViewBag.Categories = categories;
+        //        ViewBag.SubCategories = subCategories;
+        //        ViewBag.Brands = brands;
+        //        ViewBag.SubBrands = subBrands;
+
+        //        return View("ItemEdit", item);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        ModelState.AddModelError("", $"An error occurred while loading edit item page: {ex.Message}");
+        //        return View("ItemEdit");
+        //    }
+        //}
+
+        [ActionName("Edit")]
+        public IActionResult ItemEdit(int itemId)
+        {
+            try
+            {
+                var item = _appDbContext.Items
+                    .Include(i => i.Brand)
+                    .Include(i => i.SubBrand)
+                    .Include(i => i.Category)
+                    .Include(i => i.SubCategory)
+                    .FirstOrDefault(x => x.itemId == itemId);
+
+                if (item is null)
+                {
+                    return Redirect("/Item");
+                }
+
+                // Set ViewBag properties for the associated entities
+                if (item.Brand != null)
+                {
+                    ViewBag.BrandName = item.Brand.brandName;
+                    ViewBag.BrandId = item.Brand.brandId;
+                }
+
+                if (item.SubBrand != null)
+                {
+                    ViewBag.SubBrandName = item.SubBrand.subBrandName;
+                    ViewBag.SubBId = item.SubBrand.subBId;
+                }
+
+                if (item.Category != null)
+                {
+                    ViewBag.CategoryName = item.Category.catName;
+                    ViewBag.CatId = item.Category.catId;
+                }
+
+                if (item.SubCategory != null)
+                {
+                    ViewBag.SubCatName = item.SubCategory.subCatName;
+                    ViewBag.SubCId = item.SubCategory.subCId;
+                }
+
+                // Fetch all categories, subcategories, brands, and subbrands in a single query each
+                ViewBag.Categories = _appDbContext.Categories.ToList();
+                ViewBag.SubCategories = _appDbContext.SubCategories.ToList();
+                ViewBag.Brands = _appDbContext.Brands.ToList();
+                ViewBag.SubBrands = _appDbContext.SubBrands.ToList();
+
+                return View("ItemEdit", item);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while loading the edit item page: {ex.Message}");
+                return View("ItemEdit");
+            }
+        }
+
+
+        [HttpPost]
+        [ActionName("Update")]
+        public IActionResult ItemUpdate(ItemModel itemModel)
+        {
+            try
+            {
+                var existingItem = _appDbContext.Items.Find(itemModel.itemId);
+                if (existingItem == null)
+                {
+                    return Json(new MsgResopnseModel
+                    {
+                        IsSuccess = false,
+                        responeMessage = "Item not found"
+                    });
+                }
+
+                var catItem = _appDbContext.Categories.FirstOrDefault(c => c.catId == itemModel.catId);
+                if (catItem == null) throw new Exception("Category not found");
+
+                itemModel.catCode = catItem.catCode;
+
+                var subCatItem = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == itemModel.subCId);
+                if (subCatItem == null) throw new Exception("SubCategory not found");
+
+                itemModel.subCatCode = subCatItem.subCatCode;
+
+                var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == itemModel.brandId);
+                if (brandItem == null) throw new Exception("Brand not found");
+
+                itemModel.brandCode = brandItem.brandCode;
+
+                var subBrandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == itemModel.subBId);
+                if (subBrandItem == null) throw new Exception("SubBrand not found");
+
+
+                existingItem.itemCode = itemModel.itemCode;
+                existingItem.itemName = itemModel.itemName;
+                existingItem.itemBuyPrice = itemModel.itemBuyPrice;
+                existingItem.itemSalePrice = itemModel.itemSalePrice;
+                existingItem.itemWholeSalePrice = itemModel.itemWholeSalePrice;
+                existingItem.catId = itemModel.catId;
+                existingItem.catCode = catItem.catCode;
+                existingItem.subCId = itemModel.subCId;
+                existingItem.subCatCode = subCatItem.subCatCode;
+                existingItem.brandId = itemModel.brandId;
+                existingItem.brandCode = brandItem.brandCode;
+                existingItem.subBId = itemModel.subBId;
+                existingItem.subBrandCode = subBrandItem.subBrandCode;
+                existingItem.itemStock = itemModel.itemStock;
+                existingItem.itemSold = itemModel.itemSold;
+                existingItem.itemRemainStock = itemModel.itemRemainStock;
+                existingItem.itemUpdateAt = DateTime.Now.ToString();
+                existingItem.itemUpdateCount = itemModel.itemUpdateCount + 1;
+
+                _appDbContext.Items.Update(existingItem);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Update Success" : "Update Fail";
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred while updating item: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        [ActionName("Delete")]
+        public IActionResult ItemDelete(int itemId)
+        {
+            try
+            {
+                var item = _appDbContext.Items.Find(itemId);
+                if (item == null)
+                {
+                    return Json(new MsgResopnseModel
+                    {
+                        IsSuccess = false,
+                        responeMessage = "Item not found"
+                    });
+                }
+
+                _appDbContext.Items.Remove(item);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Delete Success" : "Delete Fail";
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                });
+            }
+            catch (Exception ex)
+            {
+                return Json(new MsgResopnseModel
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred while deleting item: {ex.Message}"
+                });
+            }
+        }
+
+        [HttpPost]
+        [ActionName("DeleteAll")]
+        public IActionResult DeleteAllItems()
+        {
+            MsgResopnseModel rspModel = new MsgResopnseModel();
+
+            try
+            {
+                var items = _appDbContext.Items.ToList();
+                if (items.Count == 0)
+                {
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No items found to delete."
+                    };
+                    return Json(rspModel);
+                }
+
+                _appDbContext.Items.RemoveRange(items);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "All items deleted successfully." : "Failed to delete items.";
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
+            {
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                };
+            }
+
+            return Json(rspModel);
         }
     }
 }

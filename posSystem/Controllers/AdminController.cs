@@ -24,13 +24,19 @@ namespace posSystem.Controllers
         {
             try
             {
-                int rowCount = _appDbContext.Admin.Count();
+                // Replace 'defaultAdminId' with the actual Id or any other unique identifier for the default admin
+                var defaultAdmin = "Default Admin"; // Example: Assuming the default admin has Id = 1
+
+                int rowCount = _appDbContext.Admin
+                    .Count(a => a.adminName != defaultAdmin);
+
                 int pageCount = rowCount / pageSize;
 
                 if (rowCount % pageSize > 0)
                     pageCount++;
 
                 List<AdminModel> list = _appDbContext.Admin
+                    .Where(a => a.adminName != defaultAdmin) // Exclude default admin
                     .Skip((pageNo - 1) * pageSize)
                     .Take(pageSize)
                     .ToList();
@@ -57,6 +63,7 @@ namespace posSystem.Controllers
                 return StatusCode(500, "Internal server error.");
             }
         }
+
 
         [ActionName("Create")]
         public IActionResult AdminCreate()

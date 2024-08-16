@@ -54,6 +54,7 @@ namespace posSystem.Models
         [ForeignKey("subCId")]
         public SubCategoryModel SubCategory { get; set; }
     }
+
     public class ItemResponseModel
     {
         public int pageNo { get; set; }
