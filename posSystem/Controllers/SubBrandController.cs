@@ -1,11 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using posSystem.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using System;
 
 namespace posSystem.Controllers
 {
@@ -13,30 +8,20 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IExcelService _fileUploadService;
-        private readonly ILogger<SubBrandController> _logger;
 
-        public SubBrandController(AppDbContext appDbContext, IExcelService fileUploadService, ILogger<SubBrandController> logger)
+        public SubBrandController(AppDbContext appDbContext, IExcelService fileUploadService)
         {
             _appDbContext = appDbContext;
             _fileUploadService = fileUploadService;
-            _logger = logger;
         }
 
         [HttpGet]
         [ActionName("MassUpload")]
         public IActionResult MassUpload()
         {
-            try
-            {
-                bool hasData = _appDbContext.SubBrands.Any();
-                ViewBag.HasData = hasData;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while accessing MassUpload view.");
-                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, ErrorMessage = "An error occurred while accessing the Mass Upload view." });
-            }
+            bool hasData = _appDbContext.SubBrands.Any(); // Replace with your actual data check
+            ViewBag.HasData = hasData;
+            return View();
         }
 
         [HttpPost]
@@ -61,19 +46,14 @@ namespace posSystem.Controllers
 
                 foreach (var items in subBrands)
                 {
-                    var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandCode == items.brandCode);
-                    if (brandItem == null)
-                    {
-                        _logger.LogWarning($"Brand with code {items.brandCode} not found for SubBrand {items.subBrandCode}.");
-                        continue;
-                    }
-
+                    var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandCode == items.brandCode)!;
                     items.brandId = brandItem.brandId;
                     items.subBrandCreateAt = DateTime.Now.ToString();
                     _appDbContext.SubBrands.Add(items);
                 }
 
-                int result = _appDbContext.SaveChanges();
+                int result = _appDbContext.SaveChanges(); // Synchronous save
+
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = result > 0,
@@ -82,7 +62,6 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while processing the MassUpload request.");
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -101,7 +80,7 @@ namespace posSystem.Controllers
 
             if (file == null || file.Length == 0)
             {
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = "No file uploaded. Please select an Excel file to update categories."
@@ -111,7 +90,7 @@ namespace posSystem.Controllers
 
             if (!file.FileName.EndsWith(".xlsx") && !file.FileName.EndsWith(".xls"))
             {
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = "Invalid file format. Please upload a valid Excel file."
@@ -121,39 +100,41 @@ namespace posSystem.Controllers
 
             try
             {
+                // Read categories from the Excel file
                 var updateSubBrands = _fileUploadService.ReadFromExcel<SubBrandModel>(file);
 
+                // Iterate over each category from the file
                 foreach (var items in updateSubBrands)
                 {
+                    // Find existing category by catCode
                     var existingBrands = _appDbContext.SubBrands
                         .FirstOrDefault(c => c.subBrandCode == items.subBrandCode);
 
-                    if (existingBrands == null)
+                    if (existingBrands is not null)
                     {
-                        _logger.LogWarning($"SubBrand with code {items.subBrandCode} not found.");
-                        continue;
-                    }
+                        var brandItem = _appDbContext.SubBrands.FirstOrDefault(c => c.brandCode == items.brandCode)!;
 
-                    var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandCode == items.brandCode);
-                    if (brandItem == null)
-                    {
-                        _logger.LogWarning($"Brand with code {items.brandCode} not found for SubBrand {items.subBrandCode}.");
-                        continue;
-                    }
+                        // Update properties
+                        existingBrands.subBrandName = items.subBrandName;
 
-                    existingBrands.subBrandName = items.subBrandName;
-                    existingBrands.brandId = brandItem.brandId;
-                    existingBrands.subBrandCode = items.subBrandCode;
-                    existingBrands.brandCode = items.brandCode;
-                    existingBrands.subBrandUpdateAt = DateTime.Now.ToString();
-                    existingBrands.subBrandUpdateCount ??= 0;
-                    existingBrands.subBrandUpdateCount++;
+
+                        existingBrands.brandId = brandItem.brandId;
+
+
+                        existingBrands.subBrandCode = items.subBrandCode;
+
+                        existingBrands.brandCode = items.brandCode;
+                        existingBrands.subBrandUpdateAt = DateTime.Now.ToString();
+                        existingBrands.subBrandUpdateCount ??= 0;
+                        existingBrands.subBrandUpdateCount++;
+                    }
                 }
 
+                // Save changes to the database
                 int result = await _appDbContext.SaveChangesAsync();
-                string message = result > 0 ? "Sub-Brands updated successfully!" : "Failed to update sub-brands.";
+                string message = result > 0 ? "Sub-Brands update successfully!" : "Failed to update sub-brands.";
 
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = result > 0,
                     responeMessage = message
@@ -161,8 +142,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while processing the MassUpdate request.");
-                rspModel = new MsgResopnseModel
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
@@ -174,57 +154,50 @@ namespace posSystem.Controllers
 
         private (List<SubBrandModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
-            try
+            int rowCount = _appDbContext.SubBrands.Count();
+            int pageCount = rowCount / pageSize;
+
+            if (rowCount % pageSize > 0)
+                pageCount++;
+
+            bool ascending = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
+
+            IQueryable<SubBrandModel> query = _appDbContext.SubBrands.AsQueryable();
+
+            switch (sortField.ToLower())
             {
-                int rowCount = _appDbContext.SubBrands.Count();
-                int pageCount = rowCount / pageSize;
+                case "subcatname":
+                    query = ascending ? query.OrderBy(p => p.subBrandName) : query.OrderByDescending(p => p.subBrandName);
+                    break;
+                case "subcatcode":
+                    query = ascending ? query.OrderBy(p => p.subBrandCode) : query.OrderByDescending(p => p.subBrandCode);
+                    break;
+                default:
+                    query = ascending ? query.OrderBy(p => p.subBId) : query.OrderByDescending(p => p.subBId);
+                    break;
+            }
 
-                if (rowCount % pageSize > 0)
-                    pageCount++;
-
-                bool ascending = sortOrder.Equals("asc", StringComparison.OrdinalIgnoreCase);
-
-                IQueryable<SubBrandModel> query = _appDbContext.SubBrands.AsQueryable();
-
-                switch (sortField.ToLower())
+            List<SubBrandModel> list = query
+                .Include(s => s.Brand)
+                .Skip((pageNo - 1) * pageSize)
+                .Take(pageSize)
+                .Select(s => new SubBrandModel
                 {
-                    case "subcatname":
-                        query = ascending ? query.OrderBy(p => p.subBrandName) : query.OrderByDescending(p => p.subBrandName);
-                        break;
-                    case "subcatcode":
-                        query = ascending ? query.OrderBy(p => p.subBrandCode) : query.OrderByDescending(p => p.subBrandCode);
-                        break;
-                    default:
-                        query = ascending ? query.OrderBy(p => p.subBId) : query.OrderByDescending(p => p.subBId);
-                        break;
-                }
-
-                List<SubBrandModel> list = query
-                    .Include(s => s.Brand)
-                    .Skip((pageNo - 1) * pageSize)
-                    .Take(pageSize)
-                    .Select(s => new SubBrandModel
-                    {
-                        subBId = s.subBId,
-                        subBrandName = s.subBrandName,
-                        subBrandCode = s.subBrandCode,
-                        subBrandCreateAt = s.subBrandCreateAt,
-                        subBrandUpdateAt = s.subBrandUpdateAt,
-                        subBrandUpdateCount = s.subBrandUpdateCount,
-                        brandName = _appDbContext.Brands
-                            .Where(c => c.brandCode == s.brandCode || c.brandId == s.brandId)
-                            .Select(c => c.brandName)
-                            .FirstOrDefault(),
-                    })
-                    .ToList();
-                return (list, pageCount);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while sorting SubBrands.");
-                throw; // Re-throw the exception to be handled at a higher level
-            }
+                    subBId = s.subBId,
+                    subBrandName = s.subBrandName,
+                    subBrandCode = s.subBrandCode,
+                    subBrandCreateAt = s.subBrandCreateAt,
+                    subBrandUpdateAt = s.subBrandUpdateAt,
+                    subBrandUpdateCount = s.subBrandUpdateCount,
+                    brandName = _appDbContext.Brands
+                        .Where(c => c.brandCode == s.brandCode || c.brandId == s.brandId)
+                        .Select(c => c.brandName)
+                        .FirstOrDefault(),
+                })
+                .ToList();
+            return (list, pageCount);
         }
+
 
         [ActionName("Index")]
         public IActionResult SubBrandIndex(int pageNo = 1, int pageSize = 10, string sortField = "", string sortOrder = "asc")
@@ -247,8 +220,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while accessing SubBrandIndex view.");
-                ModelState.AddModelError("", "An error occurred while accessing the SubBrand Index view.");
+                ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("SubBrandIndex");
             }
         }
@@ -256,114 +228,165 @@ namespace posSystem.Controllers
         [ActionName("Create")]
         public IActionResult SubBrandCreate()
         {
-            try
-            {
-                var brands = _appDbContext.Brands.ToList();
-                ViewBag.Brands = brands;
-                return View("SubBrandCreate");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while accessing SubBrandCreate view.");
-                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, ErrorMessage = "An error occurred while accessing the SubBrand Create view." });
-            }
+            var brands = _appDbContext.Brands.ToList();
+            ViewBag.Brands = brands;
+            return View("SubBrandCreate");
         }
 
         [HttpPost]
-        [ActionName("Create")]
-        public async Task<IActionResult> SubBrandCreate(SubBrandModel subBrand)
+        [ActionName("Save")]
+        public IActionResult SubBrandSave(SubBrandModel subBrandModel)
         {
-            try
+            var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == subBrandModel.brandId)!;
+            subBrandModel.brandCode = brandItem.brandCode;
+            subBrandModel.subBrandCreateAt = DateTime.Now.ToString();
+            _appDbContext.SubBrands.Add(subBrandModel);
+            int result = _appDbContext.SaveChanges();
+            string message = result > 0 ? "Save Success" : "Save Fail";
+            MsgResopnseModel rspModel = new MsgResopnseModel()
             {
-                if (!ModelState.IsValid)
-                {
-                    return View("SubBrandCreate", subBrand);
-                }
-
-                _appDbContext.SubBrands.Add(subBrand);
-                await _appDbContext.SaveChangesAsync();
-                TempData["SuccessMessage"] = "SubBrand created successfully!";
-                return RedirectToAction("SubBrandIndex");
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An error occurred while creating SubBrand.");
-                ModelState.AddModelError("", "An error occurred while creating SubBrand.");
-                return View("SubBrandCreate", subBrand);
-            }
+                IsSuccess = result > 0,
+                responeMessage = message
+            }!;
+            return Json(rspModel);
         }
 
         [ActionName("Edit")]
-        public IActionResult SubBrandEdit(int id)
+        public IActionResult SubBrandEdit(int subBId)
         {
-            try
+            var item = _appDbContext.SubBrands.FirstOrDefault(x => x.subBId == subBId);
+            if (item is null)
             {
-                var subBrand = _appDbContext.SubBrands.Find(id);
-
-                if (subBrand == null)
-                {
-                    _logger.LogWarning($"SubBrand with id {id} not found.");
-                    return NotFound();
-                }
-
-                var brands = _appDbContext.Brands.ToList();
-                ViewBag.Brands = brands;
-                return View("SubBrandEdit", subBrand);
+                return Redirect("/SubBrand");
             }
-            catch (Exception ex)
+
+            // Get the corresponding category for the subcategory
+            var brand = _appDbContext.Brands
+                .FirstOrDefault(c => c.brandId == item.brandId && c.brandCode == item.brandCode);
+
+            // If the category is found, add its name to the ViewBag
+            if (brand != null)
             {
-                _logger.LogError(ex, "An error occurred while accessing SubBrandEdit view.");
-                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, ErrorMessage = "An error occurred while accessing the SubBrand Edit view." });
+                ViewBag.BrandName = brand.brandName;
+                ViewBag.BrandId = brand.brandId;
             }
+
+            var brands = _appDbContext.Brands.ToList();
+            ViewBag.Brands = brands;
+
+            return View("SubBrandEdit", item);
         }
 
         [HttpPost]
-        [ActionName("Edit")]
-        public async Task<IActionResult> SubBrandEdit(SubBrandModel subBrand)
+        [ActionName("Update")]
+        public IActionResult SubBrandUpdate(int subBId, SubBrandModel subBrandModel)
         {
-            try
+            MsgResopnseModel rspModel = new MsgResopnseModel()!;
+            var item = _appDbContext.SubBrands.FirstOrDefault(x => x.subBId == subBId);
+            if (item is null)
             {
-                if (!ModelState.IsValid)
+                rspModel = new MsgResopnseModel()
                 {
-                    return View("SubBrandEdit", subBrand);
-                }
+                    IsSuccess = false,
+                    responeMessage = "No data found"
+                };
+                return Json(rspModel);
+            }
 
-                _appDbContext.SubBrands.Update(subBrand);
-                await _appDbContext.SaveChangesAsync();
-                TempData["SuccessMessage"] = "SubBrand updated successfully!";
-                return RedirectToAction("SubBrandIndex");
-            }
-            catch (Exception ex)
+            var brandItem = _appDbContext.Brands.FirstOrDefault(c => c.brandId == subBrandModel.brandId)!;
+            item.subBrandName = subBrandModel.subBrandName;
+            item.subBrandCode = subBrandModel.subBrandCode;
+            item.brandId = subBrandModel.brandId;
+            item.brandCode = brandItem.brandCode;
+            item.subBrandUpdateAt = DateTime.Now.ToString();
+            item.subBrandUpdateCount ??= 0;
+            item.subBrandUpdateCount++;
+
+            int result = _appDbContext.SaveChanges();
+            string message = result > 0 ? "Update Success" : "Update Fail";
+            rspModel = new MsgResopnseModel()
             {
-                _logger.LogError(ex, "An error occurred while updating SubBrand.");
-                ModelState.AddModelError("", "An error occurred while updating SubBrand.");
-                return View("SubBrandEdit", subBrand);
-            }
+                IsSuccess = result > 0,
+                responeMessage = message
+            };
+            return Json(rspModel);
         }
 
+        [HttpPost]
         [ActionName("Delete")]
-        public IActionResult SubBrandDelete(int id)
+        public IActionResult SubBrandDelete(int subBId)
         {
+            MsgResopnseModel rspModel = new MsgResopnseModel();
             try
             {
-                var subBrand = _appDbContext.SubBrands.Find(id);
-
-                if (subBrand == null)
+                var item = _appDbContext.SubBrands.FirstOrDefault(x => x.subBId == subBId);
+                if (item is null)
                 {
-                    _logger.LogWarning($"SubBrand with id {id} not found.");
-                    return NotFound();
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No data found"
+                    };
+                    return Json(rspModel);
                 }
 
-                _appDbContext.SubBrands.Remove(subBrand);
-                _appDbContext.SaveChanges();
-                TempData["SuccessMessage"] = "SubBrand deleted successfully!";
-                return RedirectToAction("SubBrandIndex");
+                _appDbContext.SubBrands.Remove(item);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "Delete Success" : "Delete Fail";
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "An error occurred while deleting SubBrand.");
-                return View("Error", new ErrorViewModel { RequestId = HttpContext.TraceIdentifier, ErrorMessage = "An error occurred while deleting the SubBrand." });
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                };
             }
+            return Json(rspModel);
         }
+
+        [HttpPost]
+        [ActionName("DeleteAll")]
+        public IActionResult DeleteAllSubBrands()
+        {
+            MsgResopnseModel rspModel = new MsgResopnseModel();
+            try
+            {
+                var items = _appDbContext.SubBrands.ToList();
+                if (items.Count == 0)
+                {
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No sub-brands found to delete."
+                    };
+                    return Json(rspModel);
+                }
+
+                _appDbContext.SubBrands.RemoveRange(items);
+                int result = _appDbContext.SaveChanges();
+                string message = result > 0 ? "All sub-brands deleted successfully." : "Failed to delete sub-brands.";
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
+            {
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = false,
+                    responeMessage = $"An error occurred: {ex.Message}"
+                };
+            }
+            return Json(rspModel);
+        }
+
     }
 }

@@ -1,10 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Serilog;
 using posSystem.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace posSystem.Controllers
 {
@@ -12,14 +7,12 @@ namespace posSystem.Controllers
     {
         private readonly AppDbContext _appDbContext;
         private readonly IExcelService _fileUploadService;
-        private readonly ILogger<BrandController> _logger;
 
-        // Constructor to set up the controller with database context, file upload service, and logger
-        public BrandController(AppDbContext appDbContext, IExcelService fileUploadService, ILogger<BrandController> logger)
+        // Constructor to set up the controller with database context and file upload service
+        public BrandController(AppDbContext appDbContext, IExcelService fileUploadService)
         {
             _appDbContext = appDbContext;
             _fileUploadService = fileUploadService;
-            _logger = logger;
         }
 
         // GET action to show the mass upload form
@@ -27,17 +20,10 @@ namespace posSystem.Controllers
         [ActionName("MassUpload")]
         public IActionResult MassUpload()
         {
-            try
-            {
-                bool hasData = _appDbContext.Brands.Any();
-                ViewBag.HasData = hasData;
-                return View();
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while loading MassUpload view.");
-                return StatusCode(500, "Internal server error");
-            }
+            // Check if there are any categories in the database
+            bool hasData = _appDbContext.Brands.Any();
+            ViewBag.HasData = hasData;
+            return View();
         }
 
         // POST action to handle the mass upload of brands from an Excel file
@@ -47,6 +33,7 @@ namespace posSystem.Controllers
         {
             var rspModel = new MsgResopnseModel();
 
+            // Check if the file is missing or empty
             if (file == null || file.Length == 0)
             {
                 rspModel = new MsgResopnseModel
@@ -59,15 +46,17 @@ namespace posSystem.Controllers
 
             try
             {
+                // Read brands from the uploaded Excel file
                 var brands = _fileUploadService.ReadFromExcel<BrandModel>(file);
 
+                // Add each brand to the database
                 foreach (var item in brands)
                 {
                     item.brandCreatedAt = DateTime.Now.ToString();
                     _appDbContext.Brands.Add(item);
                 }
 
-                int result = _appDbContext.SaveChanges();
+                int result = _appDbContext.SaveChanges(); // Save changes to the database
 
                 rspModel = new MsgResopnseModel
                 {
@@ -77,7 +66,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while processing mass upload.");
+                // Handle errors during file processing or database operations
                 rspModel = new MsgResopnseModel
                 {
                     IsSuccess = false,
@@ -95,6 +84,7 @@ namespace posSystem.Controllers
         {
             MsgResopnseModel rspModel = new MsgResopnseModel();
 
+            // Check if the file is missing or empty
             if (file == null || file.Length == 0)
             {
                 rspModel = new MsgResopnseModel()
@@ -105,6 +95,7 @@ namespace posSystem.Controllers
                 return Json(rspModel);
             }
 
+            // Check if the file is an Excel file
             if (!file.FileName.EndsWith(".xlsx") && !file.FileName.EndsWith(".xls"))
             {
                 rspModel = new MsgResopnseModel()
@@ -117,8 +108,10 @@ namespace posSystem.Controllers
 
             try
             {
+                // Read updated brands from the Excel file
                 var updatedBrands = _fileUploadService.ReadFromExcel<BrandModel>(file);
 
+                // Update existing brands in the database
                 foreach (var item in updatedBrands)
                 {
                     var existingBrand = _appDbContext.Brands
@@ -134,7 +127,7 @@ namespace posSystem.Controllers
                     }
                 }
 
-                int result = await _appDbContext.SaveChangesAsync();
+                int result = await _appDbContext.SaveChangesAsync(); // Save changes to the database asynchronously
                 string message = result > 0 ? "Brands updated successfully!" : "Failed to update brands.";
 
                 rspModel = new MsgResopnseModel()
@@ -145,7 +138,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating brands from Excel.");
+                // Handle errors during file processing or database operations
                 rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -159,7 +152,7 @@ namespace posSystem.Controllers
         // Helper method to sort and paginate brands
         private (List<BrandModel>, int) GetSorted(int pageNo, int pageSize, string sortField, string sortOrder)
         {
-            int rowCount = _appDbContext.Brands.Count();
+            int rowCount = _appDbContext.Brands.Count(); // Get total count of brands
             int pageCount = rowCount / pageSize;
 
             if (rowCount % pageSize > 0)
@@ -169,6 +162,7 @@ namespace posSystem.Controllers
 
             IQueryable<BrandModel> query = _appDbContext.Brands.AsQueryable();
 
+            // Sort the brands based on the sortField and sortOrder
             switch (sortField.ToLower())
             {
                 case "brandname":
@@ -182,6 +176,7 @@ namespace posSystem.Controllers
                     break;
             }
 
+            // Get the brands for the current page
             List<BrandModel> list = query
                 .Skip((pageNo - 1) * pageSize)
                 .Take(pageSize)
@@ -212,7 +207,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while retrieving and sorting brands.");
+                // Handle errors during data retrieval and sorting
                 ModelState.AddModelError("", $"An error occurred: {ex.Message}");
                 return View("BrandIndex");
             }
@@ -234,7 +229,7 @@ namespace posSystem.Controllers
             {
                 brandModel.brandCreatedAt = DateTime.Now.ToString();
                 _appDbContext.Brands.Add(brandModel);
-                int result = _appDbContext.SaveChanges();
+                int result = _appDbContext.SaveChanges(); // Save changes to the database
                 string message = result > 0 ? "Save Success" : "Save Fail";
 
                 MsgResopnseModel rspModel = new MsgResopnseModel()
@@ -246,7 +241,7 @@ namespace posSystem.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while saving a new brand.");
+                // Handle errors during the save operation
                 MsgResopnseModel rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
@@ -260,20 +255,12 @@ namespace posSystem.Controllers
         [ActionName("Edit")]
         public IActionResult BrandEdit(int id)
         {
-            try
+            var item = _appDbContext.Brands.FirstOrDefault(x => x.brandId == id);
+            if (item is null)
             {
-                var item = _appDbContext.Brands.FirstOrDefault(x => x.brandId == id);
-                if (item is null)
-                {
-                    return Redirect("/Brand");
-                }
-                return View("BrandEdit", item);
+                return Redirect("/Brand");
             }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error occurred while loading BrandEdit view.");
-                return StatusCode(500, "Internal server error");
-            }
+            return View("BrandEdit", item);
         }
 
         // POST action to update an existing brand
@@ -285,44 +272,46 @@ namespace posSystem.Controllers
             try
             {
                 var item = _appDbContext.Brands.FirstOrDefault(x => x.brandId == id);
-                if (item != null)
+                if (item is null)
                 {
-                    item.brandName = brandModel.brandName;
-                    item.brandDescription = brandModel.brandDescription;
-                    item.brandUpdatedAt = DateTime.Now.ToString();
-                    item.brandUpdateCount ??= 0;
-                    item.brandUpdateCount++;
-
-                    int result = _appDbContext.SaveChanges();
-                    rspModel = new MsgResopnseModel
-                    {
-                        IsSuccess = result > 0,
-                        responeMessage = result > 0 ? "Update Success" : "Update Fail"
-                    };
-                }
-                else
-                {
-                    rspModel = new MsgResopnseModel
+                    rspModel = new MsgResopnseModel()
                     {
                         IsSuccess = false,
-                        responeMessage = "Brand not found."
+                        responeMessage = "No data found"
                     };
+                    return Json(rspModel);
                 }
+
+                // Update brand details
+                item.brandName = brandModel.brandName;
+                item.brandCode = brandModel.brandCode;
+                item.brandDescription = brandModel.brandDescription;
+                item.brandUpdatedAt = DateTime.Now.ToString();
+                item.brandUpdateCount ??= 0;
+                item.brandUpdateCount++;
+
+                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                string message = result > 0 ? "Update Success" : "Update Fail";
+
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while updating the brand.");
-                rspModel = new MsgResopnseModel
+                // Handle errors during the update operation
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
                 };
             }
-
             return Json(rspModel);
         }
 
-        // POST action to delete a brand
+        // POST action to delete a specific brand
         [HttpPost]
         [ActionName("Delete")]
         public IActionResult BrandDelete(int id)
@@ -331,32 +320,75 @@ namespace posSystem.Controllers
             try
             {
                 var item = _appDbContext.Brands.FirstOrDefault(x => x.brandId == id);
-                if (item != null)
+                if (item is null)
                 {
-                    _appDbContext.Brands.Remove(item);
-                    int result = _appDbContext.SaveChanges();
-                    rspModel = new MsgResopnseModel
-                    {
-                        IsSuccess = result > 0,
-                        responeMessage = result > 0 ? "Delete Success" : "Delete Fail"
-                    };
-                }
-                else
-                {
-                    rspModel = new MsgResopnseModel
+                    rspModel = new MsgResopnseModel()
                     {
                         IsSuccess = false,
-                        responeMessage = "Brand not found."
+                        responeMessage = "No data found"
                     };
+                    return Json(rspModel);
                 }
+
+                _appDbContext.Brands.Remove(item);
+                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                string message = result > 0 ? "Delete Success" : "Delete Fail";
+
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error occurred while deleting the brand.");
-                rspModel = new MsgResopnseModel
+                // Handle errors during the delete operation
+                rspModel = new MsgResopnseModel()
                 {
                     IsSuccess = false,
                     responeMessage = $"An error occurred: {ex.Message}"
+                };
+            }
+            return Json(rspModel);
+        }
+
+        // POST action to delete all brands
+        [HttpPost]
+        [ActionName("DeleteAll")]
+        public IActionResult DeleteAllBrands()
+        {
+            MsgResopnseModel rspModel = new MsgResopnseModel();
+
+            try
+            {
+                var items = _appDbContext.Brands.ToList();
+                if (items.Count == 0)
+                {
+                    rspModel = new MsgResopnseModel()
+                    {
+                        IsSuccess = false,
+                        responeMessage = "No brands found to delete."
+                    };
+                    return Json(rspModel);
+                }
+
+                _appDbContext.Brands.RemoveRange(items);
+                int result = _appDbContext.SaveChanges(); // Save changes to the database
+                string message = result > 0 ? "All brands deleted successfully." : "Failed to delete brands.";
+
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = result > 0,
+                    responeMessage = message
+                };
+            }
+            catch (Exception ex)
+            {
+                // Handle errors during the delete all operation
+                rspModel = new MsgResopnseModel()
+                {
+                    IsSuccess = false,
+                    responeMessage = "You have to delete sub-brands first!"
                 };
             }
 

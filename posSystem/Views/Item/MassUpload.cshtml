@@ -25,7 +25,6 @@
 @section Scripts {
     <script>
         $(document).ready(function () {
-
             $('#uploadForm').on('submit', function (event) {
                 event.preventDefault(); // Prevent default form submission
 
@@ -67,7 +66,8 @@
                     contentType: false,
                     processData: false,
                     success: function (result) {
-                        Notiflix.Block.remove('.container'); // Remove block on success
+                        // Remove block on success
+                        Notiflix.Block.remove('body');
                         if (result.IsSuccess) {
                             Swal.fire({
                                 title: "Success!",
@@ -76,7 +76,7 @@
                                 timer: 2000,
                                 timerProgressBar: true
                             }).then(() => {
-                                location.href = "/Item";// Redirect to index page
+                                location.href = "/Item"; // Redirect to index page
                             });
                         } else {
                             Swal.fire({
@@ -87,7 +87,8 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        Notiflix.Block.remove('.container'); // Remove block on error
+                        // Remove block on error
+                        Notiflix.Block.remove('body');
                         Swal.fire({
                             title: "Error!",
                             text: "An error occurred while processing the file.",
@@ -98,6 +99,8 @@
             });
         });
     </script>
+}
+
    @*  <script>
         $(document).ready(function () {
 
@@ -168,4 +171,4 @@
             });
         });
     </script> *@
-}
+

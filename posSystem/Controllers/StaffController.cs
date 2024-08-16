@@ -188,7 +188,16 @@ namespace posSystem.Controllers
                 item.staffRole = staffModel.staffRole;
                 item.staffPhone = staffModel.staffPhone;
                 item.staffAddress = staffModel.staffAddress;
-                item.staffJoinedDate = staffModel.staffJoinedDate;
+
+                if (staffModel.staffJoinedDate is null)
+                {
+                    item.staffJoinedDate = item.staffJoinedDate;
+                }
+                else
+                {
+                    item.staffJoinedDate = staffModel.staffJoinedDate;
+                }
+              
                 item.staffEmail = staffModel.staffEmail;
 
                 if (updatePhoto)

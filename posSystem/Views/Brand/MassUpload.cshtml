@@ -64,7 +64,7 @@
                     contentType: false,
                     processData: false,
                     success: function (result) {
-                        Notiflix.Block.remove('.container'); // Remove block on success
+                        Notiflix.Block.remove('body'); // Remove block on success
                         if (result.IsSuccess) {
                             Swal.fire({
                                 title: "Success!",
@@ -84,7 +84,7 @@
                         }
                     },
                     error: function (xhr, status, error) {
-                        Notiflix.Block.remove('.container'); // Remove block on error
+                        Notiflix.Block.remove('body'); // Remove block on error
                         Swal.fire({
                             title: "Error!",
                             text: "An error occurred while processing the file.",

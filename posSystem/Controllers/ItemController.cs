@@ -4,8 +4,10 @@ using Microsoft.Extensions.Logging;
 using posSystem.Models;
 using System;
 using System.Collections.Generic;
+using System.Drawing.Printing;
 using System.Linq;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace posSystem.Controllers
 {
@@ -342,6 +344,98 @@ namespace posSystem.Controllers
             }
         }
 
+        [ActionName("CheckLowStock")]
+        public IActionResult CheckLowStock()
+        {
+            try
+            {
+                var lowStockItems = _appDbContext.Items
+                    .Where(x => x.itemRemainStock <= 2)
+                    .ToList();
+
+                var response = new
+                {
+                    lowStockCount = lowStockItems.Count,
+                    isStockLow = lowStockItems.Count > 0
+                };
+
+                return Json(response); // Return the data as JSON
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while checking low stock: {ex.Message}");
+                return Json(new { lowStockCount = 0, isStockLow = false });
+            }
+        }
+
+        [ActionName("LowStock")]
+        public IActionResult LowStock(int pageNo = 1, int pageSize = 10)
+        {
+            try
+            {
+                // Get the total number of low-stock items
+                int rowCount = _appDbContext.Items.Count(x => x.itemRemainStock <= 2);
+
+                // Calculate the total number of pages
+                int pageCount = (int)Math.Ceiling((double)rowCount / pageSize);
+
+                // Retrieve the low-stock items with pagination
+                var items = _appDbContext.Items
+                    .Where(x => x.itemRemainStock <= 2)
+                    .Include(x => x.Category)
+                    .Include(x => x.SubCategory)
+                    .Include(x => x.Brand)
+                    .Include(x => x.SubBrand)
+                    .OrderBy(x => x.itemId) // Ensure a consistent ordering
+                    .Skip((pageNo - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToList();
+
+                // Prepare the response model
+                ItemResponseModel response = new()
+                {
+                    itemData = items.Select(s => new ItemModel
+                    {
+                        itemId = s.itemId,
+                        itemCode = s.itemCode,
+                        itemName = s.itemName,
+                        itemBuyPrice = s.itemBuyPrice,
+                        itemSalePrice = s.itemSalePrice,
+                        itemWholeSalePrice = s.itemWholeSalePrice,
+                        catCode = s.catCode,
+                        subCatCode = s.subCatCode,
+                        itemDescription = s.itemDescription,
+                        itemBarcode = s.itemBarcode,
+                        itemStock = s.itemStock,
+                        itemSold = s.itemSold,
+                        itemRemainStock = s.itemRemainStock,
+                        itemCreateAt = s.itemCreateAt,
+                        itemUpdateAt = s.itemUpdateAt,
+                        itemUpdateCount = s.itemUpdateCount,
+                        creatorName = s.creatorName,
+                        catId = s.catId,
+                        subCId = s.subCId,
+                        itemCategory = s.Category?.catName, // Retrieve catName from included Category
+                        itemSubCategory = s.SubCategory?.subCatName, // Retrieve subCatName from included SubCategory
+                        itemBrand = s.Brand?.brandName, // Retrieve brandName from included Brand
+                        itemSubBrand = s.SubBrand?.subBrandName // Retrieve subBrandName from included SubBrand
+                    }).ToList(),
+                    pageSize = pageSize,
+                    pageCount = pageCount,
+                    pageNo = pageNo,
+                };
+
+                return View("LowStock", response);
+            }
+            catch (Exception ex)
+            {
+                ModelState.AddModelError("", $"An error occurred while loading low stock items: {ex.Message}");
+                return View("LowStock", new ItemResponseModel()); // Return an empty response model in case of an error
+            }
+        }
+
+
+
         [ActionName("Create")]
         public IActionResult ItemCreate()
         {
@@ -392,6 +486,7 @@ namespace posSystem.Controllers
                 itemModel.subBrandCode = subBrandItem.subBrandCode;
 
                 itemModel.itemCreateAt = DateTime.Now.ToString();
+                itemModel.itemRemainStock = itemModel.itemStock;
                 _appDbContext.Items.Add(itemModel);
                 int result = _appDbContext.SaveChanges();
                 string message = result > 0 ? "Save Success" : "Save Fail";
@@ -412,72 +507,7 @@ namespace posSystem.Controllers
             }
         }
 
-        //[ActionName("Edit")]
-        //public IActionResult ItemEdit(int itemId)
-        //{
-        //    try
-        //    {
-        //        var item = _appDbContext.Items.FirstOrDefault(x => x.itemId == itemId);
-        //        if (item is null)
-        //        {
-        //            return Redirect("/Item");
-        //        }
-
-        //        // Get the corresponding category for the subcategory
-        //        var brand = _appDbContext.Brands.FirstOrDefault(c => c.brandId == item.brandId && c.brandCode == item.brandCode);
-
-        //        // If the category is found, add its name to the ViewBag
-        //        if (brand != null)
-        //        {
-        //            ViewBag.BrandName = brand.brandName;
-        //            ViewBag.BrandId = brand.brandId;
-        //        }
-
-        //        var subBrand = _appDbContext.SubBrands.FirstOrDefault(c => c.subBId == item.subBId && c.subBrandCode == item.subBrandCode);
-
-        //        // If the category is found, add its name to the ViewBag
-        //        if (subBrand != null)
-        //        {
-        //            ViewBag.SubBrandName = subBrand.subBrandName;
-        //            ViewBag.SubBId = subBrand.subBId;
-        //        }
-
-        //        var category = _appDbContext.Categories.FirstOrDefault(c => c.catId == item.catId && c.catCode == item.catCode);
-
-        //        // If the category is found, add its name to the ViewBag
-        //        if (category != null)
-        //        {
-        //            ViewBag.CategoryName = category.catName;
-        //            ViewBag.CatId = category.catId;
-        //        }
-
-        //        var subCategory = _appDbContext.SubCategories.FirstOrDefault(c => c.subCId == item.subCId && c.subCatCode == item.subCatCode);
-
-        //        // If the category is found, add its name to the ViewBag
-        //        if (subCategory != null)
-        //        {
-        //            ViewBag.SubCatName = subCategory.subCatName;
-        //            ViewBag.SubCId = subCategory.subCId;
-        //        }
-
-        //        var categories = _appDbContext.Categories.ToList();
-        //        var subCategories = _appDbContext.SubCategories.ToList();
-        //        var brands = _appDbContext.Brands.ToList();
-        //        var subBrands = _appDbContext.SubBrands.ToList();
-
-        //        ViewBag.Categories = categories;
-        //        ViewBag.SubCategories = subCategories;
-        //        ViewBag.Brands = brands;
-        //        ViewBag.SubBrands = subBrands;
-
-        //        return View("ItemEdit", item);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        ModelState.AddModelError("", $"An error occurred while loading edit item page: {ex.Message}");
-        //        return View("ItemEdit");
-        //    }
-        //}
+        
 
         [ActionName("Edit")]
         public IActionResult ItemEdit(int itemId)

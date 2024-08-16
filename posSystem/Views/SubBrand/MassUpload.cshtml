@@ -69,7 +69,7 @@
                     contentType: false,
                     processData: false,
                     success: function (result) {
-                        Notiflix.Block.remove('.container'); // Remove block on success
+                        Notiflix.Block.remove('body'); // Remove block on success
                         if (result.IsSuccess) {
                             Swal.fire({
                                 title: "Success!",
@@ -78,7 +78,7 @@
                                 timer: 2000,
                                 timerProgressBar: true
                             }).then(() => {
-                                location.href = "/SubBrand";// Redirect to index page
+                                location.href = "/SubBrand"; // Redirect to index page
                             });
                         } else {
                             Swal.fire({
@@ -89,8 +89,8 @@
                         }
                     },
                     error: function (xhr, status, error) {
+                        Notiflix.Block.remove('body'); // Remove block on error
                         Swal.fire({
-                            Notiflix.Block.remove('.container'); // Remove block on error
                             title: "Error!",
                             text: "An error occurred while processing the file.",
                             icon: "error"
@@ -101,3 +101,4 @@
         });
     </script>
 }
+

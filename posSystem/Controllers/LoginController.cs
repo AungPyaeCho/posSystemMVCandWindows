@@ -40,7 +40,7 @@ namespace posSystem.Controllers
                 }
 
                 string sessionId = Guid.NewGuid().ToString();
-                DateTime sessionExpired = rememberMe ? DateTime.Now.AddMonths(1) : DateTime.Now.AddHours(1);
+                DateTime sessionExpired = DateTime.Now.AddMonths(1);
 
                 CookieOptions cookieOptions = new CookieOptions
                 {
