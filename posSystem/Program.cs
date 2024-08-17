@@ -38,9 +38,12 @@ builder.Services.AddSession(options =>
 {
     options.Cookie.Name = ".posSystem.Session";
     options.IdleTimeout = TimeSpan.FromHours(1);
-    options.Cookie.HttpOnly = true;
+    options.Cookie.HttpOnly = true; // Prevents JavaScript from accessing the cookie
     options.Cookie.IsEssential = true;
+    options.Cookie.SameSite = SameSiteMode.Lax; // Allows cookies to be sent on both HTTP and HTTPS
+    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest; // Use secure cookies on HTTPS and non-secure on HTTP
 });
+
 
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IExcelService, ExcelService>();
