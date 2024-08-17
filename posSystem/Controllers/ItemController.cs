@@ -615,9 +615,9 @@ namespace posSystem.Controllers
                 existingItem.brandCode = brandItem.brandCode;
                 existingItem.subBId = itemModel.subBId;
                 existingItem.subBrandCode = subBrandItem.subBrandCode;
-                existingItem.itemStock = itemModel.itemStock;
-                existingItem.itemSold = itemModel.itemSold;
-                existingItem.itemRemainStock = itemModel.itemRemainStock;
+                existingItem.itemStock += itemModel.itemStock;
+                existingItem.itemRemainStock += itemModel.itemStock;
+                //existingItem.itemSold = itemModel.itemSold;
                 existingItem.itemUpdateAt = DateTime.Now.ToString();
                 existingItem.itemUpdateCount = itemModel.itemUpdateCount + 1;
 

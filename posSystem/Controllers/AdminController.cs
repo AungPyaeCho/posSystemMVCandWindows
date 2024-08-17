@@ -64,7 +64,6 @@ namespace posSystem.Controllers
             }
         }
 
-
         [ActionName("Create")]
         public IActionResult AdminCreate()
         {

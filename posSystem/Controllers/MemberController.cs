@@ -49,6 +49,22 @@ namespace posSystem.Controllers
             return View("MemberCreate");
         }
 
+        [HttpPost]
+        [ActionName("Check")]
+        public JsonResult CheckEmail(string email)
+        {
+            try
+            {
+                bool isEmailRegistered = _appDbContext.Members.Any(a => a.memberEmail == email);
+                return Json(new { isEmailRegistered });
+            }
+            catch (Exception ex)
+            {
+               
+                return Json(new { isEmailRegistered = false });
+            }
+        }
+
         // POST action to save a new member
         [HttpPost]
         [ActionName("Save")]
