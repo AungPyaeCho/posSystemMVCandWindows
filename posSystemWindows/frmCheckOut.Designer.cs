@@ -210,7 +210,7 @@
             btnPrint.Name = "btnPrint";
             btnPrint.Size = new Size(382, 50);
             btnPrint.TabIndex = 46;
-            btnPrint.Text = "&Print";
+            btnPrint.Text = "&Check Out";
             btnPrint.UseVisualStyleBackColor = false;
             btnPrint.Click += btnPrint_Click;
             // 
@@ -339,6 +339,7 @@
             lblUserName.Size = new Size(132, 30);
             lblUserName.TabIndex = 11;
             lblUserName.Text = "lblUserName";
+            lblUserName.Visible = false;
             // 
             // lblStaffCode
             // 
@@ -349,6 +350,7 @@
             lblStaffCode.Size = new Size(125, 30);
             lblStaffCode.TabIndex = 12;
             lblStaffCode.Text = "lblStaffCode";
+            lblStaffCode.Visible = false;
             // 
             // lblStaffRole
             // 
@@ -359,6 +361,7 @@
             lblStaffRole.Size = new Size(117, 30);
             lblStaffRole.TabIndex = 13;
             lblStaffRole.Text = "lblStaffRole";
+            lblStaffRole.Visible = false;
             // 
             // frmCheckOut
             // 

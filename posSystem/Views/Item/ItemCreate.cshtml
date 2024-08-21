@@ -1,10 +1,14 @@
 ﻿@model ItemModel
+@using Microsoft.AspNetCore.Http
+@inject IHttpContextAccessor HttpContextAccessor
 
 @{
     var _categories = ViewBag.Categories as List<CategoryModel>;
     var _subCategories = ViewBag.SubCategories as List<SubCategoryModel>;
     var _brands = ViewBag.Brands as List<BrandModel>;
     var _subBrands = ViewBag.SubBrands as List<SubBrandModel>;
+    var adminName = HttpContextAccessor.HttpContext.Session.GetString("AdminName") ?? HttpContextAccessor.HttpContext.Request.Cookies["AdminName"];
+
 }
 
 <div class="container mt-5">
@@ -100,7 +104,7 @@
 
                     <div class="mb-3">
                         <label for="creatorName" class="form-label">Creator Name</label>
-                        <input type="text" class="form-control" id="creatorName" name="creatorName" placeholder="Enter creator name">
+                        <input type="text" class="form-control" id="creatorName" name="creatorName" placeholder="Enter creator name" disabled="true" value="@adminName" >
                     </div>
 
                     <div class="d-flex justify-content-between">

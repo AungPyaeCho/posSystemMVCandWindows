@@ -19,7 +19,7 @@ namespace posSystemWindows
     {
         private readonly DapperService _dapperService;
 
-        string _password;
+        string? _password;
 
         public frmLogin()
         {
@@ -29,7 +29,26 @@ namespace posSystemWindows
 
         private void btnLogin_Click(object sender, EventArgs e)
         {
-            GetUser(txtUserName.Text, txtPassword.Text);
+            bool isAdminValid = GetAdmin(txtUserName.Text, txtPassword.Text);
+            if (isAdminValid)
+            {
+                // Admin login is successful
+                this.DialogResult = DialogResult.OK; // Approve the action
+                return; // Stop further execution
+            }
+
+            // If not an admin, try logging in as a regular user.
+            bool isUserValid = GetUser(txtUserName.Text, txtPassword.Text);
+            if (isUserValid)
+            {
+                // User login is successful
+                frmLogin frmLogin = new frmLogin();
+                frmLogin.Close();
+                return; // Stop further execution
+            }
+
+            // If neither admin nor user login is successful, show an error message.
+            MessageBox.Show("Invalid username or password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
         private void LoginRecord(StaffModel user)
@@ -44,7 +63,37 @@ namespace posSystemWindows
             _dapperService.Execute(Queries.CreateLoginRecord, LoginStaff);
         }
 
-        private void GetUser(string UserName, string Password)
+        private bool GetAdmin(string username, string password)
+        {
+            try
+            {
+                string encryptedPassword = SimpleEncryptionHelper.Encrypt(password);
+
+                var parameters = new
+                {
+                    adminName = username,
+                    adminPassword = encryptedPassword
+                };
+
+                var admin = _dapperService.QueryFOD<AdminModel>(Queries.GetAdmin, parameters);
+                if (admin != null)
+                {
+                    if (admin.adminName == username && admin.adminPassword == encryptedPassword) return true;
+                    else 
+                    {
+                        return false;
+                    }
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
+            }
+        }
+
+        private bool GetUser(string UserName, string Password)
         {
             string encryptedPassword = SimpleEncryptionHelper.Encrypt(Password);
 
@@ -66,27 +115,36 @@ namespace posSystemWindows
                         LoginRecord(user);
                         frmMain mainForm = new frmMain(user);
                         mainForm.Show();
-                        this.Hide();
+                        return true;
                     }
                     else
                     {
-                        MessageBox.Show("Invalid username or password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        //MessageBox.Show("Invalid username or password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                        return false;
                     }
                 }
                 else
                 {
                     MessageBox.Show("Invalid username or password.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                    return false;
                 }
             }
             catch (Exception ex)
             {
                 MessageBox.Show($"An error occurred: {ex.Message}", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                return false;
             }
         }
 
         private void btnExit_Click(object sender, EventArgs e)
         {
             this.Close();
+        }
+
+        private void lblSetting_Click(object sender, EventArgs e)
+        {
+            frmSettingConnection frmSettingConnection = new frmSettingConnection();
+            frmSettingConnection.Show();
         }
     }
 }

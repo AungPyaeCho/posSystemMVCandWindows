@@ -18,9 +18,9 @@ namespace VenomHubLibrary.Queries
 
         public static string CreateLoginRecord { get; } = @"
             INSERT INTO tblLoginStaffDetail 
-                (staffName, staffCode, staffRole, sessionId, sessionExpired, loginAt, logOutAt)
+                (staffName, staffCode, staffRole, sessionId, sessionExpired, loginAt)
                 VALUES 
-                (@StaffName, @StaffCode, @StaffRole, @SessionId, @SessionExpired, @LoginAt, @LogOutAt)";
+                (@StaffName, @StaffCode, @StaffRole, @SessionId, @SessionExpired, @LoginAt)";
 
         public static string UpdateLoginRecord { get; } = @"
             UPDATE tblLoginStaffDetail
@@ -272,6 +272,15 @@ namespace VenomHubLibrary.Queries
             WHERE
                 staffName = @staffName AND
                 staffPassword = @staffPassword";
+
+        public static string GetAdmin { get; } = @"
+            SELECT
+                adminName,
+                adminPassword
+            FROM tblAdmin
+            WHERE
+                adminName = @adminName AND
+                adminPassword = @adminPassword";
 
 
         public static string GetCategories { get; } = @"

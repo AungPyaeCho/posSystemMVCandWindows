@@ -252,47 +252,61 @@ namespace posSystemWindows
 
         private void getFromItem(object sender, DataGridViewCellEventArgs e)
         {
-            if (e.RowIndex >= 0)
+            try
             {
-                DataGridViewRow selectedRow = dgvItems.Rows[e.RowIndex];
+                if (e.RowIndex >= 0)
+                {
+                    DataGridViewRow selectedRow = dgvItems.Rows[e.RowIndex];
 
-                int quantity = Convert.ToInt32(txtQuantity.Text);
-                int itemRemainStock = Convert.ToInt32(selectedRow.Cells["Column3"].Value);
+                    int quantity = Convert.ToInt32(txtQuantity.Text);
+                    int itemRemainStock = Convert.ToInt32(selectedRow.Cells["Column3"].Value);
 
-                _itemCode = selectedRow.Cells["itemCode"].Value.ToString()!;
-                txtItemName.Text = selectedRow.Cells["itemName"].Value.ToString()!;
-                txtItemPrice.Text = selectedRow.Cells["itemPrice"].Value.ToString()!;
-                txtWholeSalePrice.Text = selectedRow.Cells["itemWholeSalePrice"].Value.ToString()!;
-                txtCategory.Text = selectedRow.Cells["catName"].Value.ToString()!;
-                txtSubCategory.Text = selectedRow.Cells["subCatName"].Value.ToString()!;
-                txtBrand.Text = selectedRow.Cells["brandName"].Value.ToString()!;
-                txtSubBrand.Text = selectedRow.Cells["subBrandName"].Value.ToString()!;
-                txtRemainStock.Text = itemRemainStock.ToString();
-                lblStock.ForeColor = itemRemainStock <= 2 ? Color.Red : DefaultForeColor;
-                lblStock.Text = itemRemainStock <= 2 ? "Stock (Low)" : "Stock";
+                    _itemCode = selectedRow.Cells["itemCode"].Value.ToString()!;
+                    txtItemName.Text = selectedRow.Cells["itemName"].Value.ToString()!;
+                    txtItemPrice.Text = selectedRow.Cells["itemPrice"].Value.ToString()!;
+                    txtWholeSalePrice.Text = selectedRow.Cells["itemWholeSalePrice"].Value.ToString()!;
+                    txtCategory.Text = selectedRow.Cells["catName"].Value.ToString()!;
+                    txtSubCategory.Text = selectedRow.Cells["subCatName"].Value.ToString()!;
+                    txtBrand.Text = selectedRow.Cells["brandName"].Value.ToString()!;
+                    txtSubBrand.Text = selectedRow.Cells["subBrandName"].Value.ToString()!;
+                    txtRemainStock.Text = itemRemainStock.ToString();
+                    lblStock.ForeColor = itemRemainStock <= 2 ? Color.Red : DefaultForeColor;
+                    lblStock.Text = itemRemainStock <= 2 ? "Stock (Low)" : "Stock";
+                }
             }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+            }
+            
         }
 
         private void cellQtyEdit(object sender, DataGridViewCellEventArgs e)
         {
-            // Ensure the edited cell is in the quantity column
-            if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
+            using (frmLogin loginForm = new frmLogin())
             {
-                DataGridViewRow row = dgvCart.Rows[e.RowIndex];
-                int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
-                int quantity;
+                if (loginForm.ShowDialog() == DialogResult.OK)
+                {
+                    // Ensure the edited cell is in the quantity column
+                    if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
+                    {
+                        DataGridViewRow row = dgvCart.Rows[e.RowIndex];
+                        int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
+                        int quantity;
 
-                // Try to parse the quantity value
-                if (int.TryParse(row.Cells["quantity"].Value.ToString(), out quantity))
-                {
-                    // Calculate the total price and update the total price cell
-                    row.Cells["netAmount"].Value = itemPrice * quantity;
-                }
-                else
-                {
-                    // If parsing fails, reset the quantity to 1 and update the total price
-                    row.Cells["quantity"].Value = 1;
-                    row.Cells["netAmount"].Value = itemPrice;
+                        // Try to parse the quantity value
+                        if (int.TryParse(row.Cells["quantity"].Value.ToString(), out quantity))
+                        {
+                            // Calculate the total price and update the total price cell
+                            row.Cells["netAmount"].Value = itemPrice * quantity;
+                        }
+                        else
+                        {
+                            // If parsing fails, reset the quantity to 1 and update the total price
+                            row.Cells["quantity"].Value = 1;
+                            row.Cells["netAmount"].Value = itemPrice;
+                        }
+                    }
                 }
             }
         }

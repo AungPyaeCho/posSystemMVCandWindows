@@ -56,5 +56,11 @@ namespace posSystemWindows
             frmAbout frmAbout = new frmAbout();
             frmAbout.ShowDialog();
         }
+
+        private void btnSetting_Click(object sender, EventArgs e)
+        {
+            frmSettingConnection frmSettingConnection = new frmSettingConnection();
+            frmSettingConnection.ShowDialog();
+        }
     }
 }

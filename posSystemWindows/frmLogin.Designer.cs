@@ -29,6 +29,7 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
+            lblSetting = new Label();
             btnExit = new Button();
             btnLogin = new Button();
             txtPassword = new TextBox();
@@ -40,6 +41,7 @@
             // 
             // groupBox1
             // 
+            groupBox1.Controls.Add(lblSetting);
             groupBox1.Controls.Add(btnExit);
             groupBox1.Controls.Add(btnLogin);
             groupBox1.Controls.Add(txtPassword);
@@ -52,6 +54,16 @@
             groupBox1.TabIndex = 0;
             groupBox1.TabStop = false;
             groupBox1.Text = "Login";
+            // 
+            // lblSetting
+            // 
+            lblSetting.AutoSize = true;
+            lblSetting.Location = new Point(6, 170);
+            lblSetting.Name = "lblSetting";
+            lblSetting.Size = new Size(90, 32);
+            lblSetting.TabIndex = 1;
+            lblSetting.Text = "Setting";
+            lblSetting.Click += lblSetting_Click;
             // 
             // btnExit
             // 
@@ -133,5 +145,6 @@
         private Label label1;
         private Button btnExit;
         private Button btnLogin;
+        private Label lblSetting;
     }
 }

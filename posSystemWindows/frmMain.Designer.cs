@@ -93,6 +93,7 @@
             btnSetting.TabIndex = 3;
             btnSetting.Text = "Setting";
             btnSetting.UseVisualStyleBackColor = true;
+            btnSetting.Click += btnSetting_Click;
             // 
             // btnAbout
             // 

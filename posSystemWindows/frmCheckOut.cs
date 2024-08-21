@@ -184,6 +184,9 @@ namespace posSystemWindows
             try
             {
                 ProcessSale();
+                frmSale frmSale = new frmSale(_staffModel);
+                frmSale.ShowDialog();
+                this.Close();
             }
             catch (Exception ex)
             {
