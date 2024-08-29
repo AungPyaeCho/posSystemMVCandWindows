@@ -1,10 +1,5 @@
-using Microsoft.EntityFrameworkCore.Query.Internal;
-using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
-using Microsoft.IdentityModel.Tokens;
 using posSystemWindows.Models;
 using System.Data;
-using System.Data.SqlClient;
-using System.Windows.Forms;
 using VenomHubLibrary;
 using VenomHubLibrary.Queries;
 
@@ -143,6 +138,7 @@ namespace posSystemWindows
         {
             try
             {
+                // Get query from queries class base on search value
                 bool hasItemName = !string.IsNullOrEmpty(parameters.itemName);
                 bool hasItemBarcode = !string.IsNullOrEmpty(parameters.itemBarcode);
                 bool hasCategory = !string.IsNullOrEmpty(parameters.categoryCode);
@@ -182,10 +178,10 @@ namespace posSystemWindows
 
                 string itemName = txtByName.Text;
                 string itemBarcode = txtBarcode.Text;
-                string catCode = cboCategories.SelectedValue?.ToString();
-                string subCatCode = cboSubCategories.SelectedValue?.ToString();
-                string brandCode = cboBrands.SelectedValue?.ToString();
-                string subBrandCode = cboSubBrands.SelectedValue?.ToString();
+                string catCode = cboCategories.SelectedValue.ToString();
+                string subCatCode = cboSubCategories.SelectedValue.ToString();
+                string brandCode = cboBrands.SelectedValue.ToString();
+                string subBrandCode = cboSubBrands.SelectedValue.ToString();
 
                 var parameters = new ItemModel
                 {
@@ -255,8 +251,7 @@ namespace posSystemWindows
                 subBrandName = txtSubBrand.Text;
                 quantity = Convert.ToInt32(txtQuantity.Text);
                 itemRemainStock = Convert.ToInt32(txtRemainStock.Text);
-
-
+                
                 salePrice = chbWholeSale.Checked ? itemWholeSalePrice : itemPrice;
 
                 int netAmount = salePrice * quantity;
@@ -277,6 +272,7 @@ namespace posSystemWindows
         {
             try
             {
+                // Fill text boxes from selected row in datagrid view
                 if (e.RowIndex >= 0)
                 {
                     DataGridViewRow selectedRow = dgvItems.Rows[e.RowIndex];
@@ -315,16 +311,12 @@ namespace posSystemWindows
                     int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
                     int quantity;
 
-                    // Try to parse the quantity value
-                    if (int.TryParse(row.Cells["quantity"].Value.ToString(), out quantity))
+                    if ((quantity = Convert.ToInt32(row.Cells["quantity"].Value)) != null)
                     {
-                        // Calculate the total price and update the total price cell
                         row.Cells["netAmount"].Value = itemPrice * quantity;
                     }
                     else
                     {
-                        // If parsing fails, reset the quantity to 1 and update the total price
-                        row.Cells["quantity"].Value = 1;
                         row.Cells["netAmount"].Value = itemPrice;
                     }
                 }
@@ -338,19 +330,12 @@ namespace posSystemWindows
                         {
                             DataGridViewRow selectedRow = dgvCart.Rows[e.RowIndex];
                             int itemPrice = Convert.ToInt32(selectedRow.Cells["colItemPrice"].Value);
-                            int quantity;
-
-                            // Try to parse the quantity value
-                            if (int.TryParse(selectedRow.Cells["quantity"].Value.ToString(), out quantity))
-                            {
-                                // Calculate the total price and update the total price cell
-                                selectedRow.Cells["netAmount"].Value = itemPrice * quantity;
-                            }
-                            else
-                            {
-                                return;
-                            }
-
+                            int quantity = Convert.ToInt32(selectedRow.Cells["quantity"].Value);
+                            selectedRow.Cells["netAmount"].Value = itemPrice * quantity;
+                        }
+                        else
+                        {
+                            return;
                         }
                     }
                 }
@@ -375,11 +360,6 @@ namespace posSystemWindows
         {
             string itemBarcode = txtBarcode.Text;
             LoadItemsByBarcode(itemBarcode);
-        }
-
-        private void btnSearchRange_Click(object sender, EventArgs e)
-        {
-
         }
 
         private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -431,7 +411,6 @@ namespace posSystemWindows
 
         private void btnExit_Click(object sender, EventArgs e)
         {
-            //frmCheckOut.Close();
             frmMain frmMain = new frmMain(_staffModel);
             frmMain.Show();
             this.Close();

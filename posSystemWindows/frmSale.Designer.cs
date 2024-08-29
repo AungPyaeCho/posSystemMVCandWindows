@@ -48,7 +48,6 @@
             lblUserName = new Label();
             lblStaffCode = new Label();
             lblStaffRole = new Label();
-            btnSearchRange = new Button();
             txtItemName = new TextBox();
             label7 = new Label();
             groupBox3 = new GroupBox();
@@ -271,7 +270,6 @@
             panel1.Controls.Add(lblUserName);
             panel1.Controls.Add(lblStaffCode);
             panel1.Controls.Add(lblStaffRole);
-            panel1.Controls.Add(btnSearchRange);
             panel1.Controls.Add(groupBox2);
             panel1.Controls.Add(btnExit);
             panel1.Controls.Add(btnSearch);
@@ -314,18 +312,6 @@
             lblStaffRole.TabIndex = 10;
             lblStaffRole.Text = "lblStaffRole";
             lblStaffRole.Visible = false;
-            // 
-            // btnSearchRange
-            // 
-            btnSearchRange.FlatStyle = FlatStyle.Flat;
-            btnSearchRange.Location = new Point(15, 865);
-            btnSearchRange.Name = "btnSearchRange";
-            btnSearchRange.Size = new Size(208, 50);
-            btnSearchRange.TabIndex = 7;
-            btnSearchRange.Text = "Search &Range";
-            btnSearchRange.UseVisualStyleBackColor = true;
-            btnSearchRange.Visible = false;
-            btnSearchRange.Click += btnSearchRange_Click;
             // 
             // txtItemName
             // 
@@ -845,7 +831,6 @@
         private TextBox txtQuantity;
         private Label label8;
         private CheckBox chbWholeSale;
-        private Button btnSearchRange;
         private Button btnCheckOut;
         private Button btnAddCart;
         private Label lblStock;
