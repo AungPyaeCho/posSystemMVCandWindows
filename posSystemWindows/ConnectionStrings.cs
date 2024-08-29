@@ -24,17 +24,17 @@ namespace posSystemWindows
                 // Default connection string
                 _sqlConnectionStringBuilder = new SqlConnectionStringBuilder()
                 {
-                    DataSource = ".",
-                    InitialCatalog = "posDB",
-                    UserID = "sa",
-                    Password = "admin123!@#",
-                    TrustServerCertificate = true
-
-                    //DataSource = "SQL8020.site4now.net",
-                    //InitialCatalog = "db_aaaeb1_posdb",
-                    //UserID = "db_aaaeb1_posdb_admin",
-                    //Password = "admin@123",
+                    //DataSource = ".",
+                    //InitialCatalog = "posDB",
+                    //UserID = "sa",
+                    //Password = "admin123!@#",
                     //TrustServerCertificate = true
+
+                    DataSource = "SQL8020.site4now.net",
+                    InitialCatalog = "db_aaaeb1_posdb",
+                    UserID = "db_aaaeb1_posdb_admin",
+                    Password = "admin@123",
+                    TrustServerCertificate = true
                 };
             }
         }

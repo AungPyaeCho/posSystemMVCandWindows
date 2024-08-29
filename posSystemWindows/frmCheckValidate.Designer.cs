@@ -1,6 +1,6 @@
 ﻿namespace posSystemWindows
 {
-    partial class frmLogin
+    partial class frmCheckValidate
     {
         /// <summary>
         /// Required designer variable.
@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             groupBox1 = new GroupBox();
-            lblSetting = new Label();
             btnExit = new Button();
             btnLogin = new Button();
             txtPassword = new TextBox();
@@ -41,7 +40,6 @@
             // 
             // groupBox1
             // 
-            groupBox1.Controls.Add(lblSetting);
             groupBox1.Controls.Add(btnExit);
             groupBox1.Controls.Add(btnLogin);
             groupBox1.Controls.Add(txtPassword);
@@ -50,38 +48,26 @@
             groupBox1.Controls.Add(label1);
             groupBox1.Location = new Point(12, 12);
             groupBox1.Name = "groupBox1";
-            groupBox1.Size = new Size(373, 239);
-            groupBox1.TabIndex = 0;
+            groupBox1.Size = new Size(404, 247);
+            groupBox1.TabIndex = 1;
             groupBox1.TabStop = false;
-            groupBox1.Text = "Login";
-            // 
-            // lblSetting
-            // 
-            lblSetting.AutoSize = true;
-            lblSetting.Location = new Point(6, 193);
-            lblSetting.Name = "lblSetting";
-            lblSetting.Size = new Size(90, 32);
-            lblSetting.TabIndex = 1;
-            lblSetting.Text = "Setting";
-            lblSetting.Click += lblSetting_Click;
             // 
             // btnExit
             // 
             btnExit.FlatStyle = FlatStyle.Flat;
-            btnExit.Location = new Point(156, 183);
+            btnExit.Location = new Point(168, 189);
             btnExit.Name = "btnExit";
-            btnExit.Size = new Size(200, 50);
+            btnExit.Size = new Size(217, 52);
             btnExit.TabIndex = 5;
-            btnExit.Text = "E&xit";
+            btnExit.Text = "&Cancle";
             btnExit.UseVisualStyleBackColor = true;
-            btnExit.Click += btnExit_Click;
             // 
             // btnLogin
             // 
             btnLogin.FlatStyle = FlatStyle.Flat;
-            btnLogin.Location = new Point(156, 127);
+            btnLogin.Location = new Point(169, 131);
             btnLogin.Name = "btnLogin";
-            btnLogin.Size = new Size(200, 50);
+            btnLogin.Size = new Size(217, 52);
             btnLogin.TabIndex = 4;
             btnLogin.Text = "&Login";
             btnLogin.UseVisualStyleBackColor = true;
@@ -89,16 +75,16 @@
             // 
             // txtPassword
             // 
-            txtPassword.Location = new Point(156, 75);
+            txtPassword.Location = new Point(169, 78);
             txtPassword.Name = "txtPassword";
             txtPassword.PasswordChar = '*';
-            txtPassword.Size = new Size(200, 38);
+            txtPassword.Size = new Size(216, 38);
             txtPassword.TabIndex = 3;
             // 
             // label2
             // 
             label2.AutoSize = true;
-            label2.Location = new Point(6, 78);
+            label2.Location = new Point(6, 81);
             label2.Name = "label2";
             label2.Size = new Size(123, 32);
             label2.TabIndex = 2;
@@ -106,31 +92,30 @@
             // 
             // txtUserName
             // 
-            txtUserName.Location = new Point(156, 31);
+            txtUserName.Location = new Point(169, 32);
             txtUserName.Name = "txtUserName";
-            txtUserName.Size = new Size(200, 38);
+            txtUserName.Size = new Size(216, 38);
             txtUserName.TabIndex = 1;
             // 
             // label1
             // 
             label1.AutoSize = true;
-            label1.Location = new Point(6, 34);
+            label1.Location = new Point(6, 35);
             label1.Name = "label1";
-            label1.Size = new Size(144, 32);
+            label1.Size = new Size(167, 32);
             label1.TabIndex = 0;
-            label1.Text = "User Name :";
+            label1.Text = "Admin Name :";
             // 
-            // frmLogin
+            // frmCheckValidate
             // 
             AutoScaleDimensions = new SizeF(13F, 31F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(398, 263);
+            ClientSize = new Size(426, 272);
             Controls.Add(groupBox1);
             Font = new Font("Segoe UI", 9.857143F, FontStyle.Regular, GraphicsUnit.Point, 0);
             FormBorderStyle = FormBorderStyle.None;
-            Name = "frmLogin";
+            Name = "frmCheckValidate";
             StartPosition = FormStartPosition.CenterScreen;
-            Text = "Login";
             groupBox1.ResumeLayout(false);
             groupBox1.PerformLayout();
             ResumeLayout(false);
@@ -139,12 +124,11 @@
         #endregion
 
         private GroupBox groupBox1;
+        private Button btnExit;
+        private Button btnLogin;
         private TextBox txtPassword;
         private Label label2;
         private TextBox txtUserName;
         private Label label1;
-        private Button btnExit;
-        private Button btnLogin;
-        private Label lblSetting;
     }
 }

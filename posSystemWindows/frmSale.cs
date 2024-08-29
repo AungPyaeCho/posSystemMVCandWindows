@@ -78,118 +78,141 @@ namespace posSystemWindows
 
         private void LoadComboBox(ComboBox comboBox, string query, string valueMember, string displayMember, string defaultDisplayText)
         {
-            var dataTable = _dapperService.QueryDataTable(query);
+                var dataTable = _dapperService.QueryDataTable(query);
 
-            // Add a default "All" row to the DataTable
-            DataRow defaultRow = dataTable.NewRow();
-            defaultRow[valueMember] = DBNull.Value; // or an appropriate value like -1 or "All"
-            defaultRow[displayMember] = defaultDisplayText;
-            dataTable.Rows.InsertAt(defaultRow, 0);
+                // Add a default "All" row to the DataTable
+                DataRow defaultRow = dataTable.NewRow();
+                defaultRow[valueMember] = DBNull.Value; // or an appropriate value like -1 or "All"
+                defaultRow[displayMember] = defaultDisplayText;
+                dataTable.Rows.InsertAt(defaultRow, 0);
 
-            if (dataTable.Rows.Count > 0)
-            {
-                comboBox.DisplayMember = displayMember;
-                comboBox.ValueMember = valueMember;
-                comboBox.DataSource = dataTable;
-            }
-            else
-            {
-                MessageBox.Show($"No data found for {comboBox.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            }
+                if (dataTable.Rows.Count > 0)
+                {
+                    comboBox.DisplayMember = displayMember;
+                    comboBox.ValueMember = valueMember;
+                    comboBox.DataSource = dataTable;
+                }
+                else
+                {
+                    MessageBox.Show($"No data found for {comboBox.Name}.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
         }
 
         private void SearchItem()
         {
-            string itemName = txtByName.Text;
-            string itemBarcode = txtBarcode.Text;
-            string categoryCode = cboCategories.SelectedValue?.ToString();
-            string subCatCode = cboSubCategories.SelectedValue?.ToString();
-            string brandCode = cboBrands.SelectedValue?.ToString();
-            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
-
-            var parameters = new
+            try
             {
-                itemName = string.IsNullOrEmpty(itemName) ? (string?)null : itemName,
-                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode,
-                categoryCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode,
-                subCatCode = string.IsNullOrEmpty(subCatCode) ? (string?)null : subCatCode,
-                brandCode = string.IsNullOrEmpty(brandCode) ? (string?)null : brandCode,
-                subBrandCode = string.IsNullOrEmpty(subBrandCode) ? (string?)null : subBrandCode
-            };
+                string itemName = txtByName.Text;
+                string itemBarcode = txtBarcode.Text;
+                string categoryCode = cboCategories.SelectedValue?.ToString();
+                string subCatCode = cboSubCategories.SelectedValue?.ToString();
+                string brandCode = cboBrands.SelectedValue?.ToString();
+                string subBrandCode = cboSubBrands.SelectedValue?.ToString();
 
-            string query = GetQuery(parameters);
+                var parameters = new
+                {
+                    itemName = string.IsNullOrEmpty(itemName) ? (string?)null : itemName,
+                    itemBarcode = string.IsNullOrEmpty(itemBarcode) ? (string?)null : itemBarcode,
+                    categoryCode = string.IsNullOrEmpty(categoryCode) ? (string?)null : categoryCode,
+                    subCatCode = string.IsNullOrEmpty(subCatCode) ? (string?)null : subCatCode,
+                    brandCode = string.IsNullOrEmpty(brandCode) ? (string?)null : brandCode,
+                    subBrandCode = string.IsNullOrEmpty(subBrandCode) ? (string?)null : subBrandCode
+                };
 
-            DataTable dataTable = _dapperService.QueryDataTable(query, parameters);
+                string query = GetQuery(parameters);
 
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                dgvItems.DataSource = dataTable;
+                DataTable dataTable = _dapperService.QueryDataTable(query, parameters);
+
+                if (dataTable != null && dataTable.Rows.Count > 0)
+                {
+                    dgvItems.DataSource = dataTable;
+                }
+                else
+                {
+                    MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+
             }
         }
 
         private string GetQuery(dynamic parameters)
         {
-            bool hasItemName = !string.IsNullOrEmpty(parameters.itemName);
-            bool hasItemBarcode = !string.IsNullOrEmpty(parameters.itemBarcode);
-            bool hasCategory = !string.IsNullOrEmpty(parameters.categoryCode);
-            bool hasSubCategory = !string.IsNullOrEmpty(parameters.subCatCode);
-            bool hasBrand = !string.IsNullOrEmpty(parameters.brandCode);
-            bool hasSubBrand = !string.IsNullOrEmpty(parameters.subBrandCode);
-
-            if (hasItemName || hasItemBarcode)
+            try
             {
+                bool hasItemName = !string.IsNullOrEmpty(parameters.itemName);
+                bool hasItemBarcode = !string.IsNullOrEmpty(parameters.itemBarcode);
+                bool hasCategory = !string.IsNullOrEmpty(parameters.categoryCode);
+                bool hasSubCategory = !string.IsNullOrEmpty(parameters.subCatCode);
+                bool hasBrand = !string.IsNullOrEmpty(parameters.brandCode);
+                bool hasSubBrand = !string.IsNullOrEmpty(parameters.subBrandCode);
+
+                if (hasItemName || hasItemBarcode)
+                {
+                    if (hasCategory || hasSubCategory || hasBrand || hasSubBrand)
+                    {
+                        return Queries.GetItemByNameOrBarcodeWithFilter;
+                    }
+                    else
+                    {
+                        return Queries.GetItemByNameOrBarcode;
+                    }
+                }
+
                 if (hasCategory || hasSubCategory || hasBrand || hasSubBrand)
                 {
-                    return Queries.GetItemByNameOrBarcodeWithFilter;
-                }
-                else
-                {
-                    return Queries.GetItemByNameOrBarcode;
+                    return Queries.GetItemByFilters;
                 }
             }
-
-            if (hasCategory || hasSubCategory || hasBrand || hasSubBrand)
+            catch (Exception ex)
             {
-                return Queries.GetItemByFilters;
-            }
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
 
+            }
             return Queries.GetItemByAllSearch;
         }
 
         private void SearchUnkownValue()
         {
-            string itemName = txtByName.Text;
-            string itemBarcode = txtBarcode.Text;
-            string catCode = cboCategories.SelectedValue?.ToString();
-            string subCatCode = cboSubCategories.SelectedValue?.ToString();
-            string brandCode = cboBrands.SelectedValue?.ToString();
-            string subBrandCode = cboSubBrands.SelectedValue?.ToString();
-
-            var parameters = new ItemModel
+            try
             {
-                itemName = string.IsNullOrEmpty(itemName) ? null : itemName,
-                itemBarcode = string.IsNullOrEmpty(itemBarcode) ? null : itemBarcode,
-                catCode = string.IsNullOrEmpty(catCode) ? null : catCode,
-                subCatCode = string.IsNullOrEmpty(subCatCode) ? null : subCatCode,
-                brandCode = string.IsNullOrEmpty(brandCode) ? null : brandCode,
-                subBrandCode = string.IsNullOrEmpty(subBrandCode) ? null : subBrandCode
-            };
 
-            string query = Queries.BuildDynamicLikeQuery(parameters);
+                string itemName = txtByName.Text;
+                string itemBarcode = txtBarcode.Text;
+                string catCode = cboCategories.SelectedValue?.ToString();
+                string subCatCode = cboSubCategories.SelectedValue?.ToString();
+                string brandCode = cboBrands.SelectedValue?.ToString();
+                string subBrandCode = cboSubBrands.SelectedValue?.ToString();
 
-            var dataTable = _dapperService.QueryDataTable(query, parameters);
+                var parameters = new ItemModel
+                {
+                    itemName = string.IsNullOrEmpty(itemName) ? null : itemName,
+                    itemBarcode = string.IsNullOrEmpty(itemBarcode) ? null : itemBarcode,
+                    catCode = string.IsNullOrEmpty(catCode) ? null : catCode,
+                    subCatCode = string.IsNullOrEmpty(subCatCode) ? null : subCatCode,
+                    brandCode = string.IsNullOrEmpty(brandCode) ? null : brandCode,
+                    subBrandCode = string.IsNullOrEmpty(subBrandCode) ? null : subBrandCode
+                };
 
-            if (dataTable != null && dataTable.Rows.Count > 0)
-            {
-                dgvItems.DataSource = dataTable;
+                string query = Queries.BuildDynamicLikeQuery(parameters);
+
+                var dataTable = _dapperService.QueryDataTable(query, parameters);
+
+                if (dataTable != null && dataTable.Rows.Count > 0)
+                {
+                    dgvItems.DataSource = dataTable;
+                }
+                else
+                {
+                    MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                }
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("No item found with the specified criteria.", "Information", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -278,36 +301,63 @@ namespace posSystemWindows
             {
                 MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
-            
+
         }
 
         private void cellQtyEdit(object sender, DataGridViewCellEventArgs e)
         {
-            using (frmLogin loginForm = new frmLogin())
+            try
             {
-                if (loginForm.ShowDialog() == DialogResult.OK)
+                // Ensure the edited cell is in the quantity column
+                if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
                 {
-                    // Ensure the edited cell is in the quantity column
-                    if (e.ColumnIndex == dgvCart.Columns["quantity"].Index)
-                    {
-                        DataGridViewRow row = dgvCart.Rows[e.RowIndex];
-                        int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
-                        int quantity;
+                    DataGridViewRow row = dgvCart.Rows[e.RowIndex];
+                    int itemPrice = Convert.ToInt32(row.Cells["colItemPrice"].Value);
+                    int quantity;
 
-                        // Try to parse the quantity value
-                        if (int.TryParse(row.Cells["quantity"].Value.ToString(), out quantity))
+                    // Try to parse the quantity value
+                    if (int.TryParse(row.Cells["quantity"].Value.ToString(), out quantity))
+                    {
+                        // Calculate the total price and update the total price cell
+                        row.Cells["netAmount"].Value = itemPrice * quantity;
+                    }
+                    else
+                    {
+                        // If parsing fails, reset the quantity to 1 and update the total price
+                        row.Cells["quantity"].Value = 1;
+                        row.Cells["netAmount"].Value = itemPrice;
+                    }
+                }
+
+                if (e.ColumnIndex == dgvCart.Columns["colItemPrice"].Index)
+                {
+
+                    using (frmCheckValidate checkValidate = new frmCheckValidate())
+                    {
+                        if (checkValidate.ShowDialog() == DialogResult.OK)
                         {
-                            // Calculate the total price and update the total price cell
-                            row.Cells["netAmount"].Value = itemPrice * quantity;
-                        }
-                        else
-                        {
-                            // If parsing fails, reset the quantity to 1 and update the total price
-                            row.Cells["quantity"].Value = 1;
-                            row.Cells["netAmount"].Value = itemPrice;
+                            DataGridViewRow selectedRow = dgvCart.Rows[e.RowIndex];
+                            int itemPrice = Convert.ToInt32(selectedRow.Cells["colItemPrice"].Value);
+                            int quantity;
+
+                            // Try to parse the quantity value
+                            if (int.TryParse(selectedRow.Cells["quantity"].Value.ToString(), out quantity))
+                            {
+                                // Calculate the total price and update the total price cell
+                                selectedRow.Cells["netAmount"].Value = itemPrice * quantity;
+                            }
+                            else
+                            {
+                                return;
+                            }
+
                         }
                     }
                 }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("An error occurred: " + ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -329,7 +379,7 @@ namespace posSystemWindows
 
         private void btnSearchRange_Click(object sender, EventArgs e)
         {
-            
+
         }
 
         private void dgvItems_CellContentClick(object sender, DataGridViewCellEventArgs e)
@@ -346,7 +396,7 @@ namespace posSystemWindows
         {
             cellQtyEdit(sender, e);
         }
-        
+
         private void btnRemove_Click(object sender, EventArgs e)
         {
             // Check if a row is selected
@@ -404,4 +454,5 @@ namespace posSystemWindows
         }
     }
 }
+
 
